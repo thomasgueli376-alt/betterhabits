@@ -404,7 +404,7 @@
               <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
                 <i class="fa-solid fa-moon text-indigo-500"></i> Sleep Tracker
               </h2>
-              <p class="text-xs text-slate-500">Log sleep & hit target hours for <strong class="text-indigo-600">+25 XP</strong>, plus <strong class="text-purple-600">+20 XP Precision Bonus</strong> for hitting schedule!</p>
+              <p class="text-xs text-slate-500">Log sleep & hit target hours for <strong class="text-indigo-600">+25 XP</strong>, plus <strong class="text-purple-600">+20 XP Schedule Bonus</strong> for going to bed on time or earlier!</p>
             </div>
             <button id="btn-edit-sleep-goals" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-xl border border-slate-200"><i class="fa-solid fa-pen"></i> Set Sleep Goals</button>
           </div>
@@ -508,6 +508,10 @@
               Log Income / Investment
             </button>
           </form>
+          <div class="mt-4 border-t border-slate-100 pt-3">
+            <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Income Logs</h4>
+            <ul id="income-list" class="space-y-2"></ul>
+          </div>
         </div>
 
         <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
@@ -524,6 +528,10 @@
               Subtract Expense
             </button>
           </form>
+          <div class="mt-4 border-t border-slate-100 pt-3">
+            <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Expense Logs</h4>
+            <ul id="expense-list" class="space-y-2"></ul>
+          </div>
         </div>
       </div>
     </section>
@@ -532,119 +540,155 @@
     <section id="food" class="tab-content space-y-6">
       <div id="food-lt-container" class="hidden"></div>
 
-      <!-- 2-Week Calorie & Weight Fluctuations Chart.js Canvas -->
+      <!-- 14-Day Weight Trend Chart.js Canvas -->
       <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
         <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
           <div>
             <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-              <i class="fa-solid fa-chart-area text-indigo-600"></i> 14-Day Calorie & Weight Trend
+              <i class="fa-solid fa-chart-line text-rose-500"></i> 14-Day Weight Trend
             </h2>
-            <p class="text-xs text-slate-500">Track calorie intake alongside body weight fluctuations over time.</p>
+            <p class="text-xs text-slate-500">Track body weight fluctuations over time.</p>
           </div>
 
-          <!-- Weight Log Entry & Target -->
+          <!-- Weight Goal Status & Entry -->
           <div class="flex items-center gap-2">
             <form id="form-log-weight" class="flex items-center gap-2">
-              <input type="number" step="0.1" id="weight-input" placeholder="Weight (lbs)" required class="w-28 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl text-xs font-semibold focus:outline-none focus:border-rose-500">
-              <button type="submit" class="bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs px-3 py-1.5 rounded-xl transition shadow-sm">Log Weight (+15 XP)</button>
+              <input type="number" step="0.1" id="weight-input" placeholder="Weight (lbs)" required class="w-28 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-indigo-500">
+              <select id="weight-goal-type" class="bg-slate-50 border border-slate-200 px-2.5 py-1.5 rounded-xl text-xs font-bold text-slate-700 focus:outline-none focus:border-indigo-500">
+                <option value="loss">Goal: Weight Loss</option>
+                <option value="gain">Goal: Weight Gain</option>
+              </select>
+              <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 font-bold px-3 py-1.5 rounded-xl text-white text-xs transition shadow-sm">
+                Log Weight (+20 XP)
+              </button>
             </form>
           </div>
         </div>
 
-        <div class="h-64 w-full">
-          <canvas id="nutritionTrendChart"></canvas>
+        <div class="relative w-full h-64">
+          <canvas id="weightCalorieChart"></canvas>
+        </div>
+
+        <div class="mt-4 border-t border-slate-100 pt-3">
+          <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Weight History</h4>
+          <ul id="weight-history-list" class="space-y-2"></ul>
         </div>
       </div>
 
-      <!-- Logged Weight History (Editable & Deletable) -->
+      <!-- USDA Food & Calorie Lookup Tool -->
       <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
-        <h3 class="text-md font-bold text-slate-900 mb-3 flex items-center gap-2">
-          <i class="fa-solid fa-weight-scale text-rose-500"></i> Recorded Weight History
-        </h3>
-        <ul id="weight-history-list" class="space-y-2 text-sm"></ul>
+        <div class="flex flex-wrap justify-between items-center mb-3 gap-2">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-magnifying-glass text-emerald-600"></i> USDA Calorie & Food Database Lookup
+            </h2>
+            <p class="text-xs text-slate-500">Search foods to instantly view nutrition info and autofill your meal log.</p>
+          </div>
+          <span class="text-[10px] bg-emerald-50 text-emerald-600 font-bold px-2.5 py-1 rounded-lg border border-emerald-200">
+            <i class="fa-solid fa-database"></i> FoodData Central API
+          </span>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-2 mb-4">
+          <input type="text" id="usda-search-input" placeholder="Search food (e.g. Steak, Egg, Chicken breast, Oats, Salmon)..." class="flex-1 bg-slate-50 border border-slate-200 px-4 py-2.5 rounded-xl text-sm text-slate-800 focus:outline-none focus:border-emerald-500">
+          <input type="number" id="usda-qty-input" placeholder="Qty" value="1" min="1" class="w-20 bg-slate-50 border border-slate-200 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 focus:outline-none focus:border-emerald-500">
+          <select id="usda-meal-type" class="bg-slate-50 border border-slate-200 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 focus:outline-none focus:border-emerald-500">
+            <option value="Breakfast">Breakfast</option>
+            <option value="Lunch" selected>Lunch</option>
+            <option value="Dinner">Dinner</option>
+            <option value="Snack">Snack</option>
+            <option value="Dessert">Dessert</option>
+          </select>
+          <button id="btn-usda-search" onclick="searchUSDAFood()" class="bg-emerald-600 hover:bg-emerald-700 font-bold px-5 py-2.5 rounded-xl text-white text-sm transition shadow-sm flex items-center justify-center gap-2">
+            <i class="fa-solid fa-search"></i> Search
+          </button>
+        </div>
+
+        <div id="usda-results-container" class="hidden space-y-2 max-h-56 overflow-y-auto p-2 bg-slate-50 rounded-xl border border-slate-200"></div>
       </div>
 
-      <!-- Macro Tracker & Meal Logging -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
-        <!-- Macro Progress -->
-        <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4">
-          <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-            <i class="fa-solid fa-apple-whole text-emerald-500"></i> Today's Macro Goals
-          </h3>
+      <!-- Macro Goals Setup Banner -->
+      <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-bullseye text-emerald-600"></i> Daily Target Goals
+          </h2>
+          <button id="btn-edit-macro-goals" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-xl border border-slate-200"><i class="fa-solid fa-pen"></i> Edit Goals</button>
+        </div>
 
-          <div>
-            <div class="flex justify-between text-xs font-bold mb-1">
-              <span class="text-slate-600">Calories</span>
-              <span id="macro-cals-lbl" class="text-indigo-600">0 / 2,000 kcal</span>
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+          <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+            <div class="flex justify-between text-xs mb-1">
+              <span class="text-slate-500 font-bold">Calories</span>
+              <span id="cal-count-label" class="text-indigo-600 font-bold">0 / 2,000 kcal</span>
             </div>
-            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-              <div id="bar-cals" class="bg-indigo-500 h-full w-0 transition-all"></div>
+            <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden mt-2">
+              <div id="bar-cal" class="bg-indigo-500 h-full w-0 transition-all"></div>
             </div>
           </div>
 
-          <div>
-            <div class="flex justify-between text-xs font-bold mb-1">
-              <span class="text-slate-600">Protein</span>
-              <span id="macro-prot-lbl" class="text-rose-500">0 / 150g</span>
+          <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+            <div class="flex justify-between text-xs mb-1">
+              <span class="text-slate-500 font-bold">Protein</span>
+              <span id="p-count-label" class="text-rose-500 font-bold">0 / 150g</span>
             </div>
-            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-              <div id="bar-prot" class="bg-rose-500 h-full w-0 transition-all"></div>
-            </div>
-          </div>
-
-          <div>
-            <div class="flex justify-between text-xs font-bold mb-1">
-              <span class="text-slate-600">Carbs</span>
-              <span id="macro-carbs-lbl" class="text-amber-500">0 / 220g</span>
-            </div>
-            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-              <div id="bar-carbs" class="bg-amber-500 h-full w-0 transition-all"></div>
+            <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden mt-2">
+              <div id="bar-p" class="bg-rose-500 h-full w-0 transition-all"></div>
             </div>
           </div>
 
-          <div>
-            <div class="flex justify-between text-xs font-bold mb-1">
-              <span class="text-slate-600">Fats</span>
-              <span id="macro-fats-lbl" class="text-sky-500">0 / 65g</span>
+          <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+            <div class="flex justify-between text-xs mb-1">
+              <span class="text-slate-500 font-bold">Carbs</span>
+              <span id="c-count-label" class="text-amber-500 font-bold">0 / 200g</span>
             </div>
-            <div class="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-              <div id="bar-fats" class="bg-sky-500 h-full w-0 transition-all"></div>
+            <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden mt-2">
+              <div id="bar-c" class="bg-amber-500 h-full w-0 transition-all"></div>
+            </div>
+          </div>
+
+          <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
+            <div class="flex justify-between text-xs mb-1">
+              <span class="text-slate-500 font-bold">Fats</span>
+              <span id="f-count-label" class="text-sky-600 font-bold">0 / 65g</span>
+            </div>
+            <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden mt-2">
+              <div id="bar-f" class="bg-sky-500 h-full w-0 transition-all"></div>
             </div>
           </div>
         </div>
+      </div>
 
-        <!-- Add Meal Form (With Quantifier) -->
-        <div class="lg:col-span-2 bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
-          <h3 class="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
-            <i class="fa-solid fa-utensils text-amber-500"></i> Log Meal or Snack
-          </h3>
-
-          <form id="form-food" class="space-y-3 mb-6">
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <input type="text" id="food-name" placeholder="Food Name (e.g., Banana, Chicken Breast)" required class="sm:col-span-2 bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-amber-500">
-              <div>
-                <input type="number" min="1" value="1" id="food-qty" placeholder="Qty" required class="w-full bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl text-slate-800 focus:outline-none focus:border-amber-500">
-              </div>
-            </div>
-
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-              <input type="number" id="food-cals" placeholder="Calories (kcal)" required class="bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-amber-500 text-xs">
-              <input type="number" id="food-prot" placeholder="Protein (g)" required class="bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-amber-500 text-xs">
-              <input type="number" id="food-carbs" placeholder="Carbs (g)" required class="bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-amber-500 text-xs">
-              <input type="number" id="food-fats" placeholder="Fats (g)" required class="bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-amber-500 text-xs">
-            </div>
-
-            <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 font-bold py-2.5 rounded-xl text-white transition shadow-sm">
-              Log Food Item (+10 XP)
-            </button>
-          </form>
-
-          <!-- Today's Logged Meals -->
-          <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Today's Meals</h4>
-          <ul id="food-logs-list" class="space-y-2"></ul>
+      <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
+        <div class="flex items-center justify-between mb-4">
+          <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+            <i class="fa-solid fa-utensils text-emerald-600"></i> Log Meal & Macros
+          </h2>
+          <button id="btn-claim-cal-xp" class="text-xs bg-emerald-50 text-emerald-600 font-bold px-3 py-1.5 rounded-xl border border-emerald-200 hover:bg-emerald-100 transition">
+            Claim Goal XP (+25 XP)
+          </button>
         </div>
 
+        <form id="form-food" class="grid grid-cols-1 sm:grid-cols-7 gap-3 mb-6">
+          <input type="text" id="food-name" placeholder="Meal Name" required class="sm:col-span-1 bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500">
+          <input type="number" id="food-qty" placeholder="Qty" value="1" min="1" required class="bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500">
+          <select id="food-type" class="bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-slate-800 text-xs font-bold focus:outline-none focus:border-emerald-500">
+            <option value="Breakfast">Breakfast</option>
+            <option value="Lunch" selected>Lunch</option>
+            <option value="Dinner">Dinner</option>
+            <option value="Snack">Snack</option>
+            <option value="Dessert">Dessert</option>
+          </select>
+          <input type="number" id="food-cals" placeholder="Calories" required class="bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500">
+          <input type="number" id="food-protein" placeholder="Protein (g)" value="0" class="bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500">
+          <input type="number" id="food-carbs" placeholder="Carbs (g)" value="0" class="bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500">
+          <input type="number" id="food-fat" placeholder="Fat (g)" value="0" class="bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500">
+          <button type="submit" class="sm:col-span-7 bg-emerald-600 hover:bg-emerald-700 font-bold px-4 py-2.5 rounded-xl text-white transition shadow-sm">
+            Log Meal & Macros
+          </button>
+        </form>
+
+        <ul id="food-list" class="space-y-2"></ul>
       </div>
     </section>
 
@@ -652,20 +696,85 @@
     <section id="exercise" class="tab-content space-y-6">
       <div id="exercise-lt-container" class="hidden"></div>
 
+      <!-- Daily Exercise Goal Progress Banner -->
       <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
-        <h2 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
-          <i class="fa-solid fa-dumbbell text-sky-500"></i> Workout Logger
+        <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-fire text-sky-600"></i> Daily Exercise Goals (+30 XP Bonus)
+            </h2>
+            <p class="text-xs text-slate-500">Hit both duration and burn goals today to trigger the daily Master Bonus! Resets daily.</p>
+          </div>
+          <button id="btn-edit-exercise-goals" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-xl border border-slate-200"><i class="fa-solid fa-pen"></i> Edit Daily Goals</button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div class="p-4 bg-sky-50/60 rounded-2xl border border-sky-100">
+            <div class="flex justify-between items-center text-xs mb-1">
+              <span class="text-slate-600 font-bold"><i class="fa-solid fa-clock text-sky-600"></i> Active Time Goal</span>
+              <span id="ex-time-goal-lbl" class="text-sky-600 font-extrabold">0 / 45 mins</span>
+            </div>
+            <div class="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden mt-2">
+              <div id="bar-ex-time" class="bg-sky-500 h-full w-0 transition-all duration-500"></div>
+            </div>
+          </div>
+
+          <div class="p-4 bg-rose-50/60 rounded-2xl border border-rose-100">
+            <div class="flex justify-between items-center text-xs mb-1">
+              <span class="text-slate-600 font-bold"><i class="fa-solid fa-bolt text-rose-500"></i> Calorie Burn Goal</span>
+              <span id="ex-cal-goal-lbl" class="text-rose-500 font-extrabold">0 / 400 kcal</span>
+            </div>
+            <div class="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden mt-2">
+              <div id="bar-ex-cals" class="bg-rose-500 h-full w-0 transition-all duration-500"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Compendium of Physical Activities Database Search Embed -->
+      <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
+        <div class="flex flex-wrap justify-between items-center mb-3 gap-2">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-calculator text-sky-600"></i> Compendium of Physical Activities (MET Burn Calculator)
+            </h2>
+            <p class="text-xs text-slate-500">Search exercises from the Adult Compendium database to calculate burned calories.</p>
+          </div>
+          <span class="text-[10px] bg-sky-50 text-sky-600 font-bold px-2.5 py-1 rounded-lg border border-sky-200">
+            <i class="fa-solid fa-book-open"></i> MET Database
+          </span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-3 mb-4">
+          <input type="text" id="comp-search-input" placeholder="Search activity (e.g. Swimming, Running, Walking, Pilates, Biking)..." class="sm:col-span-2 bg-slate-50 border border-slate-200 px-4 py-2.5 rounded-xl text-sm text-slate-800 focus:outline-none focus:border-sky-500">
+          <input type="number" id="comp-weight-input" placeholder="Body Weight (lbs)" value="175" class="bg-slate-50 border border-slate-200 px-3.5 py-2.5 rounded-xl text-sm text-slate-800 focus:outline-none focus:border-sky-500">
+          <input type="number" id="comp-mins-input" placeholder="Duration (mins)" value="30" class="bg-slate-50 border border-slate-200 px-3.5 py-2.5 rounded-xl text-sm text-slate-800 focus:outline-none focus:border-sky-500">
+        </div>
+
+        <button onclick="searchCompendiumActivities()" class="w-full sm:w-auto bg-sky-600 hover:bg-sky-700 font-bold px-6 py-2.5 rounded-xl text-white text-sm transition shadow-sm mb-4 flex items-center justify-center gap-2">
+          <i class="fa-solid fa-magnifying-glass"></i> Search Exercise MET Database
+        </button>
+
+        <div id="comp-results-container" class="hidden space-y-2 max-h-60 overflow-y-auto p-2 bg-slate-50 rounded-xl border border-slate-200"></div>
+      </div>
+
+      <!-- Standard Workout Logger Card -->
+      <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
+        <h2 class="text-xl font-bold text-slate-900 mb-2 flex items-center gap-2">
+          <i class="fa-solid fa-dumbbell text-sky-600"></i> Exercise Log
         </h2>
+        <p class="text-xs text-slate-500 font-medium mb-4">Log workouts to earn <strong class="text-sky-600">+25 XP</strong>!</p>
 
         <form id="form-exercise" class="grid grid-cols-1 sm:grid-cols-4 gap-3 mb-6">
-          <input type="text" id="ex-name" placeholder="Workout / Activity (e.g. Running, Weightlifting)" required class="sm:col-span-2 bg-slate-50 border border-slate-200 px-4 py-2.5 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-sky-500">
-          <input type="number" id="ex-mins" placeholder="Duration (mins)" required class="bg-slate-50 border border-slate-200 px-3.5 py-2.5 rounded-xl text-slate-800 focus:outline-none focus:border-sky-500">
-          <button type="submit" class="bg-sky-500 hover:bg-sky-600 font-bold px-4 py-2.5 rounded-xl text-white transition shadow-sm">
-            Log Workout (+25 XP)
+          <input type="text" id="ex-name" placeholder="Workout Name" required class="bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-sky-500">
+          <input type="number" id="ex-mins" placeholder="Duration (mins)" required class="bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-sky-500">
+          <input type="number" id="ex-cals" placeholder="Est. Calories Burned" required class="bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-sky-500">
+          <button type="submit" class="bg-sky-600 hover:bg-sky-700 font-bold px-4 py-2 rounded-xl text-white transition shadow-sm">
+            Log Workout
           </button>
         </form>
 
-        <ul id="exercise-history-list" class="space-y-2"></ul>
+        <ul id="workout-list" class="space-y-2"></ul>
       </div>
     </section>
 
@@ -674,577 +783,934 @@
       <div id="screentime-lt-container" class="hidden"></div>
 
       <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
-        <h2 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
-          <i class="fa-solid fa-mobile-screen text-purple-600"></i> Digital Wellbeing & Screen Time
-        </h2>
+        <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-mobile-screen text-amber-500"></i> Screen Time Next-Day Reflection
+            </h2>
+            <p class="text-xs text-slate-500 font-medium">Reflect each morning on yesterday's mobile screen time. Earn <strong class="text-amber-500">+10 XP</strong> for logging + <strong class="text-emerald-600">+20 XP Bonus</strong> for staying under target!</p>
+          </div>
+          <button id="btn-edit-st-limit" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-xl border border-slate-200"><i class="fa-solid fa-pen"></i> Daily Limit: <span id="st-limit-lbl">3h 0m</span></button>
+        </div>
 
-        <form id="form-screentime" class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
-          <input type="number" step="0.1" id="st-hours" placeholder="Hours spent today (e.g. 2.5)" required class="sm:col-span-2 bg-slate-50 border border-slate-200 px-4 py-2.5 rounded-xl text-slate-800 focus:outline-none focus:border-purple-500">
-          <button type="submit" class="bg-purple-600 hover:bg-purple-700 font-bold px-4 py-2.5 rounded-xl text-white transition shadow-sm">
-            Log Screen Time (+15 XP)
-          </button>
-        </form>
+        <div class="p-5 bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl mb-6">
+          <h3 class="text-sm font-extrabold text-amber-800 uppercase tracking-wider mb-2 flex items-center gap-2">
+            <i class="fa-solid fa-sun text-amber-500"></i> Morning Reflection for Yesterday
+          </h3>
+          
+          <form id="form-screentime" class="grid grid-cols-1 sm:grid-cols-4 gap-3">
+            <div>
+              <label class="block text-xs font-bold text-slate-600 mb-1">Hours</label>
+              <input type="number" id="st-hours" placeholder="Hours" required class="w-full bg-white border border-amber-200 px-3.5 py-2 rounded-xl text-slate-800 focus:outline-none focus:border-amber-500 text-sm">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-600 mb-1">Minutes</label>
+              <input type="number" id="st-mins" placeholder="Minutes" required class="w-full bg-white border border-amber-200 px-3.5 py-2 rounded-xl text-slate-800 focus:outline-none focus:border-amber-500 text-sm">
+            </div>
+            <div>
+              <label class="block text-xs font-bold text-slate-600 mb-1">Top App Category</label>
+              <select id="st-category" class="w-full bg-white border border-amber-200 px-3 py-2 rounded-xl text-slate-800 focus:outline-none focus:border-amber-500 text-sm font-semibold">
+                <option value="Social Media">Social Media</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Work & Productivity">Work & Productivity</option>
+                <option value="Gaming">Gaming</option>
+                <option value="Messaging / Calls">Messaging / Calls</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="flex items-end">
+              <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 font-bold py-2 rounded-xl text-white text-sm transition shadow-sm">
+                Log Reflection
+              </button>
+            </div>
+          </form>
+        </div>
 
-        <ul id="screentime-history-list" class="space-y-2"></ul>
+        <h3 class="text-sm font-bold text-slate-800 mb-3">Reflection History & Categories</h3>
+        <div id="st-history" class="space-y-2"></div>
       </div>
     </section>
 
-    <!-- 8. TRAVEL GOALS TAB -->
+    <!-- 8. TRAVEL GOALS TAB (With Custom Buckets) -->
     <section id="travel" class="tab-content space-y-6">
       <div id="travel-lt-container" class="hidden"></div>
 
+      <!-- Top Custom Buckets Overview Grid -->
       <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
-        <h2 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
-          <i class="fa-solid fa-plane text-rose-500"></i> Travel Bucket List
+        <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+              <i class="fa-solid fa-boxes-stacked text-pink-500"></i> Travel Bucket Goals
+            </h2>
+            <p class="text-xs text-slate-500 font-medium">Create goal counters for special milestones (e.g., Baseball Stadiums 0/30).</p>
+          </div>
+          <button id="btn-create-travel-bucket" class="text-xs bg-pink-50 hover:bg-pink-100 text-pink-600 font-bold px-3.5 py-2 rounded-xl border border-pink-200 transition flex items-center gap-1.5">
+            <i class="fa-solid fa-plus"></i> Create Bucket
+          </button>
+        </div>
+
+        <!-- Dynamic Bucket Cards Grid -->
+        <div id="travel-buckets-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-2"></div>
+      </div>
+
+      <!-- Log Destination Item Card -->
+      <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
+        <h2 class="text-lg font-bold text-slate-900 mb-2 flex items-center gap-2">
+          <i class="fa-solid fa-location-dot text-rose-500"></i> Add Destination / Milestone Item
         </h2>
+        <p class="text-xs text-slate-500 font-medium mb-4">Check off destinations as you visit them to earn <strong class="text-pink-500">+30 XP</strong>!</p>
 
         <form id="form-travel" class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
-          <input type="text" id="travel-dest" placeholder="Destination (e.g. Kyoto, Japan)" required class="sm:col-span-2 bg-slate-50 border border-slate-200 px-4 py-2.5 rounded-xl text-slate-800 focus:outline-none focus:border-rose-500">
-          <button type="submit" class="bg-rose-500 hover:bg-rose-600 font-bold px-4 py-2.5 rounded-xl text-white transition shadow-sm">
-            Add Destination (+20 XP)
+          <input type="text" id="travel-input" placeholder="e.g. PNC Park, Yankee Stadium, Acadia National Park" required class="sm:col-span-1 bg-slate-50 border border-slate-200 px-4 py-2.5 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-pink-500 text-sm">
+          <select id="travel-bucket-select" class="bg-slate-50 border border-slate-200 px-3 py-2.5 rounded-xl text-slate-800 focus:outline-none focus:border-pink-500 text-sm font-medium">
+            <option value="general">General Travel</option>
+          </select>
+          <button type="submit" class="bg-pink-500 hover:bg-pink-600 font-bold px-5 py-2.5 rounded-xl text-white transition text-sm flex items-center justify-center gap-2 shadow-sm">
+            <i class="fa-solid fa-plus"></i> Add Destination
           </button>
         </form>
 
-        <ul id="travel-list" class="grid grid-cols-1 sm:grid-cols-2 gap-3"></ul>
+        <ul id="travel-list" class="space-y-2"></ul>
       </div>
     </section>
 
+    <!-- DYNAMIC CUSTOM SECTIONS CONTAINER -->
+    <div id="custom-sections-container"></div>
+
   </main>
 
-  <!-- JavaScript App Logic -->
+  <!-- CUSTOM SECTION CREATOR MODAL -->
+  <div id="custom-modal" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 rounded-3xl p-6 max-w-md w-full shadow-2xl">
+      <h3 class="text-lg font-bold text-slate-900 mb-1">Create Custom Section</h3>
+      <p class="text-xs text-slate-500 mb-4">Add a customized habit tab (e.g. Reading, Guitar, Language).</p>
+
+      <form id="form-custom-sec" class="space-y-4">
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Section Title</label>
+          <input type="text" id="modal-sec-title" placeholder="e.g., Guitar Practice" required class="w-full bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl text-slate-800 focus:outline-none focus:border-indigo-500">
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-700 mb-1">Icon Class (Font Awesome)</label>
+          <input type="text" id="modal-sec-icon" value="fa-star" placeholder="e.g., fa-guitar, fa-book" required class="w-full bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl text-slate-800 focus:outline-none focus:border-indigo-500">
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" id="btn-close-modal" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-600 hover:bg-slate-200 text-xs font-bold">Cancel</button>
+          <button type="submit" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold">Create Tab</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- APPLICATION LOGIC SCRIPT -->
   <script>
-    // State Management
     let state = {
       xp: 0,
       level: 1,
       streak: 1,
-      weightLogs: [],
-      water: { current: 0, goal: 64 },
-      sleepGoals: { bedtime: '22:30', waketime: '06:30', targetHrs: 8 },
-      sleepLogs: [],
       paycheck: 2300.45,
-      accounts: [
-        { id: 1, name: 'Chase Checking', balance: 4250.00 },
-        { id: 2, name: 'Savings Account', balance: 12800.00 },
-        { id: 3, name: 'Investment / IRA', balance: 34500.00 }
-      ],
-      buckets: [
-        { id: 1, name: 'Rent & Utilities', amount: 1200 },
-        { id: 2, name: 'Groceries & Dining', amount: 400 },
-        { id: 3, name: 'Investments', amount: 500 }
-      ],
+      macroGoals: { cals: 2000, p: 150, c: 200, f: 65 },
+      waterGoal: 64,
+      todayWater: 0,
+      lastWaterDate: null,
+      lastExerciseDate: null,
+      exerciseGoals: { mins: 45, cals: 400 },
+      exerciseBonusClaimedDate: null,
+      sleepGoals: { bedtime: '22:30', waketime: '06:30', duration: 8.0 },
+      sleepLogs: [],
+      weightLogs: [],
+      incomeLogs: [],
+      expenseLogs: [],
+      weightGoalType: 'loss',
+      screenTimeLimitMins: 180,
       todos: [],
-      ltGoals: [],
+      longTermGoals: [],
       foodLogs: [],
-      exerciseLogs: [],
-      screenTimeLogs: [],
-      travelGoals: []
+      workouts: [],
+      screenTime: [],
+      travelBuckets: [
+        { id: 'b_stadiums', name: 'Baseball Stadiums', target: 30 }
+      ],
+      travel: [],
+      customSections: [],
+      customLogs: {},
+      customGoals: {},
+      financials: {
+        chase: 2554.36,
+        etrade: 26266.45,
+        retirement: 89542.42,
+        investment: 19766.95
+      },
+      categories: [
+        { name: 'Rent / Cable', pct: 26.95 },
+        { name: 'Savings', pct: 46.91 },
+        { name: 'Travel', pct: 11.75 },
+        { name: 'Grocery / Needs', pct: 5.05 },
+        { name: 'Fun', pct: 4.45 },
+        { name: 'Car Expenses', pct: 3.26 }
+      ]
     };
 
-    // Load State from LocalStorage
+    let weightChartInstance = null;
+
+    // Compendium of Physical Activities (Expanded MET Data Dictionary)
+    const compendiumActivitiesDb = [
+      // Swimming & Water Activities
+      { category: "Swimming & Water", name: "Swimming, laps (freestyle, moderate pace)", met: 8.0 },
+      { category: "Swimming & Water", name: "Swimming, laps (freestyle, vigorous pace)", met: 10.0 },
+      { category: "Swimming & Water", name: "Swimming, breaststroke (moderate)", met: 10.3 },
+      { category: "Swimming & Water", name: "Swimming, backstroke (moderate)", met: 9.5 },
+      { category: "Swimming & Water", name: "Swimming, butterfly (vigorous)", met: 13.8 },
+      { category: "Swimming & Water", name: "Swimming, leisurely / casual ocean or pool", met: 6.0 },
+      { category: "Swimming & Water", name: "Water Aerobics / Water Calisthenics", met: 5.5 },
+      { category: "Swimming & Water", name: "Water Polo", met: 10.0 },
+
+      // Running & Walking
+      { category: "Walking & Running", name: "Walking, 3.5 mph (brisk pace)", met: 4.3 },
+      { category: "Walking & Running", name: "Walking, 4.0 mph (very brisk)", met: 5.0 },
+      { category: "Walking & Running", name: "Jogging, general", met: 7.0 },
+      { category: "Walking & Running", name: "Running, 6 mph (10 min/mile)", met: 9.8 },
+      { category: "Walking & Running", name: "Running, 7.5 mph (8 min/mile)", met: 11.8 },
+      { category: "Walking & Running", name: "Running, 8.6 mph (7 min/mile)", met: 12.8 },
+      { category: "Walking & Running", name: "Trail Running / Cross Country", met: 9.0 },
+
+      // Conditioning & Gym
+      { category: "Conditioning & Gym", name: "Pilates / Core Exercise", met: 3.0 },
+      { category: "Conditioning & Gym", name: "Yoga (Hatha / Vinyasa)", met: 3.3 },
+      { category: "Conditioning & Gym", name: "Yoga (Power / Bikram)", met: 4.0 },
+      { category: "Conditioning & Gym", name: "Resistance Training / Weight Lifting (Moderate)", met: 3.5 },
+      { category: "Conditioning & Gym", name: "Resistance Training / Weight Lifting (Vigorous)", met: 6.0 },
+      { category: "Conditioning & Gym", name: "Calisthenics / Bodyweight Routine", met: 5.0 },
+      { category: "Conditioning & Gym", name: "Medicine Ball Routine", met: 5.8 },
+      { category: "Conditioning & Gym", name: "HIIT / Circuit Training", met: 8.0 },
+      { category: "Conditioning & Gym", name: "Elliptical Trainer (Moderate)", met: 5.0 },
+      { category: "Conditioning & Gym", name: "Rowing Machine (Moderate)", met: 7.0 },
+      { category: "Conditioning & Gym", name: "Rowing Machine (Vigorous)", met: 8.5 },
+      { category: "Conditioning & Gym", name: "Stairmaster / Stair Climber", met: 9.0 },
+
+      // Cycling
+      { category: "Cycling & Cardio", name: "Stationary Cycling (Moderate)", met: 6.8 },
+      { category: "Cycling & Cardio", name: "Stationary Cycling (Vigorous / Spin)", met: 8.5 },
+      { category: "Cycling & Cardio", name: "Outdoor Road Cycling (12-14 mph)", met: 8.0 },
+      { category: "Cycling & Cardio", name: "Outdoor Road Cycling (14-16 mph)", met: 10.0 },
+      { category: "Cycling & Cardio", name: "Mountain Biking", met: 8.5 },
+
+      // Sports & Martial Arts
+      { category: "Sports & Games", name: "Basketball Game", met: 8.0 },
+      { category: "Sports & Games", name: "Tennis (Singles)", met: 8.0 },
+      { category: "Sports & Games", name: "Soccer / Football Match", met: 10.0 },
+      { category: "Sports & Games", name: "Baseball / Softball Practice", met: 5.0 },
+      { category: "Sports & Games", name: "Golf (Carrying Clubs)", met: 4.3 },
+      { category: "Sports & Games", name: "Volleyball (Competitive)", met: 6.0 },
+      { category: "Sports & Games", name: "Martial Arts / Kickboxing", met: 10.3 },
+      { category: "Sports & Games", name: "Boxing (Sparring)", met: 7.8 }
+    ];
+
+    // Local Fallback Food Dictionary (Extensive Staples List)
+    const fallbackFoodDb = [
+      // Eggs & Breakfast Staples
+      { name: "Whole Egg (1 large, boiled/poached)", cals: 72, p: 6.3, c: 0.4, f: 4.8 },
+      { name: "Egg Whites (1 large)", cals: 17, p: 3.6, c: 0.2, f: 0.1 },
+      { name: "Scrambled Eggs (2 large with butter)", cals: 180, p: 12, c: 1, f: 14 },
+      { name: "Oatmeal (1 cup cooked)", cals: 158, p: 6, c: 27, f: 3.2 },
+      { name: "Greek Yogurt 0% Fat (1 cup / 170g)", cals: 100, p: 18, c: 6, f: 0 },
+      { name: "Whole Milk (1 cup / 240ml)", cals: 149, p: 8, c: 12, f: 8 },
+
+      // Beef & Steaks
+      { name: "Ribeye Steak (100g cooked, trimmed)", cals: 270, p: 26, c: 0, f: 18 },
+      { name: "Sirloin Steak (100g cooked)", cals: 210, p: 29, c: 0, f: 10 },
+      { name: "Filet Mignon / Tenderloin (100g cooked)", cals: 212, p: 28, c: 0, f: 10 },
+      { name: "Flank Steak (100g cooked)", cals: 192, p: 28, c: 0, f: 8 },
+      { name: "Ground Beef 85/15 (100g cooked)", cals: 250, p: 26, c: 0, f: 15 },
+      { name: "Ground Beef 93/7 (100g cooked)", cals: 172, p: 24, c: 0, f: 8 },
+      { name: "Beef Short Ribs (100g cooked)", cals: 330, p: 24, c: 0, f: 26 },
+
+      // Poultry & Pork
+      { name: "Chicken Breast (100g cooked, skinless)", cals: 165, p: 31, c: 0, f: 3.6 },
+      { name: "Chicken Thigh (100g cooked, skinless)", cals: 209, p: 26, c: 0, f: 11 },
+      { name: "Turkey Breast (100g cooked)", cals: 135, p: 30, c: 0, f: 1 },
+      { name: "Pork Chop (100g cooked, boneless)", cals: 210, p: 27, c: 0, f: 10 },
+      { name: "Bacon (2 slices cooked)", cals: 86, p: 6, c: 0.2, f: 7 },
+
+      // Fish & Seafood
+      { name: "Salmon Fillet (100g cooked)", cals: 206, p: 22, c: 0, f: 12 },
+      { name: "Canned Tuna in Water (100g drained)", cals: 116, p: 26, c: 0, f: 1 },
+      { name: "Shrimp (100g cooked)", cals: 99, p: 24, c: 0.2, f: 0.3 },
+      { name: "Cod Fillet (100g cooked)", cals: 105, p: 23, c: 0, f: 0.9 },
+
+      // Grains & Carbs
+      { name: "White Rice (1 cup cooked)", cals: 205, p: 4.2, c: 45, f: 0.4 },
+      { name: "Brown Rice (1 cup cooked)", cals: 218, p: 4.5, c: 46, f: 1.6 },
+      { name: "Quinoa (1 cup cooked)", cals: 222, p: 8.1, c: 39, f: 3.6 },
+      { name: "Sweet Potato (1 medium baked)", cals: 103, p: 2.3, c: 24, f: 0.2 },
+      { name: "White Potato (1 medium baked)", cals: 161, p: 4.3, c: 37, f: 0.2 },
+      { name: "Whole Wheat Bread (1 slice)", cals: 80, p: 4, c: 13, f: 1 },
+      { name: "Pasta (1 cup cooked)", cals: 220, p: 8, c: 43, f: 1.3 },
+
+      // Fruits, Veggies & Nuts
+      { name: "Banana (1 medium)", cals: 105, p: 1.3, c: 27, f: 0.3 },
+      { name: "Apple (1 medium)", cals: 95, p: 0.5, c: 25, f: 0.3 },
+      { name: "Avocado (1 medium)", cals: 240, p: 3, c: 12, f: 22 },
+      { name: "Broccoli (1 cup chopped cooked)", cals: 55, p: 3.7, c: 11, f: 0.6 },
+      { name: "Spinach (1 cup fresh)", cals: 7, p: 0.9, c: 1.1, f: 0.1 },
+      { name: "Almonds (1 oz / 28g)", cals: 164, p: 6, c: 6, f: 14 },
+      { name: "Peanut Butter (2 tbsp)", cals: 188, p: 8, c: 7, f: 16 }
+    ];
+
     function loadState() {
       const saved = localStorage.getItem('good_habits_state');
       if (saved) {
         try {
-          state = Object.assign(state, JSON.parse(saved));
+          state = { ...state, ...JSON.parse(saved) };
         } catch (e) {
-          console.error(e);
+          console.error("Failed to parse state", e);
         }
       }
+
+      const todayStr = new Date().toLocaleDateString();
+
+      // Check daily reset for water
+      if (state.lastWaterDate !== todayStr) {
+        state.todayWater = 0;
+        state.lastWaterDate = todayStr;
+        saveState();
+      }
+
+      // Ensure exercise goals exist
+      if (!state.exerciseGoals) {
+        state.exerciseGoals = { mins: 45, cals: 400 };
+      }
+      if (!state.incomeLogs) state.incomeLogs = [];
+      if (!state.expenseLogs) state.expenseLogs = [];
+      if (!state.customGoals) state.customGoals = {};
+
+      checkRecurringResets();
+      setupEventListeners();
+      initChart();
+      updateUI();
     }
 
-    // Save State to LocalStorage
     function saveState() {
       localStorage.setItem('good_habits_state', JSON.stringify(state));
-      renderAll();
+      updateUI();
     }
 
-    // XP & Level Mechanics with Deduction support
-    function addXP(amount, reason = "Great Job!") {
-      state.xp += amount;
-      let levelUp = false;
-      while (state.xp >= 100) {
-        state.xp -= 100;
-        state.level += 1;
-        levelUp = true;
+    function checkRecurringResets() {
+      const now = Date.now();
+      const periods = {
+        daily: 24 * 60 * 60 * 1000,
+        weekly: 7 * 24 * 60 * 60 * 1000,
+        biweekly: 14 * 24 * 60 * 60 * 1000,
+        monthly: 30 * 24 * 60 * 60 * 1000
+      };
+
+      let stateChanged = false;
+      state.todos = state.todos.map(t => {
+        if (t.isRecurring && t.completed && t.completedAt) {
+          const elapsed = now - t.completedAt;
+          const targetPeriod = periods[t.recurrence] || periods.daily;
+          if (elapsed >= targetPeriod) {
+            stateChanged = true;
+            return { ...t, completed: false, completedAt: null };
+          }
+        }
+        return t;
+      });
+
+      if (stateChanged) saveState();
+    }
+
+    function triggerMascotPopup(title, message) {
+      document.getElementById('mascot-popup-title').textContent = title;
+      document.getElementById('mascot-popup-msg').textContent = message;
+      document.getElementById('mascot-popup').classList.remove('hidden');
+      
+      if (typeof confetti === 'function') {
+        confetti({ particleCount: 50, spread: 70, origin: { y: 0.6 } });
       }
-      if (levelUp) {
-        triggerConfetti();
-        showMascotModal("LEVEL UP!", `Congratulations! You've reached Level ${state.level}! 🎉`);
+    }
+
+    function awardXP(amount, reason = "Great Job!") {
+      state.xp += amount;
+      const nextLevelXP = state.level * 100;
+
+      if (state.xp >= nextLevelXP) {
+        state.xp -= nextLevelXP;
+        state.level += 1;
+        triggerMascotPopup("LEVEL UP! 🎉", `Pulse is so proud! You reached Level ${state.level}!`);
       } else {
-        showMascotModal(`+${amount} XP Earned!`, reason);
+        triggerMascotPopup(`+${amount} XP Earned! ❤️`, reason);
       }
       saveState();
     }
 
-    function removeXP(amount) {
+    function deductXP(amount) {
       if (!amount || amount <= 0) return;
       state.xp -= amount;
-      while (state.xp < 0) {
-        if (state.level > 1) {
-          state.level -= 1;
-          state.xp += 100;
-        } else {
-          state.xp = 0;
-          break;
-        }
+
+      while (state.xp < 0 && state.level > 1) {
+        state.level -= 1;
+        state.xp += state.level * 100;
       }
+
+      if (state.xp < 0) state.xp = 0;
       saveState();
     }
 
-    // Mascot Popup Helper
-    function showMascotModal(title, msg) {
-      document.getElementById('mascot-popup-title').innerText = title;
-      document.getElementById('mascot-popup-msg').innerText = msg;
-      document.getElementById('mascot-popup').classList.remove('hidden');
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.classList.remove('active', 'bg-indigo-50', 'text-indigo-600', 'font-bold');
+      });
+
+      const target = document.getElementById(tabId);
+      if (target) target.classList.add('active');
+
+      const activeBtn = document.getElementById(`btn-${tabId}`) || Array.from(document.querySelectorAll('.nav-btn')).find(b => b.id === `btn-${tabId}` || b.textContent.toLowerCase().includes(tabId));
+      if (activeBtn) {
+        activeBtn.classList.add('active', 'bg-indigo-50', 'text-indigo-600', 'font-bold');
+      }
     }
 
-    document.getElementById('btn-close-mascot').addEventListener('click', () => {
-      document.getElementById('mascot-popup').classList.add('hidden');
-    });
-
-    document.getElementById('header-mascot-trigger').addEventListener('click', () => {
-      showMascotModal("Pulse says hi!", "Keep completing daily habits to power up your stats!");
-    });
-
-    // Tab Navigation
-    document.querySelectorAll('.nav-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.nav-btn').forEach(b => {
-          b.classList.remove('bg-indigo-50', 'text-indigo-600', 'font-bold');
-        });
-        btn.classList.add('bg-indigo-50', 'text-indigo-600', 'font-bold');
-        
-        const target = btn.id.replace('btn-', '');
-        document.querySelectorAll('.tab-content').forEach(tab => {
-          tab.classList.remove('active');
-        });
-        const activeTab = document.getElementById(target);
-        if (activeTab) activeTab.classList.add('active');
+    function setupEventListeners() {
+      document.getElementById('header-mascot-trigger').addEventListener('click', () => {
+        const quotes = [
+          "Pulse says: Every small habit counts towards a big future!",
+          "Keep going! You're crushing your daily goals!",
+          "Remember to hydrate and take quick stretch breaks today!"
+        ];
+        const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+        triggerMascotPopup("Pulse is Cheering For You!", randomQuote);
       });
-    });
 
-    // -------------------------------------------------------------
-    // FEATURE: WATER TRACKER
-    // -------------------------------------------------------------
+      document.getElementById('btn-close-mascot').addEventListener('click', () => {
+        document.getElementById('mascot-popup').classList.add('hidden');
+      });
+
+      ['dashboard', 'todo', 'wellness', 'finance', 'food', 'exercise', 'screentime', 'travel'].forEach(tab => {
+        const btn = document.getElementById(`btn-${tab}`);
+        if (btn) btn.addEventListener('click', () => switchTab(tab));
+      });
+
+      document.getElementById('quick-todo').addEventListener('click', () => switchTab('todo'));
+      document.getElementById('quick-cal-xp').addEventListener('click', claimCalorieXP);
+      document.getElementById('quick-exercise').addEventListener('click', () => switchTab('exercise'));
+      document.getElementById('quick-finance').addEventListener('click', () => switchTab('finance'));
+
+      document.getElementById('btn-open-modal').addEventListener('click', () => document.getElementById('custom-modal').classList.remove('hidden'));
+      document.getElementById('btn-close-modal').addEventListener('click', () => document.getElementById('custom-modal').classList.add('hidden'));
+      document.getElementById('btn-export').addEventListener('click', exportData);
+
+      document.getElementById('form-todo').addEventListener('submit', addTodoTask);
+      document.getElementById('form-lt-goal').addEventListener('submit', addLongTermGoal);
+      document.getElementById('form-food').addEventListener('submit', addFoodLog);
+      document.getElementById('form-exercise').addEventListener('submit', addWorkout);
+      document.getElementById('form-screentime').addEventListener('submit', logScreenTime);
+      document.getElementById('form-travel').addEventListener('submit', addTravelGoal);
+      document.getElementById('form-income').addEventListener('submit', addIncome);
+      document.getElementById('form-expense').addEventListener('submit', addExpense);
+      document.getElementById('form-custom-sec').addEventListener('submit', createCustomSection);
+
+      document.getElementById('btn-edit-paycheck').addEventListener('click', updatePaycheckAmount);
+      document.getElementById('btn-edit-accounts').addEventListener('click', updateAccountBalances);
+      document.getElementById('btn-add-category').addEventListener('click', addBudgetCategory);
+      document.getElementById('btn-edit-macro-goals').addEventListener('click', updateMacroGoals);
+      document.getElementById('btn-claim-cal-xp').addEventListener('click', claimCalorieXP);
+
+      // Wellness Events
+      document.getElementById('btn-edit-water-goal').addEventListener('click', updateWaterGoal);
+      document.getElementById('btn-edit-sleep-goals').addEventListener('click', updateSleepGoals);
+      document.getElementById('form-sleep').addEventListener('submit', logSleep);
+
+      // Weight & Chart Events
+      document.getElementById('form-log-weight').addEventListener('submit', logWeight);
+      document.getElementById('btn-edit-st-limit').addEventListener('click', updateScreenTimeLimit);
+
+      // Travel Bucket Creation Event
+      document.getElementById('btn-create-travel-bucket').addEventListener('click', createTravelBucket);
+
+      // Exercise Goals Edit Event
+      document.getElementById('btn-edit-exercise-goals').addEventListener('click', updateExerciseGoals);
+
+      // USDA Search Input listener
+      document.getElementById('usda-search-input').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          searchUSDAFood();
+        }
+      });
+
+      // Compendium Search Input listener
+      document.getElementById('comp-search-input').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          searchCompendiumActivities();
+        }
+      });
+    }
+
+    // Compendium Exercise Search & MET Calculation
+    function searchCompendiumActivities() {
+      const query = document.getElementById('comp-search-input').value.trim().toLowerCase();
+      const weightLbs = parseFloat(document.getElementById('comp-weight-input').value) || 175;
+      const mins = parseFloat(document.getElementById('comp-mins-input').value) || 30;
+      const container = document.getElementById('comp-results-container');
+
+      const weightKg = weightLbs / 2.20462;
+      container.classList.remove('hidden');
+
+      const matches = compendiumActivitiesDb.filter(a => a.name.toLowerCase().includes(query) || a.category.toLowerCase().includes(query));
+
+      if (matches.length > 0) {
+        container.innerHTML = matches.map(act => {
+          const calsBurned = Math.round((act.met * 3.5 * weightKg / 200) * mins);
+          const nameSafe = act.name.replace(/'/g, "\\'");
+
+          return `
+            <div class="flex items-center justify-between p-2.5 bg-white rounded-lg border border-slate-200 text-xs shadow-sm">
+              <div>
+                <p class="font-bold text-slate-800">${act.name}</p>
+                <p class="text-slate-500 font-medium">MET: ${act.met} • Est. Burn: <strong class="text-sky-600">${calsBurned} kcal</strong> (${mins} mins @ ${weightLbs} lbs)</p>
+              </div>
+              <button onclick="autofillAndLogWorkout('${nameSafe}', ${mins}, ${calsBurned})" class="bg-sky-50 text-sky-600 border border-sky-200 hover:bg-sky-100 font-bold px-3 py-1.5 rounded-lg transition text-xs flex items-center gap-1">
+                <i class="fa-solid fa-plus text-[10px]"></i> Log Workout
+              </button>
+            </div>
+          `;
+        }).join('');
+      } else {
+        container.innerHTML = `<p class="text-xs text-slate-500 text-center py-2">No activities matching "${query}". Try searching "swimming", "walking", "running", "biking", "yoga", or "lifting".</p>`;
+      }
+    }
+
+    function autofillAndLogWorkout(name, mins, cals) {
+      document.getElementById('ex-name').value = name;
+      document.getElementById('ex-mins').value = mins;
+      document.getElementById('ex-cals').value = cals;
+
+      const xpEarned = 25;
+      state.workouts.push({ id: Date.now(), name, mins: parseInt(mins), cals: parseInt(cals), xpEarned });
+
+      document.getElementById('ex-name').value = '';
+      document.getElementById('ex-mins').value = '';
+      document.getElementById('ex-cals').value = '';
+
+      document.getElementById('comp-results-container').classList.add('hidden');
+      document.getElementById('comp-search-input').value = '';
+
+      checkExerciseGoalsBonus();
+      awardXP(xpEarned, `Workout logged: ${name} (${cals} kcal)!`);
+      saveState();
+    }
+
+    function deleteWorkout(id) {
+      const match = state.workouts.find(w => w.id === id);
+      if (match && match.xpEarned) deductXP(match.xpEarned);
+      state.workouts = state.workouts.filter(w => w.id !== id);
+      saveState();
+    }
+
+    function updateExerciseGoals() {
+      const mins = prompt("Daily Workout Duration Target (mins):", state.exerciseGoals ? state.exerciseGoals.mins : 45);
+      const cals = prompt("Daily Calories Burned Target (kcal):", state.exerciseGoals ? state.exerciseGoals.cals : 400);
+
+      if (mins && cals) {
+        state.exerciseGoals = { mins: parseInt(mins), cals: parseInt(cals) };
+        saveState();
+      }
+    }
+
+    function checkExerciseGoalsBonus() {
+      const todayStr = new Date().toLocaleDateString();
+      const todayWorkouts = state.workouts.filter(w => new Date(w.id).toLocaleDateString() === todayStr);
+
+      const todayMins = todayWorkouts.reduce((s, w) => s + w.mins, 0);
+      const todayCals = todayWorkouts.reduce((s, w) => s + w.cals, 0);
+
+      const targetMins = state.exerciseGoals ? state.exerciseGoals.mins : 45;
+      const targetCals = state.exerciseGoals ? state.exerciseGoals.cals : 400;
+
+      if (todayMins >= targetMins && todayCals >= targetCals && state.exerciseBonusClaimedDate !== todayStr) {
+        state.exerciseBonusClaimedDate = todayStr;
+        awardXP(30, "DAILY EXERCISE MASTER BONUS! Both time and calorie targets crushed today!");
+      }
+    }
+
+    // USDA Search Functionality (Using User's USDA API Key & Smart Ranking)
+    async function searchUSDAFood() {
+      const query = document.getElementById('usda-search-input').value.trim();
+      const mealType = document.getElementById('usda-meal-type').value;
+      const qty = parseInt(document.getElementById('usda-qty-input').value) || 1;
+      const container = document.getElementById('usda-results-container');
+      if (!query) return;
+
+      container.classList.remove('hidden');
+      container.innerHTML = `<p class="text-xs text-slate-500 text-center py-2"><i class="fa-solid fa-spinner fa-spin"></i> Searching USDA Database...</p>`;
+
+      const apiKey = 'Lgw7WrFmTHWRnFMRtFJMTwG6cCqBKfgkK7qfBwMg';
+
+      try {
+        const response = await fetch(`https://api.nal.usda.gov/fdc/v1/foods/search?api_key=${apiKey}&query=${encodeURIComponent(query)}&pageSize=15`);
+        if (!response.ok) throw new Error("API Limit or Error");
+        const data = await response.json();
+
+        if (data.foods && data.foods.length > 0) {
+          // Sort/filter results so standard foundation/SR Legacy whole foods appear first over heavily processed branded items
+          const sortedFoods = data.foods.sort((a, b) => {
+            const dataTypeRank = (type) => (type === 'Foundation' || type === 'SR Legacy' ? 0 : 1);
+            return dataTypeRank(a.dataType) - dataTypeRank(b.dataType);
+          }).slice(0, 6);
+
+          container.innerHTML = sortedFoods.map(item => {
+            const getNutrient = (id) => {
+              const match = item.foodNutrients.find(n => n.nutrientId === id || (n.nutrientName && n.nutrientName.toLowerCase().includes(id)));
+              return match ? Math.round(match.value) : 0;
+            };
+
+            const unitCals = getNutrient(1008) || getNutrient('energy');
+            const unitP = getNutrient(1003) || getNutrient('protein');
+            const unitC = getNutrient(1005) || getNutrient('carbohydrate');
+            const unitF = getNutrient(1004) || getNutrient('fat');
+
+            const cals = unitCals * qty;
+            const p = unitP * qty;
+            const c = unitC * qty;
+            const f = unitF * qty;
+
+            const nameSafe = item.description.replace(/'/g, "\\'");
+
+            return `
+              <div class="flex items-center justify-between p-2.5 bg-white rounded-lg border border-slate-200 text-xs shadow-sm">
+                <div>
+                  <p class="font-bold text-slate-800">${qty > 1 ? `(${qty}x) ` : ''}${item.description}</p>
+                  <p class="text-slate-500 font-medium">${cals} kcal | P: ${p}g | C: ${c}g | F: ${f}g</p>
+                </div>
+                <button onclick="autofillAndLogMeal('${nameSafe}', '${mealType}', ${cals}, ${p}, ${c}, ${f}, ${qty})" class="bg-emerald-50 text-emerald-600 border border-emerald-200 hover:bg-emerald-100 font-bold px-3 py-1.5 rounded-lg transition text-xs flex items-center gap-1">
+                  <i class="fa-solid fa-plus text-[10px]"></i> Log Meal
+                </button>
+              </div>
+            `;
+          }).join('');
+        } else {
+          runFallbackSearch(query, mealType, qty);
+        }
+      } catch (err) {
+        runFallbackSearch(query, mealType, qty);
+      }
+    }
+
+    function runFallbackSearch(query, mealType, qty = 1) {
+      const container = document.getElementById('usda-results-container');
+      const matches = fallbackFoodDb.filter(f => f.name.toLowerCase().includes(query.toLowerCase()));
+
+      if (matches.length > 0) {
+        container.innerHTML = matches.map(item => {
+          const cals = Math.round(item.cals * qty);
+          const p = Math.round(item.p * qty);
+          const c = Math.round(item.c * qty);
+          const f = Math.round(item.f * qty);
+
+          return `
+            <div class="flex items-center justify-between p-2.5 bg-white rounded-lg border border-slate-200 text-xs shadow-sm">
+              <div>
+                <p class="font-bold text-slate-800">${qty > 1 ? `(${qty}x) ` : ''}${item.name}</p>
+                <p class="text-slate-500 font-medium">${cals} kcal | P: ${p}g | C: ${c}g | F: ${f}g</p>
+              </div>
+              <button onclick="autofillAndLogMeal('${item.name}', '${mealType}', ${cals}, ${p}, ${c}, ${f}, ${qty})" class="bg-emerald-50 text-emerald-600 border border-emerald-200 hover:bg-emerald-100 font-bold px-3 py-1.5 rounded-lg transition text-xs flex items-center gap-1">
+                <i class="fa-solid fa-plus text-[10px]"></i> Log Meal
+              </button>
+            </div>
+          `;
+        }).join('');
+      } else {
+        container.innerHTML = `<p class="text-xs text-slate-500 text-center py-2">No matching foods found. You can enter meals manually below.</p>`;
+      }
+    }
+
+    function autofillAndLogMeal(name, mealType, cals, p, c, f, qty = 1) {
+      const formattedName = qty > 1 ? `${qty}x ${name}` : name;
+      state.foodLogs.push({ id: Date.now(), name: formattedName, mealType: mealType || 'Lunch', cals: parseInt(cals), p: parseInt(p), c: parseInt(c), f: parseInt(f), qty });
+
+      document.getElementById('food-name').value = '';
+      document.getElementById('food-cals').value = '';
+      document.getElementById('food-protein').value = '0';
+      document.getElementById('food-carbs').value = '0';
+      document.getElementById('food-fat').value = '0';
+      document.getElementById('food-qty').value = '1';
+
+      document.getElementById('usda-results-container').classList.add('hidden');
+      document.getElementById('usda-search-input').value = '';
+
+      triggerMascotPopup("Meal Logged!", `Added ${mealType}: ${formattedName} (${cals} kcal) to your daily nutrition log!`);
+      saveState();
+    }
+
+    function deleteFoodLog(id) {
+      state.foodLogs = state.foodLogs.filter(f => f.id !== id);
+      saveState();
+    }
+
+    // Travel Bucket Functions
+    function createTravelBucket() {
+      const name = prompt("Enter Bucket Goal Name (e.g., Baseball Stadiums, National Parks):");
+      if (!name) return;
+      const targetStr = prompt(`Target amount for '${name}' (e.g. 30):`, "30");
+      const target = parseInt(targetStr) || 10;
+
+      const id = 'b_' + Date.now();
+      if (!state.travelBuckets) state.travelBuckets = [];
+      state.travelBuckets.push({ id, name, target });
+      saveState();
+    }
+
+    function deleteTravelBucket(bucketId) {
+      if (confirm("Delete this travel bucket? Associated items will revert to general travel.")) {
+        state.travelBuckets = state.travelBuckets.filter(b => b.id !== bucketId);
+        state.travel = state.travel.map(t => t.bucketId === bucketId ? { ...t, bucketId: 'general' } : t);
+        saveState();
+      }
+    }
+
+    function addTravelGoal(e) {
+      e.preventDefault();
+      const input = document.getElementById('travel-input');
+      const bucketId = document.getElementById('travel-bucket-select').value;
+
+      if (!state.travel) state.travel = [];
+      state.travel.push({ id: Date.now(), text: input.value, done: false, bucketId, xpEarned: 0 });
+      input.value = '';
+      saveState();
+    }
+
+    function toggleTravel(id) {
+      state.travel = state.travel.map(t => {
+        if (t.id === id) {
+          const nextDone = !t.done;
+          if (nextDone) {
+            const xp = 30;
+            awardXP(xp, "Travel destination checked off! Wandering heart bonus!");
+            return { ...t, done: nextDone, xpEarned: xp };
+          } else {
+            deductXP(t.xpEarned || 30);
+            return { ...t, done: nextDone, xpEarned: 0 };
+          }
+        }
+        return t;
+      });
+      saveState();
+    }
+
+    function deleteTravelItem(id) {
+      const match = state.travel.find(t => t.id === id);
+      if (match && match.done && match.xpEarned) deductXP(match.xpEarned);
+      state.travel = state.travel.filter(t => t.id !== id);
+      saveState();
+    }
+
+    // Wellness Logic (Water & Sleep Precision)
     function addWater(oz) {
-      state.water.current += oz;
-      if (state.water.current >= state.water.goal && (state.water.current - oz) < state.water.goal) {
-        addXP(15, "Hydration Goal Achieved!");
+      const todayStr = new Date().toLocaleDateString();
+      if (state.lastWaterDate !== todayStr) {
+        state.todayWater = 0;
+        state.lastWaterDate = todayStr;
+      }
+
+      const prev = state.todayWater;
+      state.todayWater += oz;
+      state.lastWaterDate = todayStr;
+
+      if (prev < state.waterGoal && state.todayWater >= state.waterGoal) {
+        awardXP(15, "Hydration Goal Reached! Pulse loves water!");
       } else {
         saveState();
       }
     }
 
     function addCustomWater() {
-      const val = prompt("Enter water amount in oz:", "8");
-      if (val && !isNaN(val)) addWater(parseFloat(val));
+      const oz = prompt("Enter Water Amount (oz):", "12");
+      if (oz && !isNaN(oz)) addWater(parseInt(oz));
     }
 
-    document.getElementById('btn-edit-water-goal').addEventListener('click', () => {
-      const val = prompt("Enter daily water goal (oz):", state.water.goal);
-      if (val && !isNaN(val)) {
-        state.water.goal = parseFloat(val);
+    function updateWaterGoal() {
+      const oz = prompt("Daily Hydration Target (oz):", state.waterGoal || 64);
+      if (oz && !isNaN(oz)) {
+        state.waterGoal = parseInt(oz);
         saveState();
       }
-    });
+    }
 
-    // -------------------------------------------------------------
-    // FEATURE: WEIGHT LOGS (Editable & Deletable + XP handling)
-    // -------------------------------------------------------------
-    document.getElementById('form-log-weight').addEventListener('submit', (e) => {
+    function updateSleepGoals() {
+      const bedtime = prompt("Bedtime Target Goal (HH:MM):", state.sleepGoals.bedtime);
+      const waketime = prompt("Wake Time Target Goal (HH:MM):", state.sleepGoals.waketime);
+      const duration = prompt("Target Sleep Hours (e.g. 8.0):", state.sleepGoals.duration);
+
+      if (bedtime && waketime && duration) {
+        state.sleepGoals = { bedtime, waketime, duration: parseFloat(duration) };
+        saveState();
+      }
+    }
+
+    function timeToMins(t) {
+      const [h, m] = t.split(':').map(Number);
+      return h * 60 + m;
+    }
+
+    function logSleep(e) {
       e.preventDefault();
-      const input = document.getElementById('weight-input');
-      const val = parseFloat(input.value);
-      if (!isNaN(val)) {
-        const today = new Date().toLocaleDateString();
-        state.weightLogs.unshift({
-          id: Date.now(),
-          weight: val,
-          date: today,
-          xpEarned: 15
-        });
-        input.value = '';
-        addXP(15, "Weight logged successfully!");
-      }
-    });
+      const bed = document.getElementById('sleep-bedtime').value;
+      const wake = document.getElementById('sleep-waketime').value;
 
-    function editWeight(id) {
-      const entry = state.weightLogs.find(w => w.id === id);
-      if (!entry) return;
-      const newW = prompt("Edit weight (lbs):", entry.weight);
-      if (newW !== null && !isNaN(parseFloat(newW))) {
-        entry.weight = parseFloat(newW);
-        saveState();
-      }
-    }
+      let start = new Date(`1970-01-01T${bed}:00`);
+      let end = new Date(`1970-01-01T${wake}:00`);
+      if (end <= start) end.setDate(end.getDate() + 1);
 
-    function deleteWeight(id) {
-      const index = state.weightLogs.findIndex(w => w.id === id);
-      if (index !== -1) {
-        const entry = state.weightLogs[index];
-        state.weightLogs.splice(index, 1);
-        if (entry.xpEarned) removeXP(entry.xpEarned);
-        saveState();
-      }
-    }
+      const hours = ((end - start) / (1000 * 60 * 60)).toFixed(1);
 
-    // -------------------------------------------------------------
-    // FEATURE: NUTRITION & MEAL LOGS (Quantifiable & Deletable)
-    // -------------------------------------------------------------
-    document.getElementById('form-food').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const name = document.getElementById('food-name').value;
-      const qty = parseFloat(document.getElementById('food-qty').value) || 1;
-      const cals = (parseFloat(document.getElementById('food-cals').value) || 0) * qty;
-      const prot = (parseFloat(document.getElementById('food-prot').value) || 0) * qty;
-      const carbs = (parseFloat(document.getElementById('food-carbs').value) || 0) * qty;
-      const fats = (parseFloat(document.getElementById('food-fats').value) || 0) * qty;
+      const targetBedMins = timeToMins(state.sleepGoals.bedtime);
+      const actualBedMins = timeToMins(bed);
 
-      state.foodLogs.unshift({
-        id: Date.now(),
-        name,
-        qty,
-        cals,
-        prot,
-        carbs,
-        fats,
-        xpEarned: 10
-      });
+      let bedDiff = actualBedMins - targetBedMins;
+      if (bedDiff < -720) bedDiff += 1440;
+      if (bedDiff > 720) bedDiff -= 1440;
 
-      // Reset form inputs
-      document.getElementById('food-name').value = '';
-      document.getElementById('food-qty').value = '1';
-      document.getElementById('food-cals').value = '';
-      document.getElementById('food-prot').value = '';
-      document.getElementById('food-carbs').value = '';
-      document.getElementById('food-fats').value = '';
+      const onTimeOrEarlier = bedDiff <= 15;
 
-      addXP(10, `Logged ${qty}x ${name}!`);
-    });
+      let totalXP = 0;
+      let msgParts = [];
 
-    function deleteMeal(id) {
-      const idx = state.foodLogs.findIndex(f => f.id === id);
-      if (idx !== -1) {
-        const meal = state.foodLogs[idx];
-        state.foodLogs.splice(idx, 1);
-        if (meal.xpEarned) removeXP(meal.xpEarned);
-        saveState();
-      }
-    }
-
-    // -------------------------------------------------------------
-    // FEATURE: TO-DO LIST & LONG TERM GOALS
-    // -------------------------------------------------------------
-    document.getElementById('form-todo').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const text = document.getElementById('todo-input').value;
-      const [cat, xp] = document.getElementById('todo-category').value.split('|');
-      const isRec = document.getElementById('todo-is-recurring').checked;
-      const rec = document.getElementById('todo-recurrence').value;
-
-      state.todos.unshift({
-        id: Date.now(),
-        text,
-        category: cat,
-        xpValue: parseInt(xp),
-        completed: false,
-        isRecurring: isRec,
-        recurrence: rec
-      });
-
-      document.getElementById('todo-input').value = '';
-      saveState();
-    });
-
-    function toggleTodo(id) {
-      const item = state.todos.find(t => t.id === id);
-      if (item) {
-        item.completed = !item.completed;
-        if (item.completed) {
-          addXP(item.xpValue, `Completed ${item.text}!`);
-        } else {
-          removeXP(item.xpValue);
+      if (parseFloat(hours) >= state.sleepGoals.duration) {
+        totalXP += 25;
+        msgParts.push("Target hours met (+25 XP)");
+        if (onTimeOrEarlier) {
+          totalXP += 20;
+          msgParts.push("Schedule Precision Bonus (+20 XP)");
         }
-      }
-    }
-
-    function deleteTodo(id) {
-      const idx = state.todos.findIndex(t => t.id === id);
-      if (idx !== -1) {
-        const item = state.todos[idx];
-        state.todos.splice(idx, 1);
-        if (item.completed) removeXP(item.xpValue);
-        saveState();
-      }
-    }
-
-    document.getElementById('form-lt-goal').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const text = document.getElementById('lt-goal-text').value;
-      const cat = document.getElementById('lt-goal-category').value;
-
-      state.ltGoals.unshift({
-        id: Date.now(),
-        text,
-        category: cat,
-        completed: false,
-        xpValue: 1000
-      });
-
-      document.getElementById('lt-goal-text').value = '';
-      saveState();
-    });
-
-    function toggleLTGoal(id) {
-      const item = state.ltGoals.find(g => g.id === id);
-      if (item) {
-        item.completed = !item.completed;
-        if (item.completed) {
-          addXP(item.xpValue, `Major Goal Complete: ${item.text}!`);
-        } else {
-          removeXP(item.xpValue);
-        }
-      }
-    }
-
-    function deleteLTGoal(id) {
-      const idx = state.ltGoals.findIndex(g => g.id === id);
-      if (idx !== -1) {
-        const item = state.ltGoals[idx];
-        state.ltGoals.splice(idx, 1);
-        if (item.completed) removeXP(item.xpValue);
-        saveState();
-      }
-    }
-
-    // -------------------------------------------------------------
-    // FEATURE: EXERCISE, SLEEP & FINANCE
-    // -------------------------------------------------------------
-    document.getElementById('form-exercise').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const name = document.getElementById('ex-name').value;
-      const mins = parseFloat(document.getElementById('ex-mins').value);
-
-      state.exerciseLogs.unshift({
-        id: Date.now(),
-        name,
-        mins,
-        xpEarned: 25
-      });
-
-      document.getElementById('ex-name').value = '';
-      document.getElementById('ex-mins').value = '';
-      addXP(25, "Logged Exercise!");
-    });
-
-    function deleteExercise(id) {
-      const idx = state.exerciseLogs.findIndex(e => e.id === id);
-      if (idx !== -1) {
-        const item = state.exerciseLogs[idx];
-        state.exerciseLogs.splice(idx, 1);
-        if (item.xpEarned) removeXP(item.xpEarned);
-        saveState();
-      }
-    }
-
-    // Confetti Animation Effect
-    function triggerConfetti() {
-      if (window.confetti) {
-        confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-      }
-    }
-
-    // Chart.js Variable
-    let trendChart = null;
-
-    // -------------------------------------------------------------
-    // RENDER APP STATE TO UI
-    // -------------------------------------------------------------
-    function renderAll() {
-      // Header Stats
-      document.getElementById('user-level').innerText = state.level;
-      document.getElementById('user-xp').innerText = `${state.xp} / 100 XP`;
-      document.getElementById('xp-bar').style.width = `${state.xp}%`;
-      document.getElementById('xp-percentage').innerText = `${state.xp}% to Lvl UP`;
-
-      // Overview Dash Cards
-      document.getElementById('dash-streak').innerText = state.streak;
-      const latestWeight = state.weightLogs.length > 0 ? state.weightLogs[0].weight + ' lbs' : '-- lbs';
-      document.getElementById('dash-weight').innerText = latestWeight;
-
-      const totalNet = state.accounts.reduce((a, b) => a + b.balance, 0);
-      document.getElementById('dash-networth').innerText = `$${totalNet.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
-      document.getElementById('fin-net-worth').innerText = `$${totalNet.toLocaleString('en-US', {minimumFractionDigits: 2})}`;
-
-      const totalCalsToday = state.foodLogs.reduce((a, b) => a + b.cals, 0);
-      document.getElementById('dash-cals').innerText = `${totalCalsToday} / 2,000 kcal`;
-
-      const totalExMins = state.exerciseLogs.reduce((a, b) => a + b.mins, 0);
-      document.getElementById('dash-workout').innerText = `${totalExMins} mins`;
-
-      // Render Long-Term Goals (Dashboard)
-      const ltList = document.getElementById('dash-lt-goals-list');
-      ltList.innerHTML = '';
-      state.ltGoals.forEach(g => {
-        const li = document.createElement('li');
-        li.className = 'flex items-center justify-between p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm';
-        li.innerHTML = `
-          <div class="flex items-center gap-3">
-            <input type="checkbox" ${g.completed ? 'checked' : ''} onchange="toggleLTGoal(${g.id})" class="w-4 h-4 accent-rose-500 rounded cursor-pointer">
-            <span class="${g.completed ? 'line-through text-slate-400' : 'font-semibold text-slate-800'}">${g.text}</span>
-            <span class="text-[10px] uppercase bg-slate-200 px-2 py-0.5 rounded font-bold text-slate-600">${g.category}</span>
-          </div>
-          <button onclick="deleteLTGoal(${g.id})" class="text-xs text-rose-500 hover:text-rose-700 p-1"><i class="fa-solid fa-trash"></i></button>
-        `;
-        ltList.appendChild(li);
-      });
-
-      // Render To-Dos
-      const todoList = document.getElementById('todo-list');
-      todoList.innerHTML = '';
-      let compCount = 0;
-      state.todos.forEach(t => {
-        if (t.completed) compCount++;
-        const li = document.createElement('li');
-        li.className = 'flex items-center justify-between p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm';
-        li.innerHTML = `
-          <div class="flex items-center gap-3">
-            <input type="checkbox" ${t.completed ? 'checked' : ''} onchange="toggleTodo(${t.id})" class="w-4 h-4 accent-indigo-600 rounded cursor-pointer">
-            <div>
-              <p class="${t.completed ? 'line-through text-slate-400' : 'font-semibold text-slate-800'}">${t.text}</p>
-              <span class="text-[10px] text-indigo-600 font-bold bg-indigo-50 px-2 py-0.5 rounded border border-indigo-100">${t.category} (+${t.xpValue} XP)</span>
-              ${t.isRecurring ? `<span class="text-[10px] text-purple-600 font-bold bg-purple-50 px-2 py-0.5 rounded border border-purple-100"><i class="fa-solid fa-rotate"></i> ${t.recurrence}</span>` : ''}
-            </div>
-          </div>
-          <button onclick="deleteTodo(${t.id})" class="text-xs text-rose-500 hover:text-rose-700 p-1"><i class="fa-solid fa-trash"></i></button>
-        `;
-        todoList.appendChild(li);
-      });
-      document.getElementById('todo-count').innerText = `${compCount} Completed`;
-
-      // Render Hydration
-      const pct = Math.min(100, Math.round((state.water.current / state.water.goal) * 100));
-      document.getElementById('water-fill').style.height = `${pct}%`;
-      document.getElementById('water-fill-pct').innerText = `${pct}%`;
-      document.getElementById('water-count-label').innerText = `${state.water.current} / ${state.water.goal} oz`;
-
-      // Render Weight History (Editable & Deletable)
-      const wList = document.getElementById('weight-history-list');
-      wList.innerHTML = '';
-      if (state.weightLogs.length === 0) {
-        wList.innerHTML = `<li class="text-xs text-slate-400 italic">No weight entries recorded yet.</li>`;
       } else {
-        state.weightLogs.forEach(w => {
-          const li = document.createElement('li');
-          li.className = 'flex items-center justify-between p-2.5 bg-slate-50 border border-slate-200 rounded-xl';
-          li.innerHTML = `
-            <div class="flex items-center gap-2">
-              <span class="font-bold text-slate-800">${w.weight} lbs</span>
-              <span class="text-xs text-slate-400">• ${w.date}</span>
-            </div>
-            <div class="flex items-center gap-1">
-              <button onclick="editWeight(${w.id})" class="text-xs text-slate-500 hover:text-indigo-600 p-1.5"><i class="fa-solid fa-pen"></i></button>
-              <button onclick="deleteWeight(${w.id})" class="text-xs text-rose-500 hover:text-rose-700 p-1.5"><i class="fa-solid fa-trash"></i></button>
-            </div>
-          `;
-          wList.appendChild(li);
-        });
+        totalXP += 10;
+        msgParts.push("Sleep logged (+10 XP)");
       }
 
-      // Render Food Logs
-      const foodList = document.getElementById('food-logs-list');
-      foodList.innerHTML = '';
-      state.foodLogs.forEach(f => {
-        const li = document.createElement('li');
-        li.className = 'flex items-center justify-between p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs';
-        li.innerHTML = `
-          <div>
-            <p class="font-bold text-slate-800">${f.name} ${f.qty > 1 ? `(x${f.qty})` : ''}</p>
-            <p class="text-slate-500 mt-0.5">${f.cals} kcal | P: ${f.prot}g | C: ${f.carbs}g | F: ${f.fats}g</p>
-          </div>
-          <button onclick="deleteMeal(${f.id})" class="text-rose-500 hover:text-rose-700 p-2"><i class="fa-solid fa-trash"></i></button>
-        `;
-        foodList.appendChild(li);
-      });
+      const entry = { id: Date.now(), date: new Date().toLocaleDateString(), bed, wake, hours: parseFloat(hours), xpEarned: totalXP };
+      state.sleepLogs.unshift(entry);
 
-      // Render Macro Progress Bars
-      const totProt = state.foodLogs.reduce((a, b) => a + b.prot, 0);
-      const totCarbs = state.foodLogs.reduce((a, b) => a + b.carbs, 0);
-      const totFats = state.foodLogs.reduce((a, b) => a + b.fats, 0);
-
-      document.getElementById('macro-cals-lbl').innerText = `${totalCalsToday} / 2,000 kcal`;
-      document.getElementById('bar-cals').style.width = `${Math.min(100, (totalCalsToday / 2000) * 100)}%`;
-
-      document.getElementById('macro-prot-lbl').innerText = `${totProt} / 150g`;
-      document.getElementById('bar-prot').style.width = `${Math.min(100, (totProt / 150) * 100)}%`;
-
-      document.getElementById('macro-carbs-lbl').innerText = `${totCarbs} / 220g`;
-      document.getElementById('bar-carbs').style.width = `${Math.min(100, (totCarbs / 220) * 100)}%`;
-
-      document.getElementById('macro-fats-lbl').innerText = `${totFats} / 65g`;
-      document.getElementById('bar-fats').style.width = `${Math.min(100, (totFats / 65) * 100)}%`;
-
-      // Render Exercise Logs
-      const exList = document.getElementById('exercise-history-list');
-      exList.innerHTML = '';
-      state.exerciseLogs.forEach(e => {
-        const li = document.createElement('li');
-        li.className = 'flex items-center justify-between p-3 bg-slate-50 border border-slate-200 rounded-xl text-xs';
-        li.innerHTML = `
-          <div>
-            <p class="font-bold text-slate-800">${e.name}</p>
-            <p class="text-slate-500">${e.mins} minutes</p>
-          </div>
-          <button onclick="deleteExercise(${e.id})" class="text-rose-500 hover:text-rose-700 p-2"><i class="fa-solid fa-trash"></i></button>
-        `;
-        exList.appendChild(li);
-      });
-
-      // Render Accounts
-      const accList = document.getElementById('account-balances-list');
-      accList.innerHTML = '';
-      state.accounts.forEach(a => {
-        const div = document.createElement('div');
-        div.className = 'flex justify-between items-center p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm font-semibold';
-        div.innerHTML = `
-          <span>${a.name}</span>
-          <span class="text-emerald-600">$${a.balance.toLocaleString('en-US', {minimumFractionDigits: 2})}</span>
-        `;
-        accList.appendChild(div);
-      });
-
-      // Render Nutrition & Weight Chart
-      renderChart();
+      awardXP(totalXP, msgParts.join(" + "));
+      saveState();
     }
 
-    // Chart.js Renderer
-    function renderChart() {
-      const ctx = document.getElementById('nutritionTrendChart');
+    function deleteSleepLog(id) {
+      const match = state.sleepLogs.find(s => s.id === id);
+      if (match && match.xpEarned) deductXP(match.xpEarned);
+      state.sleepLogs = state.sleepLogs.filter(s => s.id !== id);
+      saveState();
+    }
+
+    // Screen Time Reflection
+    function updateScreenTimeLimit() {
+      const hours = prompt("Daily Screen Time Limit Target (Hours):", Math.floor(state.screenTimeLimitMins / 60));
+      if (hours && !isNaN(hours)) {
+        state.screenTimeLimitMins = parseInt(hours) * 60;
+        saveState();
+      }
+    }
+
+    function logScreenTime(e) {
+      e.preventDefault();
+      const h = parseInt(document.getElementById('st-hours').value) || 0;
+      const m = parseInt(document.getElementById('st-mins').value) || 0;
+      const category = document.getElementById('st-category').value;
+      const totalMins = (h * 60) + m;
+
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const dateStr = yesterday.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' });
+
+      let earnedXP = 10;
+      let msg = "Yesterday's screen time logged (+10 XP)";
+
+      if (totalMins <= state.screenTimeLimitMins) {
+        earnedXP += 20;
+        msg += " + Under Limit Bonus! (+20 XP)";
+      }
+
+      state.screenTime.unshift({
+        id: Date.now(),
+        date: dateStr,
+        mins: totalMins,
+        category,
+        xpEarned: earnedXP
+      });
+
+      document.getElementById('st-hours').value = '';
+      document.getElementById('st-mins').value = '';
+
+      awardXP(earnedXP, msg);
+      saveState();
+    }
+
+    function deleteScreenTimeLog(id) {
+      const match = state.screenTime.find(s => s.id === id);
+      if (match && match.xpEarned) deductXP(match.xpEarned);
+      state.screenTime = state.screenTime.filter(s => s.id !== id);
+      saveState();
+    }
+
+    // Weight & Chart Logic
+    function logWeight(e) {
+      e.preventDefault();
+      const val = parseFloat(document.getElementById('weight-input').value);
+      const goalType = document.getElementById('weight-goal-type').value;
+      state.weightGoalType = goalType;
+
+      const dateStr = new Date().toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' });
+      const lastLog = state.weightLogs[state.weightLogs.length - 1];
+
+      let earnedXP = 20;
+      let progressBonus = false;
+      if (lastLog) {
+        if (goalType === 'loss' && val < lastLog.weight) progressBonus = true;
+        if (goalType === 'gain' && val > lastLog.weight) progressBonus = true;
+      }
+
+      if (progressBonus) {
+        earnedXP += 30;
+      }
+
+      state.weightLogs.push({ id: Date.now(), date: dateStr, weight: val, xpEarned: earnedXP });
+      document.getElementById('weight-input').value = '';
+
+      if (progressBonus) {
+        awardXP(earnedXP, `Moving towards your weight goal! +30 Progress Bonus!`);
+      } else {
+        awardXP(earnedXP, "Daily weight logged!");
+      }
+      saveState();
+    }
+
+    function deleteWeightLog(id) {
+      const match = state.weightLogs.find(w => w.id === id);
+      if (match && match.xpEarned) deductXP(match.xpEarned);
+      state.weightLogs = state.weightLogs.filter(w => w.id !== id);
+      saveState();
+    }
+
+    function initChart() {
+      const ctx = document.getElementById('weightCalorieChart');
       if (!ctx) return;
 
-      if (trendChart) trendChart.destroy();
-
-      trendChart = new Chart(ctx, {
+      weightChartInstance = new Chart(ctx, {
         type: 'line',
         data: {
-          labels: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5', 'Day 6', 'Today'],
+          labels: [],
           datasets: [
             {
-              label: 'Calories (kcal)',
-              data: [1850, 2100, 1950, 1800, 2050, 1900, state.foodLogs.reduce((a, b) => a + b.cals, 0)],
-              borderColor: '#6366f1',
-              backgroundColor: 'rgba(99, 102, 241, 0.1)',
-              yAxisID: 'y',
-              tension: 0.3,
-              fill: true
-            },
-            {
               label: 'Weight (lbs)',
-              data: [175.2, 175.0, 174.8, 174.5, 174.6, 174.2, state.weightLogs.length > 0 ? state.weightLogs[0].weight : 174.0],
-              borderColor: '#f43f5e',
-              yAxisID: 'y1',
-              tension: 0.3
+              data: [],
+              borderColor: 'rgba(244, 63, 94, 1)',
+              backgroundColor: 'rgba(244, 63, 94, 0.1)',
+              borderWidth: 3,
+              tension: 0.3,
+              pointRadius: 4,
+              fill: true
             }
           ]
         },
@@ -1254,27 +1720,794 @@
           scales: {
             y: {
               type: 'linear',
-              display: true,
               position: 'left',
-              title: { display: true, text: 'Calories' }
-            },
-            y1: {
-              type: 'linear',
-              display: true,
-              position: 'right',
-              grid: { drawOnChartArea: false },
-              title: { display: true, text: 'Weight (lbs)' }
+              title: { display: true, text: 'Weight (lbs)' },
+              grid: { color: 'rgba(226, 232, 240, 0.6)' }
             }
           }
         }
       });
     }
 
-    // Initial Startup
-    window.onload = function() {
-      loadState();
-      renderAll();
-    };
+    function updateChartData() {
+      if (!weightChartInstance) return;
+
+      const dates = [];
+      const now = new Date();
+      for (let i = 13; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(now.getDate() - i);
+        dates.push(d.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' }));
+      }
+
+      const weightData = dates.map(d => {
+        const match = state.weightLogs.find(w => w.date === d);
+        return match ? match.weight : null;
+      });
+
+      weightChartInstance.data.labels = dates;
+      weightChartInstance.data.datasets[0].data = weightData;
+      weightChartInstance.update();
+    }
+
+    // Long Term Goals Logic
+    function addLongTermGoal(e) {
+      e.preventDefault();
+      const text = document.getElementById('lt-goal-text').value;
+      const category = document.getElementById('lt-goal-category').value;
+
+      state.longTermGoals.push({ id: Date.now(), text, category, completed: false, xpEarned: 0 });
+      document.getElementById('lt-goal-text').value = '';
+      saveState();
+    }
+
+    function toggleLTGoal(id) {
+      state.longTermGoals = state.longTermGoals.map(g => {
+        if (g.id === id) {
+          const nextDone = !g.completed;
+          if (nextDone) {
+            const xp = 1000;
+            awardXP(xp, "MAJOR MILESTONE UNLOCKED! +1,000 XP!");
+            return { ...g, completed: nextDone, xpEarned: xp };
+          } else {
+            deductXP(g.xpEarned || 1000);
+            return { ...g, completed: nextDone, xpEarned: 0 };
+          }
+        }
+        return g;
+      });
+      saveState();
+    }
+
+    function deleteLTGoal(id) {
+      const match = state.longTermGoals.find(g => g.id === id);
+      if (match && match.completed && match.xpEarned) deductXP(match.xpEarned);
+      state.longTermGoals = state.longTermGoals.filter(g => g.id !== id);
+      saveState();
+    }
+
+    // To-Do Logic
+    function addTodoTask(e) {
+      e.preventDefault();
+      const input = document.getElementById('todo-input');
+      const catVal = document.getElementById('todo-category').value.split('|');
+      const category = catVal[0];
+      const xp = parseInt(catVal[1]);
+      const isRecurring = document.getElementById('todo-is-recurring').checked;
+      const recurrence = document.getElementById('todo-recurrence').value;
+
+      state.todos.push({
+        id: Date.now(),
+        text: input.value,
+        category,
+        xp,
+        isRecurring,
+        recurrence,
+        completed: false,
+        completedAt: null,
+        xpEarned: 0
+      });
+
+      input.value = '';
+      document.getElementById('todo-is-recurring').checked = false;
+      saveState();
+    }
+
+    function toggleTodo(id) {
+      state.todos = state.todos.map(t => {
+        if (t.id === id) {
+          const nextCompleted = !t.completed;
+          if (nextCompleted) {
+            const earned = t.xp || 10;
+            awardXP(earned, `${t.category || 'Task'} completed! Pulse loves your productivity!`);
+            return {
+              ...t,
+              completed: nextCompleted,
+              completedAt: Date.now(),
+              xpEarned: earned
+            };
+          } else {
+            deductXP(t.xpEarned || t.xp || 10);
+            return {
+              ...t,
+              completed: nextCompleted,
+              completedAt: null,
+              xpEarned: 0
+            };
+          }
+        }
+        return t;
+      });
+      saveState();
+    }
+
+    function deleteTodo(id) {
+      const match = state.todos.find(t => t.id === id);
+      if (match && match.completed && match.xpEarned) deductXP(match.xpEarned);
+      state.todos = state.todos.filter(t => t.id !== id);
+      saveState();
+    }
+
+    // Food & Macro Logic
+    function addFoodLog(e) {
+      e.preventDefault();
+      const name = document.getElementById('food-name').value;
+      const qty = parseInt(document.getElementById('food-qty').value) || 1;
+      const mealType = document.getElementById('food-type').value;
+      const cals = (parseInt(document.getElementById('food-cals').value) || 0) * qty;
+      const p = (parseInt(document.getElementById('food-protein').value) || 0) * qty;
+      const c = (parseInt(document.getElementById('food-carbs').value) || 0) * qty;
+      const f = (parseInt(document.getElementById('food-fat').value) || 0) * qty;
+
+      const formattedName = qty > 1 ? `${qty}x ${name}` : name;
+      state.foodLogs.push({ id: Date.now(), name: formattedName, mealType, cals, p, c, f, qty });
+
+      document.getElementById('food-name').value = '';
+      document.getElementById('food-cals').value = '';
+      document.getElementById('food-protein').value = '0';
+      document.getElementById('food-carbs').value = '0';
+      document.getElementById('food-fat').value = '0';
+      document.getElementById('food-qty').value = '1';
+      saveState();
+    }
+
+    function updateMacroGoals() {
+      const cals = prompt("Daily Calorie Target (kcal):", state.macroGoals.cals);
+      const p = prompt("Daily Protein Target (g):", state.macroGoals.p);
+      const c = prompt("Daily Carbs Target (g):", state.macroGoals.c);
+      const f = prompt("Daily Fat Target (g):", state.macroGoals.f);
+
+      if (cals && p && c && f) {
+        state.macroGoals = { cals: parseInt(cals), p: parseInt(p), c: parseInt(c), f: parseInt(f) };
+        saveState();
+      }
+    }
+
+    function claimCalorieXP() {
+      const totalCals = state.foodLogs.reduce((sum, item) => sum + item.cals, 0);
+      if (totalCals <= state.macroGoals.cals && totalCals > 0) {
+        awardXP(25, "Awesome nutrition discipline staying under budget!");
+      } else {
+        alert("You have exceeded your calorie budget or haven't logged meals today.");
+      }
+    }
+
+    // Exercise Logic
+    function addWorkout(e) {
+      e.preventDefault();
+      const name = document.getElementById('ex-name').value;
+      const mins = parseInt(document.getElementById('ex-mins').value);
+      const cals = parseInt(document.getElementById('ex-cals').value);
+      const xpEarned = 25;
+      
+      state.workouts.push({ id: Date.now(), name, mins, cals, xpEarned });
+      document.getElementById('ex-name').value = '';
+      document.getElementById('ex-mins').value = '';
+      document.getElementById('ex-cals').value = '';
+      
+      checkExerciseGoalsBonus();
+      awardXP(xpEarned, "Workout logged! Pulse's heart is pumping!");
+      saveState();
+    }
+
+    // Finance Functions
+    function addIncome(e) {
+      e.preventDefault();
+      const desc = document.getElementById('inc-desc').value;
+      const amount = parseFloat(document.getElementById('inc-amount').value);
+      const cat = document.getElementById('inc-category').value;
+
+      let xpEarned = 0;
+      if (cat === 'Retirement') {
+        state.financials.retirement += amount;
+        xpEarned = 50;
+        awardXP(xpEarned, "Investment deposit logged! Wealth building bonus!");
+      } else if (cat === 'Savings') {
+        state.financials.etrade += amount;
+        xpEarned = 50;
+        awardXP(xpEarned, "Savings deposit logged! Wealth building bonus!");
+      } else {
+        state.financials.chase += amount;
+      }
+
+      state.incomeLogs.unshift({ id: Date.now(), desc, amount, category: cat, xpEarned });
+
+      document.getElementById('inc-desc').value = '';
+      document.getElementById('inc-amount').value = '';
+      saveState();
+    }
+
+    function deleteIncomeLog(id) {
+      const match = state.incomeLogs.find(i => i.id === id);
+      if (match) {
+        if (match.category === 'Retirement') state.financials.retirement -= match.amount;
+        else if (match.category === 'Savings') state.financials.etrade -= match.amount;
+        else state.financials.chase -= match.amount;
+
+        if (match.xpEarned) deductXP(match.xpEarned);
+      }
+      state.incomeLogs = state.incomeLogs.filter(i => i.id !== id);
+      saveState();
+    }
+
+    function addExpense(e) {
+      e.preventDefault();
+      const desc = document.getElementById('exp-desc').value;
+      const amount = parseFloat(document.getElementById('exp-amount').value);
+      const bucket = document.getElementById('exp-bucket').value;
+
+      state.financials.chase -= amount;
+      state.expenseLogs.unshift({ id: Date.now(), desc, amount, bucket });
+
+      document.getElementById('exp-desc').value = '';
+      document.getElementById('exp-amount').value = '';
+      saveState();
+    }
+
+    function deleteExpenseLog(id) {
+      const match = state.expenseLogs.find(e => e.id === id);
+      if (match) {
+        state.financials.chase += match.amount;
+      }
+      state.expenseLogs = state.expenseLogs.filter(e => e.id !== id);
+      saveState();
+    }
+
+    function updatePaycheckAmount() {
+      const val = prompt("Bi-weekly Paycheck Net Amount ($):", state.paycheck);
+      if (val && !isNaN(val)) {
+        state.paycheck = parseFloat(val);
+        saveState();
+      }
+    }
+
+    function updateAccountBalances() {
+      const chase = prompt("Chase Checking Balance ($):", state.financials.chase);
+      const etrade = prompt("E*Trade Savings Balance ($):", state.financials.etrade);
+      const ret = prompt("Retirement Balances ($):", state.financials.retirement);
+      const inv = prompt("Brokerage Balances ($):", state.financials.investment);
+
+      if (chase && etrade && ret && inv) {
+        state.financials = {
+          chase: parseFloat(chase),
+          etrade: parseFloat(etrade),
+          retirement: parseFloat(ret),
+          investment: parseFloat(inv)
+        };
+        saveState();
+      }
+    }
+
+    function addBudgetCategory() {
+      const name = prompt("New Category Name:");
+      const pct = prompt("Paycheck Allocation Percentage (%):");
+      if (name && pct && !isNaN(pct)) {
+        state.categories.push({ name, pct: parseFloat(pct) });
+        saveState();
+      }
+    }
+
+    // Custom Section Creation & Goals
+    function createCustomSection(e) {
+      e.preventDefault();
+      const title = document.getElementById('modal-sec-title').value;
+      const icon = document.getElementById('modal-sec-icon').value;
+      const id = 'custom_' + Date.now();
+
+      state.customSections.push({ id, title, icon });
+      state.customLogs[id] = [];
+      state.customGoals[id] = [];
+      document.getElementById('custom-modal').classList.add('hidden');
+      document.getElementById('modal-sec-title').value = '';
+      saveState();
+      switchTab(id);
+    }
+
+    function addCustomLog(e, secId) {
+      if (e) e.preventDefault();
+      const input = document.getElementById(`input_${secId}`);
+      if (!input || !input.value.trim()) return;
+      if (!state.customLogs[secId]) state.customLogs[secId] = [];
+
+      const xpEarned = 15;
+      state.customLogs[secId].unshift({ id: Date.now(), text: input.value.trim(), date: new Date().toLocaleDateString(), xpEarned });
+      input.value = '';
+      awardXP(xpEarned, "Custom habit logged! Pulse is cheering!");
+      saveState();
+    }
+
+    function deleteCustomLog(secId, logId) {
+      const match = (state.customLogs[secId] || []).find(l => l.id === logId);
+      if (match && match.xpEarned) deductXP(match.xpEarned);
+      state.customLogs[secId] = (state.customLogs[secId] || []).filter(l => l.id !== logId);
+      saveState();
+    }
+
+    function addCustomGoal(e, secId) {
+      if (e) e.preventDefault();
+      const textInput = document.getElementById(`goal_text_${secId}`);
+      const typeSelect = document.getElementById(`goal_type_${secId}`);
+      if (!textInput || !textInput.value.trim()) return;
+
+      if (!state.customGoals[secId]) state.customGoals[secId] = [];
+
+      state.customGoals[secId].unshift({
+        id: Date.now(),
+        text: textInput.value.trim(),
+        type: typeSelect ? typeSelect.value : 'short',
+        completed: false,
+        xpEarned: 0
+      });
+
+      textInput.value = '';
+      saveState();
+    }
+
+    function toggleCustomGoal(secId, goalId) {
+      if (!state.customGoals[secId]) return;
+
+      state.customGoals[secId] = state.customGoals[secId].map(g => {
+        if (g.id === goalId) {
+          const nextDone = !g.completed;
+          if (nextDone) {
+            const xp = g.type === 'long' ? 1000 : 50;
+            const msg = g.type === 'long' ? "MAJOR CUSTOM GOAL COMPLETED! +1,000 XP!" : "Short-Term Goal Completed! +50 XP!";
+            awardXP(xp, msg);
+            return { ...g, completed: nextDone, xpEarned: xp };
+          } else {
+            deductXP(g.xpEarned || (g.type === 'long' ? 1000 : 50));
+            return { ...g, completed: nextDone, xpEarned: 0 };
+          }
+        }
+        return g;
+      });
+      saveState();
+    }
+
+    function deleteCustomGoal(secId, goalId) {
+      if (!state.customGoals[secId]) return;
+      const match = state.customGoals[secId].find(g => g.id === goalId);
+      if (match && match.completed && match.xpEarned) deductXP(match.xpEarned);
+      state.customGoals[secId] = state.customGoals[secId].filter(g => g.id !== goalId);
+      saveState();
+    }
+
+    // Render Function
+    function updateUI() {
+      // Level & XP
+      document.getElementById('user-level').textContent = state.level;
+      const maxXP = state.level * 100;
+      document.getElementById('user-xp').textContent = `${state.xp} / ${maxXP} XP`;
+      const pct = Math.min(100, Math.round((state.xp / maxXP) * 100));
+      document.getElementById('xp-bar').style.width = pct + '%';
+      document.getElementById('xp-percentage').textContent = pct + '% to Lvl UP';
+
+      // Current Weight Dashboard Card
+      const latestWeight = state.weightLogs.length > 0 ? state.weightLogs[state.weightLogs.length - 1].weight : null;
+      document.getElementById('dash-weight').textContent = latestWeight ? `${latestWeight} lbs` : '-- lbs';
+
+      // Weight History
+      document.getElementById('weight-history-list').innerHTML = state.weightLogs.map(w => `
+        <li class="flex items-center justify-between p-2.5 bg-slate-50 rounded-xl border border-slate-200 text-xs">
+          <div>
+            <span class="font-bold text-slate-800">${w.date}</span>
+            <span class="text-rose-500 font-extrabold ml-2">${w.weight} lbs</span>
+          </div>
+          <button onclick="deleteWeightLog(${w.id})" class="text-slate-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button>
+        </li>
+      `).join('');
+
+      // Water UI Render
+      const wPct = Math.min(100, Math.round((state.todayWater / state.waterGoal) * 100));
+      document.getElementById('water-fill').style.height = wPct + '%';
+      document.getElementById('water-fill-pct').textContent = wPct + '%';
+      document.getElementById('water-count-label').textContent = `${state.todayWater} / ${state.waterGoal} oz`;
+      document.getElementById('water-status-msg').textContent = wPct >= 100 ? "🎉 Daily hydration target crushed!" : "Keep drinking water today!";
+
+      // Sleep UI Render
+      document.getElementById('goal-bedtime-lbl').textContent = state.sleepGoals.bedtime;
+      document.getElementById('goal-waketime-lbl').textContent = state.sleepGoals.waketime;
+      document.getElementById('goal-sleep-hrs-lbl').textContent = `${state.sleepGoals.duration} hrs`;
+
+      document.getElementById('sleep-history-list').innerHTML = state.sleepLogs.map(s => `
+        <li class="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs">
+          <div>
+            <span class="font-bold text-slate-800">${s.date}</span>
+            <span class="text-slate-500 ml-2">(${s.bed} to ${s.wake})</span>
+            <span class="font-extrabold text-indigo-600 ml-2">${s.hours} hrs slept</span>
+          </div>
+          <button onclick="deleteSleepLog(${s.id})" class="text-slate-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button>
+        </li>
+      `).join('');
+
+      // Screen Time Limit Label & History
+      const limitHrs = (state.screenTimeLimitMins / 60).toFixed(1);
+      document.getElementById('st-limit-lbl').textContent = `${limitHrs}h`;
+
+      document.getElementById('st-history').innerHTML = state.screenTime.map(st => `
+        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex justify-between items-center text-xs">
+          <div>
+            <span class="font-bold text-slate-800">${st.date}</span>
+            <span class="ml-2 font-semibold text-amber-600 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-md">${st.category || 'General'}</span>
+            <span class="font-extrabold ml-2 ${st.mins <= state.screenTimeLimitMins ? 'text-emerald-600' : 'text-amber-500'}">${Math.floor(st.mins / 60)}h ${st.mins % 60}m</span>
+          </div>
+          <button onclick="deleteScreenTimeLog(${st.id})" class="text-slate-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button>
+        </div>
+      `).join('');
+
+      // Travel Buckets & Items Render
+      if (!state.travelBuckets) state.travelBuckets = [];
+      if (!state.travel) state.travel = [];
+
+      const bucketsGrid = document.getElementById('travel-buckets-grid');
+      bucketsGrid.innerHTML = state.travelBuckets.map(b => {
+        const doneCount = state.travel.filter(t => t.bucketId === b.id && t.done).length;
+        const totalItems = state.travel.filter(t => t.bucketId === b.id).length;
+        const bPct = Math.min(100, Math.round((doneCount / b.target) * 100));
+
+        return `
+          <div class="p-4 bg-gradient-to-br from-pink-50 to-rose-50 rounded-2xl border border-pink-200 shadow-sm relative group">
+            <div class="flex justify-between items-start mb-2">
+              <h3 class="font-extrabold text-slate-900 text-sm flex items-center gap-1.5">
+                <i class="fa-solid fa-trophy text-amber-500"></i> ${b.name}
+              </h3>
+              <button onclick="deleteTravelBucket('${b.id}')" class="text-xs text-slate-400 hover:text-rose-500 transition"><i class="fa-solid fa-trash"></i></button>
+            </div>
+            
+            <div class="flex items-baseline justify-between mb-1">
+              <span class="text-2xl font-black text-pink-600">${doneCount} <span class="text-xs font-bold text-slate-500">/ ${b.target}</span></span>
+              <span class="text-xs font-bold text-pink-600">${bPct}%</span>
+            </div>
+
+            <div class="w-full bg-pink-200/60 h-2 rounded-full overflow-hidden">
+              <div class="bg-gradient-to-r from-pink-500 to-rose-500 h-full transition-all duration-500" style="width: ${bPct}%"></div>
+            </div>
+            <p class="text-[10px] text-slate-500 font-medium mt-2">${totalItems} items added to bucket</p>
+          </div>
+        `;
+      }).join('');
+
+      // Travel Bucket Options Dropdown
+      const bucketSelect = document.getElementById('travel-bucket-select');
+      bucketSelect.innerHTML = `<option value="general">General Travel</option>` + state.travelBuckets.map(b => `
+        <option value="${b.id}">${b.name}</option>
+      `).join('');
+
+      // Travel Items Render
+      document.getElementById('travel-list').innerHTML = state.travel.map(t => {
+        const bMatch = state.travelBuckets.find(b => b.id === t.bucketId);
+        const bName = bMatch ? bMatch.name : 'General';
+
+        return `
+          <li class="flex items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+            <div class="flex items-center gap-3">
+              <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTravel(${t.id})" class="w-4 h-4 accent-pink-500 rounded cursor-pointer">
+              <span class="${t.done ? 'line-through text-slate-400' : 'text-slate-800 font-bold'}">${t.text}</span>
+              <span class="text-[10px] bg-pink-50 text-pink-600 font-bold px-2 py-0.5 rounded-md border border-pink-200">${bName}</span>
+            </div>
+            <button onclick="deleteTravelItem(${t.id})" class="text-xs text-slate-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button>
+          </li>
+        `;
+      }).join('');
+
+      // Update Chart
+      updateChartData();
+
+      // Long Term Goals Dashboard Render
+      const dashLTList = document.getElementById('dash-lt-goals-list');
+      dashLTList.innerHTML = state.longTermGoals.map(g => `
+        <li class="flex items-center justify-between p-3.5 bg-slate-50 hover:bg-slate-100 rounded-xl border border-slate-200 transition">
+          <div class="flex items-center gap-3">
+            <input type="checkbox" ${g.completed ? 'checked' : ''} onchange="toggleLTGoal(${g.id})" class="w-4 h-4 accent-rose-500 rounded cursor-pointer">
+            <span class="${g.completed ? 'line-through text-slate-400' : 'text-slate-800 font-bold'}">${g.text}</span>
+            <span class="text-[10px] bg-rose-50 text-rose-600 font-bold px-2 py-0.5 rounded-md border border-rose-200 capitalize">${g.category}</span>
+          </div>
+          <button onclick="deleteLTGoal(${g.id})" class="text-xs text-slate-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button>
+        </li>
+      `).join('');
+
+      // Render Category Tab Long-Term Goals
+      ['exercise', 'food', 'wellness', 'finance', 'screentime', 'travel', 'todo'].forEach(cat => {
+        const container = document.getElementById(`${cat}-lt-container`);
+        if (!container) return;
+
+        const catGoals = state.longTermGoals.filter(g => g.category === cat);
+        if (catGoals.length > 0) {
+          container.classList.remove('hidden');
+          container.innerHTML = `
+            <div class="bg-gradient-to-r from-rose-50 to-pink-50 border border-rose-200 p-4 rounded-2xl">
+              <h3 class="text-xs font-extrabold text-rose-600 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+                <i class="fa-solid fa-trophy text-amber-500"></i> Long-Term Goals (${cat})
+              </h3>
+              <div class="space-y-2">
+                ${catGoals.map(g => `
+                  <div class="flex items-center justify-between p-2.5 bg-white rounded-xl border border-rose-100 shadow-sm">
+                    <div class="flex items-center gap-2">
+                      <input type="checkbox" ${g.completed ? 'checked' : ''} onchange="toggleLTGoal(${g.id})" class="w-4 h-4 accent-rose-500 rounded cursor-pointer">
+                      <span class="${g.completed ? 'line-through text-slate-400' : 'text-slate-800 font-bold text-sm'}">${g.text}</span>
+                    </div>
+                    <span class="text-xs font-bold text-amber-500">+1,000 XP</span>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          `;
+        } else {
+          container.classList.add('hidden');
+        }
+      });
+
+      // To-Do List Render
+      const todoList = document.getElementById('todo-list');
+      todoList.innerHTML = state.todos.map(t => `
+        <li class="flex items-center justify-between p-3.5 bg-slate-50 hover:bg-slate-100/80 rounded-xl border border-slate-200 transition">
+          <div class="flex items-center gap-3">
+            <input type="checkbox" ${t.completed ? 'checked' : ''} onchange="toggleTodo(${t.id})" class="w-4 h-4 accent-indigo-600 rounded cursor-pointer">
+            <span class="${t.completed ? 'line-through text-slate-400' : 'text-slate-800 font-medium'}">${t.text}</span>
+            <span class="text-[10px] bg-indigo-50 text-indigo-600 font-bold px-2 py-0.5 rounded-md border border-indigo-200">${t.category || 'Task'} (+${t.xp || 10} XP)</span>
+            ${t.isRecurring ? `<span class="text-[10px] bg-purple-50 text-purple-600 font-bold px-2 py-0.5 rounded-md border border-purple-200 flex items-center gap-1"><i class="fa-solid fa-rotate text-[8px]"></i> ${t.recurrence}</span>` : ''}
+          </div>
+          <button onclick="deleteTodo(${t.id})" class="text-xs text-rose-500 hover:text-rose-700 p-1"><i class="fa-solid fa-trash"></i></button>
+        </li>
+      `).join('');
+      document.getElementById('todo-count').textContent = `${state.todos.filter(t => t.completed).length} Completed`;
+
+      // Food & Macros Render
+      const foodList = document.getElementById('food-list');
+      foodList.innerHTML = state.foodLogs.map(f => `
+        <li class="flex items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+          <div>
+            <div class="flex items-center gap-2">
+              <span class="text-slate-800 font-bold">${f.name}</span>
+              <span class="text-[10px] bg-emerald-50 text-emerald-600 font-bold px-2 py-0.5 rounded-md border border-emerald-200">${f.mealType || 'Meal'}</span>
+            </div>
+            <p class="text-xs text-slate-500 font-medium mt-0.5">P: ${f.p || 0}g | C: ${f.c || 0}g | F: ${f.f || 0}g</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-extrabold text-emerald-600 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg">${f.cals} kcal</span>
+            <button onclick="deleteFoodLog(${f.id})" class="text-slate-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        </li>
+      `).join('');
+
+      const totalCals = state.foodLogs.reduce((s, f) => s + f.cals, 0);
+      const totalP = state.foodLogs.reduce((s, f) => s + (f.p || 0), 0);
+      const totalC = state.foodLogs.reduce((s, f) => s + (f.c || 0), 0);
+      const totalF = state.foodLogs.reduce((s, f) => s + (f.f || 0), 0);
+
+      document.getElementById('dash-cals').textContent = `${totalCals} / ${state.macroGoals.cals} kcal`;
+      document.getElementById('cal-count-label').textContent = `${totalCals} / ${state.macroGoals.cals} kcal`;
+      document.getElementById('p-count-label').textContent = `${totalP} / ${state.macroGoals.p}g`;
+      document.getElementById('c-count-label').textContent = `${totalC} / ${state.macroGoals.c}g`;
+      document.getElementById('f-count-label').textContent = `${totalF} / ${state.macroGoals.f}g`;
+
+      document.getElementById('bar-cal').style.width = Math.min(100, (totalCals / state.macroGoals.cals) * 100) + '%';
+      document.getElementById('bar-p').style.width = Math.min(100, (totalP / state.macroGoals.p) * 100) + '%';
+      document.getElementById('bar-c').style.width = Math.min(100, (totalC / state.macroGoals.c) * 100) + '%';
+      document.getElementById('bar-f').style.width = Math.min(100, (totalF / state.macroGoals.f) * 100) + '%';
+
+      // Exercise Goals & Logs Render
+      const todayStr = new Date().toLocaleDateString();
+      const todayWorkouts = state.workouts.filter(w => new Date(w.id).toLocaleDateString() === todayStr);
+
+      const todayMins = todayWorkouts.reduce((s, w) => s + w.mins, 0);
+      const todayCals = todayWorkouts.reduce((s, w) => s + w.cals, 0);
+
+      const targetMins = state.exerciseGoals ? state.exerciseGoals.mins : 45;
+      const targetCals = state.exerciseGoals ? state.exerciseGoals.cals : 400;
+
+      document.getElementById('ex-time-goal-lbl').textContent = `${todayMins} / ${targetMins} mins`;
+      document.getElementById('ex-cal-goal-lbl').textContent = `${todayCals} / ${targetCals} kcal`;
+
+      document.getElementById('bar-ex-time').style.width = Math.min(100, (todayMins / targetMins) * 100) + '%';
+      document.getElementById('bar-ex-cals').style.width = Math.min(100, (todayCals / targetCals) * 100) + '%';
+
+      const exList = document.getElementById('workout-list');
+      exList.innerHTML = state.workouts.map(w => {
+        const logDate = new Date(w.id).toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' });
+        return `
+          <li class="flex items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+            <div>
+              <span class="text-slate-800 font-bold">${w.name} (${w.mins} mins)</span>
+              <span class="text-[10px] bg-slate-200 text-slate-600 font-bold px-1.5 py-0.5 rounded-md ml-2">${logDate}</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="text-xs font-extrabold text-sky-600 bg-sky-50 border border-sky-200 px-2.5 py-1 rounded-lg">-${w.cals} kcal</span>
+              <button onclick="deleteWorkout(${w.id})" class="text-slate-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </li>
+        `;
+      }).join('');
+
+      document.getElementById('dash-workout').textContent = `${todayMins} mins`;
+
+      // Income & Expense Render
+      document.getElementById('income-list').innerHTML = state.incomeLogs.map(i => `
+        <li class="flex items-center justify-between p-2.5 bg-slate-50 rounded-xl border border-slate-200 text-xs">
+          <div>
+            <span class="font-bold text-slate-800">${i.desc}</span>
+            <span class="text-emerald-600 font-extrabold ml-2">+$${i.amount.toFixed(2)}</span>
+            <span class="text-[10px] bg-emerald-50 text-emerald-600 font-bold px-1.5 py-0.5 rounded ml-2">${i.category}</span>
+          </div>
+          <button onclick="deleteIncomeLog(${i.id})" class="text-slate-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button>
+        </li>
+      `).join('');
+
+      document.getElementById('expense-list').innerHTML = state.expenseLogs.map(e => `
+        <li class="flex items-center justify-between p-2.5 bg-slate-50 rounded-xl border border-slate-200 text-xs">
+          <div>
+            <span class="font-bold text-slate-800">${e.desc}</span>
+            <span class="text-rose-500 font-extrabold ml-2">-$${e.amount.toFixed(2)}</span>
+            <span class="text-[10px] bg-rose-50 text-rose-600 font-bold px-1.5 py-0.5 rounded ml-2">${e.bucket}</span>
+          </div>
+          <button onclick="deleteExpenseLog(${e.id})" class="text-slate-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button>
+        </li>
+      `).join('');
+
+      // Financials Render
+      const netWorth = state.financials.chase + state.financials.etrade + state.financials.retirement + state.financials.investment;
+      document.getElementById('fin-net-worth').textContent = '$' + netWorth.toLocaleString('en-US', { minimumFractionDigits: 2 });
+      document.getElementById('dash-networth').textContent = '$' + netWorth.toLocaleString('en-US', { minimumFractionDigits: 2 });
+      document.getElementById('fin-paycheck-amount').textContent = '$' + state.paycheck.toLocaleString('en-US', { minimumFractionDigits: 2 });
+
+      document.getElementById('account-balances-list').innerHTML = `
+        <div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl border border-slate-200">
+          <span class="text-sm font-semibold text-slate-700">Chase Checking</span>
+          <span class="font-extrabold text-sky-600">$${state.financials.chase.toLocaleString()}</span>
+        </div>
+        <div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl border border-slate-200">
+          <span class="text-sm font-semibold text-slate-700">E*Trade High-Yield Savings</span>
+          <span class="font-extrabold text-emerald-600">$${state.financials.etrade.toLocaleString()}</span>
+        </div>
+        <div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl border border-slate-200">
+          <span class="text-sm font-semibold text-slate-700">Retirement Accounts</span>
+          <span class="font-extrabold text-purple-600">$${state.financials.retirement.toLocaleString()}</span>
+        </div>
+        <div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl border border-slate-200">
+          <span class="text-sm font-semibold text-slate-700">Investment Brokerage</span>
+          <span class="font-extrabold text-indigo-600">$${state.financials.investment.toLocaleString()}</span>
+        </div>
+      `;
+
+      const p = state.paycheck;
+      document.getElementById('budget-buckets-list').innerHTML = state.categories.map(c => `
+        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex justify-between items-center">
+          <div>
+            <p class="text-sm font-bold text-slate-800">${c.name} (${c.pct}%)</p>
+            <p class="text-xs text-slate-500 font-medium">$${((p * c.pct) / 100).toFixed(2)} per paycheck</p>
+          </div>
+          <span class="text-sm font-extrabold text-indigo-600">$${(((p * c.pct) / 100) * 2).toFixed(2)}/mo</span>
+        </div>
+      `).join('');
+
+      const expSelect = document.getElementById('exp-bucket');
+      expSelect.innerHTML = state.categories.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+
+      renderCustomTabs();
+    }
+
+    function renderCustomTabs() {
+      const navContainer = document.getElementById('nav-tabs');
+      const contentContainer = document.getElementById('custom-sections-container');
+
+      const activeTabEl = document.querySelector('.tab-content.active');
+      const activeTabId = activeTabEl ? activeTabEl.id : 'dashboard';
+
+      document.querySelectorAll('.custom-nav-btn').forEach(b => b.remove());
+
+      state.customSections.forEach(sec => {
+        const btn = document.createElement('button');
+        btn.id = `btn-${sec.id}`;
+        btn.className = `nav-btn custom-nav-btn flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100 hover:text-slate-900 transition ${sec.id === activeTabId ? 'active bg-indigo-50 text-indigo-600 font-bold' : ''}`;
+        btn.onclick = () => switchTab(sec.id);
+        btn.innerHTML = `<i class="fa-solid ${sec.icon}"></i> ${sec.title}`;
+        navContainer.appendChild(btn);
+
+        const logs = state.customLogs[sec.id] || [];
+        const goals = state.customGoals[sec.id] || [];
+
+        let sectionEl = document.getElementById(sec.id);
+        if (!sectionEl) {
+          sectionEl = document.createElement('section');
+          sectionEl.id = sec.id;
+          contentContainer.appendChild(sectionEl);
+        }
+
+        sectionEl.className = `tab-content space-y-6 ${sec.id === activeTabId ? 'active' : ''}`;
+        sectionEl.innerHTML = `
+          <!-- Custom Section Header & Goals -->
+          <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
+            <h2 class="text-xl font-bold text-slate-900 mb-2 flex items-center gap-2">
+              <i class="fa-solid ${sec.icon} text-indigo-600"></i> ${sec.title} Goals
+            </h2>
+            <p class="text-xs text-slate-500 font-medium mb-4">Add short-term (+50 XP) or long-term (+1,000 XP) goals for this custom section.</p>
+
+            <form onsubmit="addCustomGoal(event, '${sec.id}')" class="grid grid-cols-1 sm:grid-cols-4 gap-2 mb-6">
+              <input type="text" id="goal_text_${sec.id}" placeholder="Enter goal description..." required class="sm:col-span-2 bg-slate-50 border border-slate-200 px-4 py-2 rounded-xl text-sm text-slate-800 focus:outline-none focus:border-indigo-500">
+              <select id="goal_type_${sec.id}" class="bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 focus:outline-none focus:border-indigo-500">
+                <option value="short">Short-Term (+50 XP)</option>
+                <option value="long">Long-Term (+1,000 XP)</option>
+              </select>
+              <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 font-bold px-4 py-2 rounded-xl text-white text-xs transition shadow-sm">
+                Add Goal
+              </button>
+            </form>
+
+            <ul class="space-y-2">
+              ${goals.map(g => `
+                <li class="flex items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                  <div class="flex items-center gap-3">
+                    <input type="checkbox" ${g.completed ? 'checked' : ''} onchange="toggleCustomGoal('${sec.id}', ${g.id})" class="w-4 h-4 accent-indigo-600 rounded cursor-pointer">
+                    <span class="${g.completed ? 'line-through text-slate-400' : 'text-slate-800 font-bold text-sm'}">${g.text}</span>
+                    <span class="text-[10px] ${g.type === 'long' ? 'bg-amber-50 text-amber-600 border-amber-200' : 'bg-indigo-50 text-indigo-600 border-indigo-200'} font-bold px-2 py-0.5 rounded-md border uppercase">
+                      ${g.type === 'long' ? 'Long-Term (+1,000 XP)' : 'Short-Term (+50 XP)'}
+                    </span>
+                  </div>
+                  <button onclick="deleteCustomGoal('${sec.id}', ${g.id})" class="text-xs text-slate-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button>
+                </li>
+              `).join('')}
+            </ul>
+          </div>
+
+          <!-- Custom Log Entries -->
+          <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
+            <h3 class="text-lg font-bold text-slate-900 mb-2 flex items-center gap-2">
+              <i class="fa-solid fa-list text-indigo-600"></i> ${sec.title} Activity Log
+            </h3>
+            <p class="text-xs text-slate-500 font-medium mb-4">Log daily notes or progress entries to earn <strong class="text-indigo-600">+15 XP</strong> each!</p>
+
+            <form onsubmit="addCustomLog(event, '${sec.id}')" class="flex gap-2 mb-6">
+              <input type="text" id="input_${sec.id}" placeholder="Log progress or notes..." required class="flex-1 bg-slate-50 border border-slate-200 px-4 py-2.5 rounded-xl text-slate-800 focus:outline-none focus:border-indigo-500">
+              <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 font-bold px-5 py-2.5 rounded-xl text-white transition shadow-sm">Log Entry</button>
+            </form>
+
+            <ul class="space-y-2">
+              ${logs.map(l => `
+                <li class="flex items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+                  <div>
+                    <span class="text-slate-800 font-medium">${l.text}</span>
+                    <span class="text-xs text-slate-400 font-medium ml-2">(${l.date})</span>
+                  </div>
+                  <button onclick="deleteCustomLog('${sec.id}', ${l.id})" class="text-slate-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button>
+                </li>
+              `).join('')}
+            </ul>
+          </div>
+        `;
+      });
+    }
+
+    function exportData() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `good_habits_backup_${new Date().toISOString().slice(0,10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    document.addEventListener('DOMContentLoaded', loadState);
   </script>
 </body>
 </html>
