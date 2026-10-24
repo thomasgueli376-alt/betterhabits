@@ -288,8 +288,8 @@
 
           <button id="quick-finance" class="p-4 bg-slate-50 hover:bg-slate-100 rounded-2xl border border-slate-200 text-left transition flex items-center justify-between group">
             <div>
-              <p class="font-bold text-slate-800 group-hover:text-purple-600 transition">Invest Money</p>
-              <p class="text-xs text-amber-500 mt-0.5 font-bold">+50 XP Bonus</p>
+              <p class="font-bold text-slate-800 group-hover:text-purple-600 transition">Invest / Save Money</p>
+              <p class="text-xs text-amber-500 mt-0.5 font-bold">Double XP (+100 XP)</p>
             </div>
             <span class="text-xl">🏦</span>
           </button>
@@ -447,68 +447,120 @@
     <section id="finance" class="tab-content space-y-6">
       <div id="finance-lt-container" class="hidden"></div>
 
+      <!-- Top Summary Metrics Grid -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm">
           <p class="text-xs text-slate-500 font-bold uppercase tracking-wider">Total Net Worth</p>
           <h3 class="text-3xl font-extrabold text-emerald-600 mt-1" id="fin-net-worth">$0.00</h3>
-          <p class="text-[11px] text-slate-400 mt-2">Combined balance across all accounts</p>
+          <p class="text-[11px] text-slate-400 mt-2">Combined physical balance across bank accounts</p>
         </div>
 
         <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm">
-          <p class="text-xs text-slate-500 font-bold uppercase tracking-wider">Paycheck Total (Per 2 Wks)</p>
-          <div class="flex items-center justify-between mt-1">
-            <h3 class="text-2xl font-extrabold text-indigo-600" id="fin-paycheck-amount">$2,300.45</h3>
-            <button id="btn-edit-paycheck" class="text-xs text-slate-400 hover:text-indigo-600 font-bold"><i class="fa-solid fa-pen"></i> Edit</button>
+          <div class="flex items-center justify-between">
+            <p class="text-xs text-slate-500 font-bold uppercase tracking-wider">Paycheck (Per 2 Wks)</p>
+            <button id="btn-edit-paycheck" class="text-xs text-slate-400 hover:text-indigo-600 font-bold flex items-center gap-1">
+              <i class="fa-solid fa-pen text-[10px]"></i> Edit
+            </button>
           </div>
-          <p class="text-[11px] text-slate-400 mt-2">Base used for percentage routing</p>
+          <h3 class="text-2xl font-extrabold text-indigo-600 mt-1" id="fin-paycheck-amount">$0.00</h3>
+          <p class="text-[11px] text-slate-400 mt-2">Base for paycheck percentage routing</p>
         </div>
 
-        <div class="bg-gradient-to-br from-purple-50 to-indigo-50 border border-purple-200 p-5 rounded-2xl shadow-sm">
-          <p class="text-xs text-purple-600 font-bold uppercase tracking-wider">Investment Boost</p>
-          <h3 class="text-2xl font-extrabold text-amber-500 mt-1">+50 XP</h3>
-          <p class="text-[11px] text-slate-500 mt-2">Awarded for adding to Retirement or Savings!</p>
+        <div class="bg-gradient-to-br from-indigo-50 to-purple-50 border border-indigo-200 p-5 rounded-2xl shadow-sm">
+          <div class="flex items-center justify-between">
+            <p class="text-xs text-indigo-600 font-bold uppercase tracking-wider">Bucket Allocation</p>
+            <span id="fin-pct-badge" class="text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-slate-200 text-slate-600">0%</span>
+          </div>
+          <h3 class="text-2xl font-extrabold text-slate-800 mt-1" id="fin-total-allocated-pct">0.00%</h3>
+          <div class="w-full bg-slate-200/70 h-2 rounded-full overflow-hidden mt-3">
+            <div id="fin-pct-bar" class="h-full bg-indigo-600 transition-all duration-300 w-0"></div>
+          </div>
         </div>
       </div>
 
+      <!-- Accounts & Buckets Split Layout -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- BANK ACCOUNTS LIST CARD -->
         <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
           <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-              <span>🏦</span> Account Balances
-            </h3>
-            <button id="btn-edit-accounts" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-xl border border-slate-200"><i class="fa-solid fa-pen"></i> Edit Balances</button>
+            <div>
+              <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <span>🏦</span> Bank Accounts
+              </h3>
+              <p class="text-xs text-slate-500 font-medium">Physical accounts funded automatically through tied buckets</p>
+            </div>
+            <button id="btn-add-account" class="text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-600 font-bold px-3 py-1.5 rounded-xl border border-indigo-200 transition flex items-center gap-1.5">
+              <i class="fa-solid fa-plus"></i> Add Account
+            </button>
           </div>
-          <div class="space-y-3" id="account-balances-list"></div>
+          <div class="space-y-2.5" id="bank-accounts-list"></div>
         </div>
 
+        <!-- BUDGET BUCKETS LIST CARD -->
         <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
           <div class="flex justify-between items-center mb-4">
-            <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-              <span>🥧</span> Budget Buckets
-            </h3>
-            <button id="btn-add-category" class="text-xs bg-slate-100 hover:bg-slate-200 text-indigo-600 font-bold px-3 py-1.5 rounded-xl border border-slate-200"><i class="fa-solid fa-plus"></i> Add Category</button>
+            <div>
+              <h3 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+                <span>🥧</span> Budget Buckets
+              </h3>
+              <p class="text-xs text-slate-500 font-medium">Virtual envelopes tied to a specific bank account</p>
+            </div>
+            <button id="btn-add-bucket" class="text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-600 font-bold px-3 py-1.5 rounded-xl border border-indigo-200 transition flex items-center gap-1.5">
+              <i class="fa-solid fa-plus"></i> Add Bucket
+            </button>
           </div>
-          <div class="space-y-3" id="budget-buckets-list"></div>
+          <div class="space-y-2.5" id="budget-buckets-list"></div>
         </div>
       </div>
 
+      <!-- SEPARATE INVESTMENT OVERVIEW SECTION (Excluded from Net Worth calculation) -->
+      <div class="bg-gradient-to-br from-purple-50/70 via-indigo-50/40 to-white border border-purple-200 p-6 rounded-3xl shadow-sm">
+        <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+          <div>
+            <h3 class="text-lg font-extrabold text-purple-950 flex items-center gap-2">
+              <span>📈</span> Investment & Portfolio Buckets
+            </h3>
+            <p class="text-xs text-purple-700 font-medium">
+              Tracked separately from buckets flagged as investments. <strong class="text-purple-900">Does not add to Net Worth</strong> since physical balances are already captured above.
+            </p>
+          </div>
+          <div class="text-right">
+            <span class="text-xs font-bold text-purple-600 uppercase tracking-wider">Total Investments</span>
+            <h4 class="text-2xl font-black text-purple-700" id="fin-investments-total">$0.00</h4>
+          </div>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3" id="investment-buckets-grid">
+          <!-- Rendered dynamically -->
+        </div>
+      </div>
+
+      <!-- Income & Expense Transactions -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        
+        <!-- LOG INCOME / DEPOSIT -->
         <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
-          <h3 class="text-lg font-bold mb-4 flex items-center gap-2 text-emerald-600">
-            <span>💵</span> Log Income / Investment (+XP)
-          </h3>
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-lg font-bold flex items-center gap-2 text-emerald-600">
+              <span>💵</span> Log Inflow / Deposit
+            </h3>
+            <span class="text-[11px] font-extrabold text-amber-600 bg-amber-50 border border-amber-200 px-2 py-0.5 rounded-lg">
+              ✨ Savings & Investments = 2X XP (+100 XP)
+            </span>
+          </div>
           <form id="form-income" class="space-y-3">
-            <input type="text" id="inc-desc" placeholder="Description (e.g. Paycheck, IRA deposit)" required class="w-full bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500">
-            <div class="flex gap-2">
-              <input type="number" step="0.01" id="inc-amount" placeholder="Amount ($)" required class="w-1/2 bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500">
-              <select id="inc-category" class="w-1/2 bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-slate-800 focus:outline-none focus:border-emerald-500">
-                <option value="Retirement">Retirement (+50 XP)</option>
-                <option value="Savings">Savings (+50 XP)</option>
-                <option value="Chase">Checking / Other</option>
+            <input type="text" id="inc-desc" placeholder="Description (e.g. Paycheck, IRA deposit, Nonna, Side gig)" required class="w-full bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 text-sm">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <input type="number" step="0.01" id="inc-amount" placeholder="Amount ($)" required class="bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 text-sm">
+              <select id="inc-bucket-select" required class="bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-slate-800 text-xs font-semibold focus:outline-none focus:border-emerald-500">
+                <option value="" disabled selected>Deposit to Bucket...</option>
+              </select>
+              <select id="inc-account-preview" disabled class="bg-slate-100 border border-slate-200 px-3 py-2 rounded-xl text-slate-500 text-xs font-medium">
+                <option value="">Tied Account...</option>
               </select>
             </div>
-            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 font-bold px-4 py-2.5 rounded-xl text-white transition shadow-sm">
-              Log Income / Investment
+            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-700 font-bold px-4 py-2.5 rounded-xl text-white transition shadow-sm text-sm flex items-center justify-center gap-2">
+              <span>Log Inflow / Deposit</span>
             </button>
           </form>
           <div class="mt-4 border-t border-slate-100 pt-3">
@@ -517,17 +569,23 @@
           </div>
         </div>
 
+        <!-- LOG EXPENSE -->
         <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
           <h3 class="text-lg font-bold mb-4 flex items-center gap-2 text-rose-500">
             <span>🧾</span> Log Expense
           </h3>
           <form id="form-expense" class="space-y-3">
-            <input type="text" id="exp-desc" placeholder="Expense description (e.g., Groceries, Gas)" required class="w-full bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-rose-500">
-            <div class="flex gap-2">
-              <input type="number" step="0.01" id="exp-amount" placeholder="Amount ($)" required class="w-1/2 bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-rose-500">
-              <select id="exp-bucket" class="w-1/2 bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-slate-800 focus:outline-none focus:border-rose-500"></select>
+            <input type="text" id="exp-desc" placeholder="Expense description (e.g. Groceries, Rent, Uber, Restaurant)" required class="w-full bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-rose-500 text-sm">
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+              <input type="number" step="0.01" id="exp-amount" placeholder="Amount ($)" required class="bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-rose-500 text-sm">
+              <select id="exp-bucket-select" required class="bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-slate-800 text-xs font-semibold focus:outline-none focus:border-rose-500">
+                <option value="" disabled selected>Select Bucket...</option>
+              </select>
+              <select id="exp-account-preview" disabled class="bg-slate-100 border border-slate-200 px-3 py-2 rounded-xl text-slate-500 text-xs font-medium">
+                <option value="">Deducts From...</option>
+              </select>
             </div>
-            <button type="submit" class="w-full bg-rose-500 hover:bg-rose-600 font-bold px-4 py-2.5 rounded-xl text-white transition shadow-sm">
+            <button type="submit" class="w-full bg-rose-500 hover:bg-rose-600 font-bold px-4 py-2.5 rounded-xl text-white transition shadow-sm text-sm">
               Subtract Expense
             </button>
           </form>
@@ -979,6 +1037,68 @@
     </div>
   </div>
 
+  <!-- ADD BANK ACCOUNT MODAL (STARTS AT ZERO, FUNDED THROUGH BUCKETS) -->
+  <div id="modal-add-account" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 rounded-3xl p-6 max-w-sm w-full shadow-2xl">
+      <h3 class="text-lg font-bold text-slate-900 mb-1">Add Bank Account</h3>
+      <p class="text-xs text-slate-500 mb-4">Create a bank account. It starts at $0.00 and is funded automatically when you set starting funds in its tied buckets.</p>
+      <form id="form-add-account" class="space-y-3">
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Account Name</label>
+          <input type="text" id="acc-name-input" placeholder="e.g., Chase Checking, E*Trade Savings" required class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-sm text-slate-800 focus:outline-none focus:border-indigo-500">
+        </div>
+        <div class="p-3 bg-indigo-50 border border-indigo-100 rounded-xl text-[11px] text-indigo-700 font-medium">
+          <i class="fa-solid fa-circle-info"></i> Balance will automatically update as you allocate money into its buckets.
+        </div>
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" id="btn-close-acc-modal" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-600 text-xs font-bold hover:bg-slate-200">Cancel</button>
+          <button type="submit" class="px-4 py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700">Add Account</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ADD BUDGET BUCKET MODAL (WITH INVESTMENT CHECKBOX) -->
+  <div id="modal-add-bucket" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white border border-slate-200 rounded-3xl p-6 max-w-sm w-full shadow-2xl">
+      <h3 class="text-lg font-bold text-slate-900 mb-1">Add Budget Bucket</h3>
+      <p class="text-xs text-slate-500 mb-4">Create a budget envelope tied to a specific bank account.</p>
+      <form id="form-add-bucket" class="space-y-3">
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Bucket / Category Name</label>
+          <input type="text" id="bkt-name-input" placeholder="e.g., Rent/Cable, Fun, Travel, Savings, Stocks" required class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-sm text-slate-800 focus:outline-none focus:border-indigo-500">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Tied Bank Account</label>
+          <select id="bkt-account-input" required class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-indigo-500"></select>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Paycheck Allocation %</label>
+          <input type="number" step="0.01" id="bkt-pct-input" placeholder="e.g. 25.00" value="0.00" required class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-sm text-slate-800 focus:outline-none focus:border-indigo-500">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Starting Bucket Funds ($)</label>
+          <input type="number" step="0.01" id="bkt-initial-funds" placeholder="0.00" value="0.00" required class="w-full bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-sm text-slate-800 focus:outline-none focus:border-indigo-500">
+          <p class="text-[10px] text-slate-400 mt-1">This initial sum is automatically deposited into the tied bank account.</p>
+        </div>
+        
+        <!-- Investment Checkbox -->
+        <div class="flex items-center gap-2.5 pt-1 bg-purple-50/70 p-3 rounded-xl border border-purple-100">
+          <input type="checkbox" id="bkt-is-investment" class="w-4 h-4 accent-purple-600 rounded cursor-pointer">
+          <label for="bkt-is-investment" class="text-xs font-bold text-purple-900 cursor-pointer">
+            📈 Investment Bucket
+            <span class="block text-[10px] font-normal text-purple-600">Displays in the Investment Section below</span>
+          </label>
+        </div>
+
+        <div class="flex justify-end gap-2 pt-2">
+          <button type="button" id="btn-close-bkt-modal" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-600 text-xs font-bold hover:bg-slate-200">Cancel</button>
+          <button type="submit" class="px-4 py-2 rounded-xl bg-indigo-600 text-white text-xs font-bold hover:bg-indigo-700">Create Bucket</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- APPLICATION LOGIC SCRIPT -->
   <script>
     // Embedded API Key
@@ -992,7 +1112,9 @@
       xp: 0,
       level: 1,
       streak: 1,
-      paycheck: 2300.45,
+      paycheck: 0.00,
+      bankAccounts: [], // [{ id, name, balance }]
+      budgetBuckets: [], // [{ id, name, accountId, pct, currentAmount, isInvestment }]
       macroGoals: { cals: 2000, p: 150, c: 200, f: 65 },
       waterGoal: 64,
       todayWater: 0,
@@ -1019,21 +1141,7 @@
       customSections: [],
       customLogs: {},
       customGoals: {},
-      unlockedBadges: [],
-      financials: {
-        chase: 2554.36,
-        etrade: 26266.45,
-        retirement: 89542.42,
-        investment: 19766.95
-      },
-      categories: [
-        { name: 'Rent / Cable', pct: 26.95 },
-        { name: 'Savings', pct: 46.91 },
-        { name: 'Travel', pct: 11.75 },
-        { name: 'Grocery / Needs', pct: 5.05 },
-        { name: 'Fun', pct: 4.45 },
-        { name: 'Car Expenses', pct: 3.26 }
-      ]
+      unlockedBadges: []
     };
 
     let weightChartInstance = null;
@@ -1102,7 +1210,7 @@
         desc: 'Achieve a Net Worth of over $100,000',
         emoji: '💎',
         xpReward: 250,
-        check: (s) => (s.financials.chase + s.financials.etrade + s.financials.retirement + s.financials.investment) >= 100000
+        check: (s) => (s.bankAccounts || []).reduce((sum, a) => sum + (a.balance || 0), 0) >= 100000
       }
     ];
 
@@ -1110,11 +1218,18 @@
       const saved = localStorage.getItem('good_habits_state');
       if (saved) {
         try {
-          state = { ...state, ...JSON.parse(saved) };
+          const parsed = JSON.parse(saved);
+          state = { ...state, ...parsed };
         } catch (e) {
           console.error("Failed to parse state", e);
         }
       }
+
+      if (!Array.isArray(state.bankAccounts)) state.bankAccounts = [];
+      if (!Array.isArray(state.budgetBuckets)) state.budgetBuckets = [];
+      if (!Array.isArray(state.incomeLogs)) state.incomeLogs = [];
+      if (!Array.isArray(state.expenseLogs)) state.expenseLogs = [];
+      if (typeof state.paycheck !== 'number') state.paycheck = 0.00;
 
       const todayStr = new Date().toLocaleDateString();
 
@@ -1126,8 +1241,6 @@
       }
 
       if (!state.exerciseGoals) state.exerciseGoals = { mins: 45, cals: 400 };
-      if (!state.incomeLogs) state.incomeLogs = [];
-      if (!state.expenseLogs) state.expenseLogs = [];
       if (!state.customGoals) state.customGoals = {};
       if (!state.unlockedBadges) state.unlockedBadges = [];
 
@@ -1269,17 +1382,27 @@
       document.getElementById('form-exercise').addEventListener('submit', addWorkout);
       document.getElementById('form-screentime').addEventListener('submit', logScreenTimeBreakdown);
       document.getElementById('form-travel').addEventListener('submit', addTravelGoal);
-      document.getElementById('form-income').addEventListener('submit', addIncome);
-      document.getElementById('form-expense').addEventListener('submit', addExpense);
       document.getElementById('form-custom-sec').addEventListener('submit', createCustomSection);
 
+      // FINANCE EVENT LISTENERS
       document.getElementById('btn-edit-paycheck').addEventListener('click', updatePaycheckAmount);
-      document.getElementById('btn-edit-accounts').addEventListener('click', updateAccountBalances);
-      document.getElementById('btn-add-category').addEventListener('click', addBudgetCategory);
-      document.getElementById('btn-edit-macro-goals').addEventListener('click', updateMacroGoals);
-      document.getElementById('btn-claim-cal-xp').addEventListener('click', claimCalorieXP);
+      document.getElementById('btn-add-account').addEventListener('click', openAddAccountModal);
+      document.getElementById('btn-close-acc-modal').addEventListener('click', closeAddAccountModal);
+      document.getElementById('form-add-account').addEventListener('submit', commitAddAccount);
+
+      document.getElementById('btn-add-bucket').addEventListener('click', openAddBucketModal);
+      document.getElementById('btn-close-bkt-modal').addEventListener('click', closeAddBucketModal);
+      document.getElementById('form-add-bucket').addEventListener('submit', commitAddBucket);
+
+      document.getElementById('form-income').addEventListener('submit', handleIncomeSubmit);
+      document.getElementById('form-expense').addEventListener('submit', handleExpenseSubmit);
+
+      document.getElementById('inc-bucket-select').addEventListener('change', updateIncomeAccountPreview);
+      document.getElementById('exp-bucket-select').addEventListener('change', updateExpenseAccountPreview);
 
       // Wellness Events
+      document.getElementById('btn-edit-macro-goals').addEventListener('click', updateMacroGoals);
+      document.getElementById('btn-claim-cal-xp').addEventListener('click', claimCalorieXP);
       document.getElementById('btn-edit-water-goal').addEventListener('click', updateWaterGoal);
       document.getElementById('btn-edit-sleep-goals').addEventListener('click', updateSleepGoals);
       document.getElementById('form-sleep').addEventListener('submit', logSleep);
@@ -1298,6 +1421,272 @@
       document.querySelectorAll('.st-category-input').forEach(input => {
         input.addEventListener('input', updateScreenTimeLivePreview);
       });
+    }
+
+    // =========================================================
+    // FINANCE LOGIC: ACCOUNTS + BUCKETS + SEPARATE INVESTMENTS
+    // =========================================================
+    function getFinanceNetWorth() {
+      // Sum strictly across bank accounts (no double-counting with investment buckets)
+      return (state.bankAccounts || []).reduce((sum, acc) => sum + (acc.balance || 0), 0);
+    }
+
+    function updatePaycheckAmount() {
+      const val = prompt("Bi-weekly Paycheck Net Amount ($):", state.paycheck || 0);
+      if (val !== null && !isNaN(val)) {
+        state.paycheck = parseFloat(val);
+        saveState();
+      }
+    }
+
+    // Bank Account Modals (Starts at $0, money is added via bucket initial funds or deposits)
+    function openAddAccountModal() {
+      document.getElementById('modal-add-account').classList.remove('hidden');
+    }
+    function closeAddAccountModal() {
+      document.getElementById('modal-add-account').classList.add('hidden');
+    }
+    function commitAddAccount(e) {
+      e.preventDefault();
+      const name = document.getElementById('acc-name-input').value.trim();
+      if (!name) return;
+
+      state.bankAccounts.push({
+        id: 'acc_' + Date.now(),
+        name,
+        balance: 0.00 // Always starts at 0; funded through buckets
+      });
+
+      document.getElementById('acc-name-input').value = '';
+      closeAddAccountModal();
+      saveState();
+    }
+
+    function editAccountBalance(accId) {
+      const acc = state.bankAccounts.find(a => a.id === accId);
+      if (!acc) return;
+      const newBal = prompt(`Adjust physical balance for "${acc.name}" ($):`, acc.balance);
+      if (newBal !== null && !isNaN(newBal)) {
+        acc.balance = parseFloat(newBal);
+        saveState();
+      }
+    }
+
+    function deleteAccount(accId) {
+      const tiedBuckets = state.budgetBuckets.filter(b => b.accountId === accId);
+      if (tiedBuckets.length > 0) {
+        alert(`Cannot delete this account while ${tiedBuckets.length} bucket(s) are tied to it. Delete or reassign those buckets first.`);
+        return;
+      }
+      if (confirm("Delete this bank account?")) {
+        state.bankAccounts = state.bankAccounts.filter(a => a.id !== accId);
+        saveState();
+      }
+    }
+
+    // Budget Bucket Modals
+    function openAddBucketModal() {
+      if (state.bankAccounts.length === 0) {
+        alert("Please add at least one Bank Account first so this bucket can be tied to it!");
+        return;
+      }
+      const accSelect = document.getElementById('bkt-account-input');
+      accSelect.innerHTML = state.bankAccounts.map(a => `<option value="${a.id}">${a.name}</option>`).join('');
+      document.getElementById('modal-add-bucket').classList.remove('hidden');
+    }
+    function closeAddBucketModal() {
+      document.getElementById('modal-add-bucket').classList.add('hidden');
+    }
+    function commitAddBucket(e) {
+      e.preventDefault();
+      const name = document.getElementById('bkt-name-input').value.trim();
+      const accountId = document.getElementById('bkt-account-input').value;
+      const pct = parseFloat(document.getElementById('bkt-pct-input').value) || 0;
+      const currentAmount = parseFloat(document.getElementById('bkt-initial-funds').value) || 0;
+      const isInvestment = document.getElementById('bkt-is-investment').checked;
+
+      if (!name || !accountId) return;
+
+      // Initial bucket funds directly increase the tied bank account balance
+      const account = state.bankAccounts.find(a => a.id === accountId);
+      if (account && currentAmount > 0) {
+        account.balance = (account.balance || 0) + currentAmount;
+      }
+
+      state.budgetBuckets.push({
+        id: 'bkt_' + Date.now(),
+        name,
+        accountId,
+        pct,
+        currentAmount,
+        isInvestment
+      });
+
+      document.getElementById('bkt-name-input').value = '';
+      document.getElementById('bkt-pct-input').value = '0.00';
+      document.getElementById('bkt-initial-funds').value = '0.00';
+      document.getElementById('bkt-is-investment').checked = false;
+      closeAddBucketModal();
+      saveState();
+    }
+
+    function editBucketFunds(bktId) {
+      const bkt = state.budgetBuckets.find(b => b.id === bktId);
+      if (!bkt) return;
+      const newPct = prompt(`Paycheck allocation % for "${bkt.name}":`, bkt.pct);
+      const newFunds = prompt(`Current funds in "${bkt.name}" ($):`, bkt.currentAmount);
+
+      if (newPct !== null && !isNaN(newPct)) bkt.pct = parseFloat(newPct);
+      if (newFunds !== null && !isNaN(newFunds)) {
+        const diff = parseFloat(newFunds) - (bkt.currentAmount || 0);
+        bkt.currentAmount = parseFloat(newFunds);
+        // Automatically sync difference to tied bank account
+        const account = state.bankAccounts.find(a => a.id === bkt.accountId);
+        if (account) account.balance = (account.balance || 0) + diff;
+      }
+      saveState();
+    }
+
+    function toggleBucketInvestment(bktId) {
+      const bkt = state.budgetBuckets.find(b => b.id === bktId);
+      if (bkt) {
+        bkt.isInvestment = !bkt.isInvestment;
+        saveState();
+      }
+    }
+
+    function deleteBucket(bktId) {
+      const bkt = state.budgetBuckets.find(b => b.id === bktId);
+      if (!bkt) return;
+      if (confirm(`Delete bucket "${bkt.name}"? (Note: The tied bank account balance will decrease by this bucket's current funds: $${(bkt.currentAmount || 0).toFixed(2)})`)) {
+        const account = state.bankAccounts.find(a => a.id === bkt.accountId);
+        if (account) {
+          account.balance = Math.max(0, (account.balance || 0) - (bkt.currentAmount || 0));
+        }
+        state.budgetBuckets = state.budgetBuckets.filter(b => b.id !== bktId);
+        saveState();
+      }
+    }
+
+    function updateIncomeAccountPreview() {
+      const bktId = document.getElementById('inc-bucket-select').value;
+      const bkt = state.budgetBuckets.find(b => b.id === bktId);
+      const acc = bkt ? state.bankAccounts.find(a => a.id === bkt.accountId) : null;
+      document.getElementById('inc-account-preview').innerHTML = `<option>${acc ? 'Deposits to: ' + acc.name : 'Tied Account...'}</option>`;
+    }
+
+    function updateExpenseAccountPreview() {
+      const bktId = document.getElementById('exp-bucket-select').value;
+      const bkt = state.budgetBuckets.find(b => b.id === bktId);
+      const acc = bkt ? state.bankAccounts.find(a => a.id === bkt.accountId) : null;
+      document.getElementById('exp-account-preview').innerHTML = `<option>${acc ? 'Deducts: ' + acc.name : 'Deducts From...'}</option>`;
+    }
+
+    // Income submission (Savings & Investment receive DOUBLE XP: +100 XP)
+    function handleIncomeSubmit(e) {
+      e.preventDefault();
+      const desc = document.getElementById('inc-desc').value.trim();
+      const amount = parseFloat(document.getElementById('inc-amount').value);
+      const bucketId = document.getElementById('inc-bucket-select').value;
+
+      if (!bucketId || isNaN(amount) || amount <= 0) return;
+
+      const bucket = state.budgetBuckets.find(b => b.id === bucketId);
+      if (!bucket) return;
+
+      const account = state.bankAccounts.find(a => a.id === bucket.accountId);
+
+      bucket.currentAmount = (bucket.currentAmount || 0) + amount;
+      if (account) {
+        account.balance = (account.balance || 0) + amount;
+      }
+
+      // Check for Savings or Investment for DOUBLE XP
+      const nameLower = bucket.name.toLowerCase();
+      const isSavingsOrInvest = bucket.isInvestment || nameLower.includes('saving') || nameLower.includes('invest') || nameLower.includes('retirement');
+      const xpEarned = isSavingsOrInvest ? 100 : 50;
+
+      state.incomeLogs.unshift({
+        id: Date.now(),
+        desc,
+        amount,
+        bucketId,
+        bucketName: bucket.name,
+        accountName: account ? account.name : 'Unassigned',
+        xpEarned
+      });
+
+      document.getElementById('inc-desc').value = '';
+      document.getElementById('inc-amount').value = '';
+      
+      const reasonMsg = isSavingsOrInvest 
+        ? `DOUBLE XP BONUS! Added $${amount.toFixed(2)} to ${bucket.name} (+100 XP)!` 
+        : `Deposit logged: +$${amount.toFixed(2)} to ${bucket.name}!`;
+
+      awardXP(xpEarned, reasonMsg);
+      saveState();
+    }
+
+    function deleteIncomeLog(id) {
+      const match = state.incomeLogs.find(i => i.id === id);
+      if (match) {
+        const bucket = state.budgetBuckets.find(b => b.id === match.bucketId);
+        if (bucket) {
+          bucket.currentAmount = (bucket.currentAmount || 0) - match.amount;
+          const account = state.bankAccounts.find(a => a.id === bucket.accountId);
+          if (account) account.balance = (account.balance || 0) - match.amount;
+        }
+        if (match.xpEarned) deductXP(match.xpEarned);
+      }
+      state.incomeLogs = state.incomeLogs.filter(i => i.id !== id);
+      saveState();
+    }
+
+    // Expense submission (Debits Bucket + Debits Linked Bank Account)
+    function handleExpenseSubmit(e) {
+      e.preventDefault();
+      const desc = document.getElementById('exp-desc').value.trim();
+      const amount = parseFloat(document.getElementById('exp-amount').value);
+      const bucketId = document.getElementById('exp-bucket-select').value;
+
+      if (!bucketId || isNaN(amount) || amount <= 0) return;
+
+      const bucket = state.budgetBuckets.find(b => b.id === bucketId);
+      if (!bucket) return;
+
+      const account = state.bankAccounts.find(a => a.id === bucket.accountId);
+
+      bucket.currentAmount = (bucket.currentAmount || 0) - amount;
+      if (account) {
+        account.balance = (account.balance || 0) - amount;
+      }
+
+      state.expenseLogs.unshift({
+        id: Date.now(),
+        desc,
+        amount,
+        bucketId,
+        bucketName: bucket.name,
+        accountName: account ? account.name : 'Unassigned'
+      });
+
+      document.getElementById('exp-desc').value = '';
+      document.getElementById('exp-amount').value = '';
+      saveState();
+    }
+
+    function deleteExpenseLog(id) {
+      const match = state.expenseLogs.find(e => e.id === id);
+      if (match) {
+        const bucket = state.budgetBuckets.find(b => b.id === match.bucketId);
+        if (bucket) {
+          bucket.currentAmount = (bucket.currentAmount || 0) + match.amount;
+          const account = state.bankAccounts.find(a => a.id === bucket.accountId);
+          if (account) account.balance = (account.balance || 0) + match.amount;
+        }
+      }
+      state.expenseLogs = state.expenseLogs.filter(e => e.id !== id);
+      saveState();
     }
 
     // =========================================================
@@ -1361,7 +1750,6 @@
         xpEarned: earnedXP
       });
 
-      // Reset inputs
       document.querySelectorAll('.st-category-input').forEach(i => i.value = '0');
       updateScreenTimeLivePreview();
 
@@ -1385,27 +1773,27 @@
     }
 
     // =========================================================
-  // SECURE SERVERLESS GEMINI CALLER (VERCEL BACKEND)
-  // =========================================================
-  async function callGeminiPrompt(promptText) {
-    const response = await fetch('/api/gemini', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        systemInstruction: '',
-        userPrompt: promptText
-      })
-    });
+    // SECURE SERVERLESS GEMINI CALLER (VERCEL BACKEND)
+    // =========================================================
+    async function callGeminiPrompt(promptText) {
+      const response = await fetch('/api/gemini', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          systemInstruction: '',
+          userPrompt: promptText
+        })
+      });
 
-    if (!response.ok) {
-      const errData = await response.json().catch(() => ({}));
-      throw new Error(errData.error || `HTTP ${response.status}`);
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.error || `HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+      return typeof data === 'string' ? data : JSON.stringify(data);
     }
 
-    const data = await response.json();
-    // Return as a JSON string so your existing handleAIFoodChat JSON.parse() works unchanged
-    return typeof data === 'string' ? data : JSON.stringify(data);
-  }
     // =========================================================
     // CONVERSATIONAL GEMINI AI NUTRITION ASSISTANT
     // =========================================================
@@ -2102,103 +2490,6 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
       saveState();
     }
 
-    // Finance Functions
-    function addIncome(e) {
-      e.preventDefault();
-      const desc = document.getElementById('inc-desc').value;
-      const amount = parseFloat(document.getElementById('inc-amount').value);
-      const cat = document.getElementById('inc-category').value;
-
-      let xpEarned = 0;
-      if (cat === 'Retirement') {
-        state.financials.retirement += amount;
-        xpEarned = 50;
-        awardXP(xpEarned, "Investment deposit logged! Wealth building bonus!");
-      } else if (cat === 'Savings') {
-        state.financials.etrade += amount;
-        xpEarned = 50;
-        awardXP(xpEarned, "Savings deposit logged! Wealth building bonus!");
-      } else {
-        state.financials.chase += amount;
-      }
-
-      state.incomeLogs.unshift({ id: Date.now(), desc, amount, category: cat, xpEarned });
-
-      document.getElementById('inc-desc').value = '';
-      document.getElementById('inc-amount').value = '';
-      saveState();
-    }
-
-    function deleteIncomeLog(id) {
-      const match = state.incomeLogs.find(i => i.id === id);
-      if (match) {
-        if (match.category === 'Retirement') state.financials.retirement -= match.amount;
-        else if (match.category === 'Savings') state.financials.etrade -= match.amount;
-        else state.financials.chase -= match.amount;
-
-        if (match.xpEarned) deductXP(match.xpEarned);
-      }
-      state.incomeLogs = state.incomeLogs.filter(i => i.id !== id);
-      saveState();
-    }
-
-    function addExpense(e) {
-      e.preventDefault();
-      const desc = document.getElementById('exp-desc').value;
-      const amount = parseFloat(document.getElementById('exp-amount').value);
-      const bucket = document.getElementById('exp-bucket').value;
-
-      state.financials.chase -= amount;
-      state.expenseLogs.unshift({ id: Date.now(), desc, amount, bucket });
-
-      document.getElementById('exp-desc').value = '';
-      document.getElementById('exp-amount').value = '';
-      saveState();
-    }
-
-    function deleteExpenseLog(id) {
-      const match = state.expenseLogs.find(e => e.id === id);
-      if (match) {
-        state.financials.chase += match.amount;
-      }
-      state.expenseLogs = state.expenseLogs.filter(e => e.id !== id);
-      saveState();
-    }
-
-    function updatePaycheckAmount() {
-      const val = prompt("Bi-weekly Paycheck Net Amount ($):", state.paycheck);
-      if (val && !isNaN(val)) {
-        state.paycheck = parseFloat(val);
-        saveState();
-      }
-    }
-
-    function updateAccountBalances() {
-      const chase = prompt("Chase Checking Balance ($):", state.financials.chase);
-      const etrade = prompt("E*Trade Savings Balance ($):", state.financials.etrade);
-      const ret = prompt("Retirement Balances ($):", state.financials.retirement);
-      const inv = prompt("Brokerage Balances ($):", state.financials.investment);
-
-      if (chase && etrade && ret && inv) {
-        state.financials = {
-          chase: parseFloat(chase),
-          etrade: parseFloat(etrade),
-          retirement: parseFloat(ret),
-          investment: parseFloat(inv)
-        };
-        saveState();
-      }
-    }
-
-    function addBudgetCategory() {
-      const name = prompt("New Category Name:");
-      const pct = prompt("Paycheck Allocation Percentage (%):");
-      if (name && pct && !isNaN(pct)) {
-        state.categories.push({ name, pct: parseFloat(pct) });
-        saveState();
-      }
-    }
-
     // Custom Section Creation & Goals
     function createCustomSection(e) {
       e.preventDefault();
@@ -2283,7 +2574,9 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
       saveState();
     }
 
-    // Render Function
+    // =========================================================
+    // MASTER UI RENDER
+    // =========================================================
     function updateUI() {
       // Level & XP
       document.getElementById('user-level').textContent = state.level;
@@ -2572,67 +2865,164 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
 
       document.getElementById('dash-workout').textContent = `${todayMins} mins`;
 
-      // Income & Expense Render
+      // =========================================================
+      // FINANCE TAB RENDER
+      // =========================================================
+      const netWorth = getFinanceNetWorth();
+      const netWorthFormatted = '$' + netWorth.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+      document.getElementById('fin-net-worth').textContent = netWorthFormatted;
+      document.getElementById('dash-networth').textContent = netWorthFormatted;
+
+      const paycheckVal = state.paycheck || 0;
+      document.getElementById('fin-paycheck-amount').textContent = '$' + paycheckVal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+      // Percent Allocated
+      const totalPct = (state.budgetBuckets || []).reduce((sum, b) => sum + (b.pct || 0), 0);
+      document.getElementById('fin-total-allocated-pct').textContent = totalPct.toFixed(2) + '%';
+      document.getElementById('fin-pct-bar').style.width = Math.min(100, totalPct) + '%';
+
+      const pctBadge = document.getElementById('fin-pct-badge');
+      if (totalPct === 100) {
+        pctBadge.className = 'text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800';
+        pctBadge.textContent = '100% Balanced';
+      } else if (totalPct > 100) {
+        pctBadge.className = 'text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-rose-100 text-rose-800';
+        pctBadge.textContent = `${(totalPct - 100).toFixed(1)}% Over`;
+      } else {
+        pctBadge.className = 'text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-800';
+        pctBadge.textContent = `${(100 - totalPct).toFixed(1)}% Unallocated`;
+      }
+
+      // Bank Accounts UI
+      const accList = document.getElementById('bank-accounts-list');
+      if (state.bankAccounts.length === 0) {
+        accList.innerHTML = `<div class="p-6 text-center text-xs text-slate-400 bg-slate-50 border border-dashed border-slate-200 rounded-2xl">No bank accounts added yet. Click "+ Add Account" to start.</div>`;
+      } else {
+        accList.innerHTML = state.bankAccounts.map(acc => `
+          <div class="flex justify-between items-center p-3.5 bg-slate-50 hover:bg-slate-100/80 rounded-2xl border border-slate-200 transition">
+            <div>
+              <span class="text-sm font-bold text-slate-800">${acc.name}</span>
+              <p class="text-[11px] text-slate-400 mt-0.5">Physical Bank Balance</p>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="text-base font-extrabold text-slate-900">$${(acc.balance || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+              <button onclick="editAccountBalance('${acc.id}')" title="Edit Balance" class="text-xs text-slate-400 hover:text-indigo-600 transition"><i class="fa-solid fa-pen"></i></button>
+              <button onclick="deleteAccount('${acc.id}')" title="Delete Account" class="text-xs text-slate-400 hover:text-rose-500 transition"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </div>
+        `).join('');
+      }
+
+      // Budget Buckets UI
+      const bktList = document.getElementById('budget-buckets-list');
+      if (state.budgetBuckets.length === 0) {
+        bktList.innerHTML = `<div class="p-6 text-center text-xs text-slate-400 bg-slate-50 border border-dashed border-slate-200 rounded-2xl">No budget buckets created yet. Click "+ Add Bucket" to assign categories.</div>`;
+      } else {
+        bktList.innerHTML = state.budgetBuckets.map(bkt => {
+          const tiedAcc = state.bankAccounts.find(a => a.id === bkt.accountId);
+          const accName = tiedAcc ? tiedAcc.name : 'Unassigned';
+          const perCheck = (paycheckVal * (bkt.pct / 100)) || 0;
+          const perMonth = perCheck * 2;
+          const funds = bkt.currentAmount || 0;
+
+          return `
+            <div class="p-3.5 bg-slate-50 hover:bg-slate-100/80 rounded-2xl border border-slate-200 transition">
+              <div class="flex justify-between items-start">
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="text-sm font-bold text-slate-800">${bkt.name}</span>
+                    <span class="text-[10px] bg-indigo-50 text-indigo-600 font-bold px-2 py-0.5 rounded-md border border-indigo-200">${bkt.pct}%</span>
+                    ${bkt.isInvestment ? `<span class="text-[9px] bg-purple-100 text-purple-700 font-extrabold px-1.5 py-0.5 rounded-md border border-purple-200 flex items-center gap-1"><span>📈</span> Invest</span>` : ''}
+                  </div>
+                  <p class="text-[11px] text-slate-500 mt-0.5 flex items-center gap-1">
+                    <i class="fa-solid fa-link text-[9px] text-slate-400"></i> Tied to: <strong class="text-slate-700">${accName}</strong>
+                  </p>
+                  <p class="text-[10px] text-slate-400 mt-0.5">$${perCheck.toFixed(2)} / paycheck • $${perMonth.toFixed(2)} / mo</p>
+                </div>
+                <div class="text-right flex flex-col items-end">
+                  <span class="text-sm font-black ${funds < 0 ? 'text-rose-500' : 'text-emerald-600'}">
+                    $${funds.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </span>
+                  <div class="flex items-center gap-2 mt-2">
+                    <button onclick="toggleBucketInvestment('${bkt.id}')" title="Toggle Investment Status" class="text-xs ${bkt.isInvestment ? 'text-purple-600' : 'text-slate-300 hover:text-purple-500'} transition"><i class="fa-solid fa-chart-line"></i></button>
+                    <button onclick="editBucketFunds('${bkt.id}')" title="Adjust Bucket Funds / Pct" class="text-xs text-slate-400 hover:text-indigo-600 transition"><i class="fa-solid fa-pen"></i></button>
+                    <button onclick="deleteBucket('${bkt.id}')" title="Delete Bucket" class="text-xs text-slate-400 hover:text-rose-500 transition"><i class="fa-solid fa-trash"></i></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // Investment Buckets Section Rendering
+      const investBuckets = state.budgetBuckets.filter(b => b.isInvestment);
+      const investTotal = investBuckets.reduce((sum, b) => sum + (b.currentAmount || 0), 0);
+      document.getElementById('fin-investments-total').textContent = '$' + investTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+      const investGrid = document.getElementById('investment-buckets-grid');
+      if (investBuckets.length === 0) {
+        investGrid.innerHTML = `
+          <div class="col-span-full p-4 text-center text-xs text-purple-600/70 bg-white/70 border border-dashed border-purple-200 rounded-2xl">
+            No investment buckets designated yet. Check "Investment Bucket" when creating or click the <i class="fa-solid fa-chart-line"></i> icon on any bucket.
+          </div>
+        `;
+      } else {
+        investGrid.innerHTML = investBuckets.map(b => {
+          const tiedAcc = state.bankAccounts.find(a => a.id === b.accountId);
+          return `
+            <div class="p-3.5 bg-white rounded-2xl border border-purple-100 shadow-sm flex items-center justify-between">
+              <div>
+                <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                  <span class="text-purple-500">📈</span> ${b.name}
+                </span>
+                <span class="text-[10px] text-slate-400 block mt-0.5">Tied: ${tiedAcc ? tiedAcc.name : 'None'}</span>
+              </div>
+              <div class="text-right">
+                <span class="text-sm font-extrabold text-purple-700">
+                  $${(b.currentAmount || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                </span>
+                <span class="text-[10px] text-slate-400 block">${b.pct}% alloc</span>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // Populate Select Options for Income & Expense Forms
+      const bktOptions = `<option value="" disabled selected>Select Bucket...</option>` + state.budgetBuckets.map(b => {
+        return `<option value="${b.id}">${b.name} (${b.pct}%)${b.isInvestment ? ' [Invest 2X XP]' : ''}</option>`;
+      }).join('');
+
+      document.getElementById('inc-bucket-select').innerHTML = bktOptions;
+      document.getElementById('exp-bucket-select').innerHTML = bktOptions;
+      updateIncomeAccountPreview();
+      updateExpenseAccountPreview();
+
+      // Income Logs
       document.getElementById('income-list').innerHTML = state.incomeLogs.map(i => `
         <li class="flex items-center justify-between p-2.5 bg-slate-50 rounded-xl border border-slate-200 text-xs">
           <div>
             <span class="font-bold text-slate-800">${i.desc}</span>
             <span class="text-emerald-600 font-extrabold ml-2">+$${i.amount.toFixed(2)}</span>
-            <span class="text-[10px] bg-emerald-50 text-emerald-600 font-bold px-1.5 py-0.5 rounded ml-2">${i.category}</span>
+            <span class="text-[10px] bg-emerald-50 text-emerald-600 font-bold px-1.5 py-0.5 rounded ml-2">${i.bucketName || 'Bucket'} (${i.accountName || 'Bank'})</span>
+            ${i.xpEarned === 100 ? `<span class="text-[9px] bg-amber-100 text-amber-800 font-bold px-1 py-0.2 rounded ml-1">2X XP</span>` : ''}
           </div>
           <button onclick="deleteIncomeLog(${i.id})" class="text-slate-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button>
         </li>
       `).join('');
 
+      // Expense Logs
       document.getElementById('expense-list').innerHTML = state.expenseLogs.map(e => `
         <li class="flex items-center justify-between p-2.5 bg-slate-50 rounded-xl border border-slate-200 text-xs">
           <div>
             <span class="font-bold text-slate-800">${e.desc}</span>
             <span class="text-rose-500 font-extrabold ml-2">-$${e.amount.toFixed(2)}</span>
-            <span class="text-[10px] bg-rose-50 text-rose-600 font-bold px-1.5 py-0.5 rounded ml-2">${e.bucket}</span>
+            <span class="text-[10px] bg-rose-50 text-rose-600 font-bold px-1.5 py-0.5 rounded ml-2">${e.bucketName || 'Bucket'} (${e.accountName || 'Bank'})</span>
           </div>
           <button onclick="deleteExpenseLog(${e.id})" class="text-slate-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button>
         </li>
       `).join('');
-
-      // Financials Render
-      const netWorth = state.financials.chase + state.financials.etrade + state.financials.retirement + state.financials.investment;
-      document.getElementById('fin-net-worth').textContent = '$' + netWorth.toLocaleString('en-US', { minimumFractionDigits: 2 });
-      document.getElementById('dash-networth').textContent = '$' + netWorth.toLocaleString('en-US', { minimumFractionDigits: 2 });
-      document.getElementById('fin-paycheck-amount').textContent = '$' + state.paycheck.toLocaleString('en-US', { minimumFractionDigits: 2 });
-
-      document.getElementById('account-balances-list').innerHTML = `
-        <div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl border border-slate-200">
-          <span class="text-sm font-semibold text-slate-700">Chase Checking</span>
-          <span class="font-extrabold text-sky-600">$${state.financials.chase.toLocaleString()}</span>
-        </div>
-        <div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl border border-slate-200">
-          <span class="text-sm font-semibold text-slate-700">E*Trade High-Yield Savings</span>
-          <span class="font-extrabold text-emerald-600">$${state.financials.etrade.toLocaleString()}</span>
-        </div>
-        <div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl border border-slate-200">
-          <span class="text-sm font-semibold text-slate-700">Retirement Accounts</span>
-          <span class="font-extrabold text-purple-600">$${state.financials.retirement.toLocaleString()}</span>
-        </div>
-        <div class="flex justify-between items-center p-3 bg-slate-50 rounded-xl border border-slate-200">
-          <span class="text-sm font-semibold text-slate-700">Investment Brokerage</span>
-          <span class="font-extrabold text-indigo-600">$${state.financials.investment.toLocaleString()}</span>
-        </div>
-      `;
-
-      const p = state.paycheck;
-      document.getElementById('budget-buckets-list').innerHTML = state.categories.map(c => `
-        <div class="p-3 bg-slate-50 rounded-xl border border-slate-200 flex justify-between items-center">
-          <div>
-            <p class="text-sm font-bold text-slate-800">${c.name} (${c.pct}%)</p>
-            <p class="text-xs text-slate-500 font-medium">$${((p * c.pct) / 100).toFixed(2)} per paycheck</p>
-          </div>
-          <span class="text-sm font-extrabold text-indigo-600">$${(((p * c.pct) / 100) * 2).toFixed(2)}/mo</span>
-        </div>
-      `).join('');
-
-      const expSelect = document.getElementById('exp-bucket');
-      expSelect.innerHTML = state.categories.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
 
       renderCustomTabs();
     }
