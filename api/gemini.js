@@ -12,7 +12,7 @@ export default async function handler(req, res) {
 
   try {
     const response = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.8-flash:generateContent?key=${apiKey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -20,13 +20,16 @@ export default async function handler(req, res) {
           contents: [
             {
               role: 'user',
-              parts: [{ text: `${systemInstruction}\n\nUser Input: ${userPrompt}` }]
+              parts: [{ text: `${systemInstruction ? systemInstruction + '\n\n' : ''}${userPrompt}` }]
             }
           ],
           generationConfig: {
             temperature: 0.1,
             maxOutputTokens: 600,
-            responseMimeType: 'application/json'
+            responseMimeType: 'application/json',
+            thinkingConfig: {
+              thinkingLevel: 'low'
+            }
           }
         })
       }
