@@ -1385,56 +1385,27 @@
     }
 
     // =========================================================
-    // ROBUST GEMINI CALLER WITH SYSTEM RESOLUTION & AUTO-FALLBACK
-    // =========================================================
-    async function callGeminiPrompt(promptText) {
-      const apiKey = getActiveGeminiKey();
-      
-      const modelsToTry = [
-        "gemini-3.8-flash",
-        "gemini-2.5-flash",
-        "gemini-2.0-flash",
-        "gemini-1.5-flash"
-      ];
-      
-      let lastError = null;
+  // SECURE SERVERLESS GEMINI CALLER (VERCEL BACKEND)
+  // =========================================================
+  async function callGeminiPrompt(promptText) {
+    const response = await fetch('/api/gemini', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        systemInstruction: '',
+        userPrompt: promptText
+      })
+    });
 
-      for (const model of modelsToTry) {
-        try {
-          const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-          const payload = {
-            contents: [
-              {
-                parts: [{ text: promptText }]
-              }
-            ]
-          };
-
-          const response = await fetch(url, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-          });
-
-          if (!response.ok) {
-            const errData = await response.json().catch(() => ({}));
-            const errMsg = errData.error?.message || `HTTP ${response.status}`;
-            throw new Error(errMsg);
-          }
-
-          const data = await response.json();
-          const rawText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (rawText) {
-            return rawText;
-          }
-        } catch (err) {
-          lastError = err;
-          console.warn(`Request failed for model ${model}:`, err.message);
-        }
-      }
-      throw lastError || new Error("Failed to reach Gemini API. Please check your connection or API key.");
+    if (!response.ok) {
+      const errData = await response.json().catch(() => ({}));
+      throw new Error(errData.error || `HTTP ${response.status}`);
     }
 
+    const data = await response.json();
+    // Return as a JSON string so your existing handleAIFoodChat JSON.parse() works unchanged
+    return typeof data === 'string' ? data : JSON.stringify(data);
+  }
     // =========================================================
     // CONVERSATIONAL GEMINI AI NUTRITION ASSISTANT
     // =========================================================
