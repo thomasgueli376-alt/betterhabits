@@ -10,12 +10,13 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Supabase JS Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
     
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
@@ -28,17 +29,16 @@
       display: block;
     }
 
-    /* Mascot Animations */
     @keyframes floatMascot {
-      0%, 100% { transform: translateY(0px) scale(1); }
-      50% { transform: translateY(-6px) scale(1.05); }
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-5px); }
     }
     
     @keyframes pulseHeartbeat {
       0%, 100% { transform: scale(1); }
-      14% { transform: scale(1.18); }
+      14% { transform: scale(1.15); }
       28% { transform: scale(1); }
-      42% { transform: scale(1.12); }
+      42% { transform: scale(1.1); }
       70% { transform: scale(1); }
     }
 
@@ -47,10 +47,9 @@
     }
 
     .animate-heartbeat {
-      animation: pulseHeartbeat 1.5s ease-in-out infinite;
+      animation: pulseHeartbeat 1.4s ease-in-out infinite;
     }
 
-    /* Custom scrollbar */
     ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
@@ -66,22 +65,61 @@
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
 
+  <!-- ========================================================= -->
+  <!-- 1-TIME ONBOARDING GUIDE MODAL                             -->
+  <!-- ========================================================= -->
+  <div id="onboarding-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 transition-all">
+    <div class="bg-white border border-slate-200 rounded-3xl p-6 sm:p-7 max-w-md w-full shadow-2xl space-y-4">
+      <div class="text-center space-y-2">
+        <div class="w-16 h-16 mx-auto rounded-2xl bg-indigo-50 border border-indigo-100 flex items-center justify-center shadow-inner">
+          <svg class="w-12 h-12 text-rose-500 animate-heartbeat" viewBox="0 0 100 100" fill="currentColor">
+            <path d="M50 88.5L43.8 82.8C22.6 63.6 8.5 50.8 8.5 35C8.5 22.2 18.5 12.2 31.3 12.2C38.5 12.2 45.4 15.6 50 20.8C54.6 15.6 61.5 12.2 68.7 12.2C81.5 12.2 91.5 22.2 91.5 35C91.5 50.8 77.4 63.6 56.2 82.8L50 88.5Z"/>
+            <circle cx="36" cy="38" r="4.5" fill="#1e293b"/>
+            <circle cx="64" cy="38" r="4.5" fill="#1e293b"/>
+            <circle cx="37.5" cy="36.5" r="1.5" fill="#ffffff"/>
+            <circle cx="65.5" cy="36.5" r="1.5" fill="#ffffff"/>
+            <path d="M41 49 Q50 58 59 49" stroke="#1e293b" stroke-width="3" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <h3 class="text-lg font-black text-slate-900" id="tour-title">Welcome to Good Habits!</h3>
+        <p class="text-xs text-slate-600 font-medium leading-relaxed" id="tour-desc">
+          Meet <strong>Beaty</strong>, your personal coach! Beaty tracks your habits, guards your budget, and monitors your calorie limits across all your devices.
+        </p>
+      </div>
+
+      <div class="flex justify-center gap-1.5 py-1">
+        <span id="dot-0" class="w-2.5 h-2.5 rounded-full bg-indigo-600"></span>
+        <span id="dot-1" class="w-2.5 h-2.5 rounded-full bg-slate-200"></span>
+        <span id="dot-2" class="w-2.5 h-2.5 rounded-full bg-slate-200"></span>
+        <span id="dot-3" class="w-2.5 h-2.5 rounded-full bg-slate-200"></span>
+      </div>
+
+      <div class="flex items-center justify-between gap-3 pt-3 border-t border-slate-100">
+        <button onclick="skipTour()" class="text-xs font-bold text-slate-400 hover:text-slate-600 transition">Skip Guide</button>
+        <button onclick="nextTourStep()" id="tour-next-btn" class="bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs px-5 py-2.5 rounded-xl shadow-md transition active:scale-95">
+          Next →
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Mascot Pop-Up Modal -->
   <div id="mascot-popup" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 transition-all">
-    <div class="bg-white border border-rose-100 rounded-3xl p-6 max-w-sm w-full shadow-2xl text-center transform transition-all scale-95" id="mascot-modal-card">
+    <div class="bg-white border border-slate-200 rounded-3xl p-6 max-w-sm w-full shadow-2xl text-center transform transition-all scale-95" id="mascot-modal-card">
       <div class="relative w-24 h-24 mx-auto mb-3 flex items-center justify-center">
-        <!-- SVG Animated Heart Mascot -->
-        <svg id="mascot-popup-svg" class="w-20 h-20 text-rose-500 animate-heartbeat filter drop-shadow-lg" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+        <svg id="mascot-popup-svg" class="w-20 h-20 text-rose-500 animate-heartbeat filter drop-shadow-md" viewBox="0 0 100 100" fill="currentColor">
+          <path d="M50 88.5L43.8 82.8C22.6 63.6 8.5 50.8 8.5 35C8.5 22.2 18.5 12.2 31.3 12.2C38.5 12.2 45.4 15.6 50 20.8C54.6 15.6 61.5 12.2 68.7 12.2C81.5 12.2 91.5 22.2 91.5 35C91.5 50.8 77.4 63.6 56.2 82.8L50 88.5Z"/>
+          <circle cx="36" cy="38" r="4.5" fill="#1e293b"/>
+          <circle cx="64" cy="38" r="4.5" fill="#1e293b"/>
+          <circle cx="37.5" cy="36.5" r="1.5" fill="#ffffff"/>
+          <circle cx="65.5" cy="36.5" r="1.5" fill="#ffffff"/>
+          <path d="M41 49 Q50 58 59 49" stroke="#1e293b" stroke-width="3" fill="none" stroke-linecap="round"/>
         </svg>
-        <div class="absolute inset-0 flex items-center justify-center pt-1 text-white font-bold text-xs select-none pointer-events-none">
-          Pulse
-        </div>
       </div>
       <h3 class="text-xl font-extrabold text-slate-900" id="mascot-popup-title">Awesome Job!</h3>
-      <p class="text-sm text-slate-600 mt-2 font-medium" id="mascot-popup-msg">Pulse is super proud of your progress today!</p>
-      <button id="btn-close-mascot" class="mt-5 w-full bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 text-white font-bold py-2.5 rounded-xl shadow-md shadow-rose-200 transition">
-        Keep Going! ❤️
+      <p class="text-sm text-slate-600 mt-2 font-medium" id="mascot-popup-msg">Beaty is super proud of your discipline today!</p>
+      <button id="btn-close-mascot" class="mt-5 w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-2.5 rounded-xl shadow transition">
+        Keep Going! ⚡
       </button>
     </div>
   </div>
@@ -89,20 +127,25 @@
   <!-- Header / Navigation Bar -->
   <header class="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
-      <div id="auth-container"></div>
+      
       <!-- Logo, Mascot & Level Indicator -->
-      <div class="flex items-center gap-3 cursor-pointer" id="header-mascot-trigger" title="Click Pulse for a boost!">
-        <div class="relative w-11 h-11 bg-rose-50 border border-rose-200 rounded-2xl shadow-sm flex items-center justify-center overflow-hidden">
-          <svg class="w-8 h-8 text-rose-500 animate-float" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+      <div class="flex items-center gap-3 cursor-pointer" id="header-mascot-trigger" title="Click Beaty for advice!">
+        <div class="relative w-11 h-11 bg-slate-100 border border-slate-200 rounded-2xl shadow-sm flex items-center justify-center overflow-hidden">
+          <svg class="w-8 h-8 text-rose-500 animate-float" viewBox="0 0 100 100" fill="currentColor">
+            <path d="M50 88.5L43.8 82.8C22.6 63.6 8.5 50.8 8.5 35C8.5 22.2 18.5 12.2 31.3 12.2C38.5 12.2 45.4 15.6 50 20.8C54.6 15.6 61.5 12.2 68.7 12.2C81.5 12.2 91.5 22.2 91.5 35C91.5 50.8 77.4 63.6 56.2 82.8L50 88.5Z"/>
+            <circle cx="36" cy="38" r="4.5" fill="#1e293b"/>
+            <circle cx="64" cy="38" r="4.5" fill="#1e293b"/>
+            <circle cx="37.5" cy="36.5" r="1.5" fill="#ffffff"/>
+            <circle cx="65.5" cy="36.5" r="1.5" fill="#ffffff"/>
+            <path d="M41 49 Q50 58 59 49" stroke="#1e293b" stroke-width="3" fill="none" stroke-linecap="round"/>
           </svg>
         </div>
         <div>
           <div class="flex items-center gap-1.5">
-            <h1 class="font-extrabold text-xl tracking-tight bg-gradient-to-r from-rose-500 via-purple-600 to-indigo-600 bg-clip-text text-transparent">
+            <h1 class="font-extrabold text-xl tracking-tight text-slate-900">
               Good Habits
             </h1>
-            <span class="text-[10px] bg-rose-100 text-rose-600 font-bold px-1.5 py-0.5 rounded-md">Pulse</span>
+            <span class="text-[10px] bg-indigo-100 text-indigo-700 font-bold px-1.5 py-0.5 rounded-md">Beaty</span>
           </div>
           <div class="flex items-center gap-2 text-xs text-slate-500">
             <span>Level <strong id="user-level" class="text-indigo-600">1</strong></span>
@@ -112,7 +155,7 @@
         </div>
       </div>
 
-      <!-- Navigation Tabs with Colorful Emojis -->
+      <!-- Navigation Tabs -->
       <nav class="flex items-center gap-1 overflow-x-auto py-1 max-w-full text-sm font-semibold text-slate-600" id="nav-tabs">
         <button id="btn-dashboard" class="nav-btn active flex items-center gap-2 px-3 py-2 rounded-xl bg-indigo-50 text-indigo-600 font-bold transition">
           <span class="text-base">🏠</span> Overview
@@ -143,10 +186,14 @@
         </button>
       </nav>
 
-      <!-- Custom Actions -->
+      <!-- Right Actions: Auth Slot + Guide + Add Tab + Export -->
       <div class="flex items-center gap-2">
+        <div id="auth-container"></div>
+        <button onclick="openTourAgain()" title="First-Time Guide" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-2 rounded-xl border border-slate-200 transition flex items-center gap-1.5">
+          <i class="fa-solid fa-circle-question text-indigo-600"></i> Guide
+        </button>
         <button id="btn-open-modal" class="text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-600 font-bold px-3 py-2 rounded-xl border border-indigo-200 transition flex items-center gap-1.5">
-          <i class="fa-solid fa-plus"></i> Add Custom Tab
+          <i class="fa-solid fa-plus"></i> Add Tab
         </button>
         <button id="btn-export" title="Backup Data" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-600 p-2 rounded-xl border border-slate-200 transition">
           <i class="fa-solid fa-download"></i>
@@ -160,18 +207,46 @@
   <div class="w-full bg-slate-200/60 border-b border-slate-200 px-4 py-1.5">
     <div class="max-w-7xl mx-auto flex items-center gap-3">
       <div class="w-full bg-slate-300/70 h-2.5 rounded-full overflow-hidden border border-slate-300">
-        <div id="xp-bar" class="bg-gradient-to-r from-rose-500 via-purple-500 to-indigo-500 h-full w-0 transition-all duration-500"></div>
+        <div id="xp-bar" class="bg-gradient-to-r from-indigo-500 via-sky-500 to-emerald-500 h-full w-0 transition-all duration-500"></div>
       </div>
       <span class="text-[10px] uppercase font-bold tracking-wider text-slate-500 whitespace-nowrap" id="xp-percentage">0% to Lvl UP</span>
     </div>
   </div>
 
   <!-- Main Content Container -->
-  <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full">
+  <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full space-y-6">
+
+    <!-- BEATY LIVE ADVICE & CALORIC WATCH BANNER -->
+    <div id="beaty-banner" class="bg-white border-2 border-slate-200 rounded-2xl p-4 shadow-sm flex flex-col sm:flex-row items-center gap-4 transition-all">
+      <div class="relative w-12 h-12 bg-slate-100 border border-slate-200 rounded-xl flex items-center justify-center shrink-0 cursor-pointer" onclick="pokeBeaty()" title="Click Beaty!">
+        <svg class="w-9 h-9 text-rose-500 animate-heartbeat" viewBox="0 0 100 100" fill="currentColor">
+          <path d="M50 88.5L43.8 82.8C22.6 63.6 8.5 50.8 8.5 35C8.5 22.2 18.5 12.2 31.3 12.2C38.5 12.2 45.4 15.6 50 20.8C54.6 15.6 61.5 12.2 68.7 12.2C81.5 12.2 91.5 22.2 91.5 35C91.5 50.8 77.4 63.6 56.2 82.8L50 88.5Z"/>
+          <circle cx="36" cy="38" r="4.5" fill="#1e293b"/>
+          <circle cx="64" cy="38" r="4.5" fill="#1e293b"/>
+          <circle cx="37.5" cy="36.5" r="1.5" fill="#ffffff"/>
+          <circle cx="65.5" cy="36.5" r="1.5" fill="#ffffff"/>
+          <path d="M41 49 Q50 58 59 49" stroke="#1e293b" stroke-width="3" fill="none" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="flex-1 text-center sm:text-left">
+        <div class="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+          <span class="text-xs font-black uppercase tracking-wider text-slate-800">Beaty Coach</span>
+          <span id="beaty-alert-badge" class="hidden text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-amber-100 text-amber-800">
+            ⚠️ 80% Calorie Watch
+          </span>
+        </div>
+        <p id="beaty-advice-text" class="text-xs font-semibold text-slate-600 mt-0.5">
+          "Pacing looks solid! Track your water and log your meals as you eat to keep your routine balanced."
+        </p>
+      </div>
+      <div class="text-right shrink-0 hidden sm:block">
+        <span class="text-[10px] font-bold text-slate-400 uppercase block">Daily Calorie Gauge</span>
+        <span id="beaty-cal-pill" class="text-xs font-black text-indigo-600">0 / 2,000 kcal</span>
+      </div>
+    </div>
 
     <!-- 1. OVERVIEW DASHBOARD TAB -->
     <section id="dashboard" class="tab-content active space-y-6">
-      
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm flex items-center justify-between">
           <div>
@@ -188,9 +263,9 @@
         <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm flex items-center justify-between">
           <div>
             <p class="text-xs text-slate-500 font-bold uppercase tracking-wider">Current Weight</p>
-            <h3 class="text-2xl font-extrabold text-rose-500 mt-1" id="dash-weight">-- lbs</h3>
+            <h3 class="text-2xl font-extrabold text-slate-800 mt-1" id="dash-weight">-- lbs</h3>
           </div>
-          <div class="p-3 bg-rose-50 rounded-2xl text-rose-500 border border-rose-100">
+          <div class="p-3 bg-slate-100 rounded-2xl text-slate-700 border border-slate-200">
             <span class="text-xl">⚖️</span>
           </div>
         </div>
@@ -239,8 +314,8 @@
         </div>
 
         <form id="form-lt-goal" class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
-          <input type="text" id="lt-goal-text" placeholder="e.g. Lose 20 lbs, Buy a House, Visit Japan" required class="sm:col-span-1 bg-slate-50 border border-slate-200 px-4 py-2.5 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-rose-500">
-          <select id="lt-goal-category" class="bg-slate-50 border border-slate-200 px-3 py-2.5 rounded-xl text-slate-800 focus:outline-none focus:border-rose-500">
+          <input type="text" id="lt-goal-text" placeholder="e.g. Lose 20 lbs, Buy a House, Visit Japan" required class="sm:col-span-1 bg-slate-50 border border-slate-200 px-4 py-2.5 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-indigo-500">
+          <select id="lt-goal-category" class="bg-slate-50 border border-slate-200 px-3 py-2.5 rounded-xl text-slate-800 focus:outline-none focus:border-indigo-500 font-medium">
             <option value="exercise">Exercise</option>
             <option value="food">Nutrition & Macros</option>
             <option value="wellness">Wellness</option>
@@ -249,7 +324,7 @@
             <option value="travel">Travel Goals</option>
             <option value="todo">To-Do</option>
           </select>
-          <button type="submit" class="bg-gradient-to-r from-rose-500 to-pink-500 hover:from-rose-600 hover:to-pink-600 font-bold px-5 py-2.5 rounded-xl text-white transition shadow-sm flex items-center justify-center gap-2">
+          <button type="submit" class="bg-slate-900 hover:bg-slate-800 font-bold px-5 py-2.5 rounded-xl text-white transition shadow-sm flex items-center justify-center gap-2">
             <span>🏆</span> Create Goal
           </button>
         </form>
@@ -353,22 +428,33 @@
       </div>
     </section>
 
-    <!-- 3. WELLNESS TAB (Water & Sleep) -->
+    <!-- 3. WELLNESS TAB (Editable Water Rack & Sleep) -->
     <section id="wellness" class="tab-content space-y-6">
       <div id="wellness-lt-container" class="hidden"></div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
-        <!-- Water Tracker Card -->
+        <!-- Editable Water Tracker Card with Interactive Rack -->
         <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
           <div class="flex justify-between items-center mb-4">
             <div>
               <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
                 <span class="text-xl">💧</span> Water & Hydration
               </h2>
-              <p class="text-xs text-slate-500">Track hydration and earn <strong class="text-sky-500">+15 XP</strong> when reaching your daily goal!</p>
+              <p class="text-xs text-slate-500">Click a drop to set count directly, or use the quick buttons below (+15 XP goal)!</p>
             </div>
-            <button id="btn-edit-water-goal" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-xl border border-slate-200"><i class="fa-solid fa-pen"></i> Edit Goal</button>
+            <button id="btn-edit-water-goal" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-xl border border-slate-200">
+              <i class="fa-solid fa-pen"></i> Edit Goal
+            </button>
+          </div>
+
+          <!-- Interactive Glass Rack -->
+          <div class="p-4 bg-sky-50/70 rounded-2xl border border-sky-100 mb-4">
+            <div class="flex items-center justify-between mb-2">
+              <span class="text-xs font-bold text-slate-600">Quick-Tap 8oz Glasses:</span>
+              <span class="text-xs font-black text-sky-700" id="water-glasses-count">0 / 8</span>
+            </div>
+            <div id="water-glasses-rack" class="flex justify-between items-center py-2 px-1"></div>
           </div>
 
           <!-- Bottle Progress Container -->
@@ -381,22 +467,25 @@
             </div>
 
             <div class="flex-1">
-              <p class="text-xs text-slate-500 font-bold uppercase tracking-wider">Today's Progress</p>
+              <p class="text-xs text-slate-500 font-bold uppercase tracking-wider">Today's Total</p>
               <h3 class="text-3xl font-extrabold text-sky-600 mt-1" id="water-count-label">0 / 64 oz</h3>
               <p class="text-xs text-slate-400 mt-2 font-medium" id="water-status-msg">Drink up to feel energized!</p>
             </div>
           </div>
 
           <!-- Add Water Action Buttons -->
-          <div class="grid grid-cols-3 gap-3">
-            <button onclick="addWater(8)" class="py-2.5 bg-sky-50 hover:bg-sky-100 text-sky-700 font-bold rounded-xl border border-sky-200 transition text-sm flex items-center justify-center gap-1.5">
-              <i class="fa-solid fa-plus text-xs"></i> 8 oz
+          <div class="grid grid-cols-4 gap-2">
+            <button onclick="addWater(8)" class="py-2.5 bg-sky-50 hover:bg-sky-100 text-sky-700 font-bold rounded-xl border border-sky-200 transition text-xs flex items-center justify-center gap-1">
+              <i class="fa-solid fa-plus"></i> 8 oz
             </button>
-            <button onclick="addWater(16)" class="py-2.5 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-xl transition text-sm flex items-center justify-center gap-1.5 shadow-sm">
-              <i class="fa-solid fa-plus text-xs"></i> 16 oz
+            <button onclick="addWater(16)" class="py-2.5 bg-sky-500 hover:bg-sky-600 text-white font-bold rounded-xl transition text-xs flex items-center justify-center gap-1 shadow-sm">
+              <i class="fa-solid fa-plus"></i> 16 oz
             </button>
-            <button onclick="addCustomWater()" class="py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl border border-slate-200 transition text-sm">
+            <button onclick="addCustomWater()" class="py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl border border-slate-200 transition text-xs">
               Custom
+            </button>
+            <button onclick="resetWaterToday()" class="py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-600 font-bold rounded-xl border border-rose-200 transition text-xs" title="Reset today's water">
+              Reset
             </button>
           </div>
         </div>
@@ -408,19 +497,17 @@
               <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
                 <span class="text-xl">🌙</span> Sleep Tracker
               </h2>
-              <p class="text-xs text-slate-500">Log sleep & hit target hours for <strong class="text-indigo-600">+25 XP</strong>, plus <strong class="text-purple-600">+20 XP Schedule Bonus</strong> for going to bed on time or earlier!</p>
+              <p class="text-xs text-slate-500">Target hours earn <strong class="text-indigo-600">+25 XP</strong>, plus <strong class="text-purple-600">+20 XP Schedule Bonus</strong> for bedtime discipline!</p>
             </div>
-            <button id="btn-edit-sleep-goals" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-xl border border-slate-200"><i class="fa-solid fa-pen"></i> Set Sleep Goals</button>
+            <button id="btn-edit-sleep-goals" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-xl border border-slate-200"><i class="fa-solid fa-pen"></i> Goals</button>
           </div>
 
-          <!-- Sleep Target Banner -->
           <div class="p-4 bg-indigo-50/60 rounded-2xl border border-indigo-100 mb-6 flex flex-wrap justify-between items-center gap-2 text-xs font-semibold text-slate-700">
             <div>🛌 Bedtime: <strong id="goal-bedtime-lbl" class="text-indigo-600">10:30 PM</strong></div>
             <div>☀️ Wake: <strong id="goal-waketime-lbl" class="text-indigo-600">6:30 AM</strong></div>
             <div>⏱️ Target: <strong id="goal-sleep-hrs-lbl" class="text-indigo-600">8.0 hrs</strong></div>
           </div>
 
-          <!-- Sleep Logger Form -->
           <form id="form-sleep" class="space-y-3 mb-6">
             <div class="grid grid-cols-2 gap-3">
               <div>
@@ -437,7 +524,6 @@
             </button>
           </form>
 
-          <!-- Sleep Logs History -->
           <ul id="sleep-history-list" class="space-y-2"></ul>
         </div>
 
@@ -448,7 +534,6 @@
     <section id="finance" class="tab-content space-y-6">
       <div id="finance-lt-container" class="hidden"></div>
 
-      <!-- Top Summary Metrics Grid -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm">
           <p class="text-xs text-slate-500 font-bold uppercase tracking-wider">Total Net Worth</p>
@@ -479,7 +564,6 @@
         </div>
       </div>
 
-      <!-- Accounts & Buckets Split Layout -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         <!-- BANK ACCOUNTS LIST CARD -->
@@ -515,7 +599,7 @@
         </div>
       </div>
 
-      <!-- SEPARATE INVESTMENT OVERVIEW SECTION (Excluded from Net Worth calculation) -->
+      <!-- SEPARATE INVESTMENT OVERVIEW SECTION -->
       <div class="bg-gradient-to-br from-purple-50/70 via-indigo-50/40 to-white border border-purple-200 p-6 rounded-3xl shadow-sm">
         <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
           <div>
@@ -531,9 +615,7 @@
             <h4 class="text-2xl font-black text-purple-700" id="fin-investments-total">$0.00</h4>
           </div>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3" id="investment-buckets-grid">
-          <!-- Rendered dynamically -->
-        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3" id="investment-buckets-grid"></div>
       </div>
 
       <!-- Income & Expense Transactions -->
@@ -550,7 +632,7 @@
             </span>
           </div>
           <form id="form-income" class="space-y-3">
-            <input type="text" id="inc-desc" placeholder="Description (e.g. Paycheck, IRA deposit, Nonna, Side gig)" required class="w-full bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 text-sm">
+            <input type="text" id="inc-desc" placeholder="Description (e.g. Paycheck, IRA deposit, Side gig)" required class="w-full bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 text-sm">
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
               <input type="number" step="0.01" id="inc-amount" placeholder="Amount ($)" required class="bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500 text-sm">
               <select id="inc-bucket-select" required class="bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-slate-800 text-xs font-semibold focus:outline-none focus:border-emerald-500">
@@ -576,7 +658,7 @@
             <span>🧾</span> Log Expense
           </h3>
           <form id="form-expense" class="space-y-3">
-            <input type="text" id="exp-desc" placeholder="Expense description (e.g. Groceries, Rent, Uber, Restaurant)" required class="w-full bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-rose-500 text-sm">
+            <input type="text" id="exp-desc" placeholder="Expense description (e.g. Groceries, Rent, Uber)" required class="w-full bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-rose-500 text-sm">
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
               <input type="number" step="0.01" id="exp-amount" placeholder="Amount ($)" required class="bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-rose-500 text-sm">
               <select id="exp-bucket-select" required class="bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-slate-800 text-xs font-semibold focus:outline-none focus:border-rose-500">
@@ -586,7 +668,7 @@
                 <option value="">Deducts From...</option>
               </select>
             </div>
-            <button type="submit" class="w-full bg-rose-500 hover:bg-rose-600 font-bold px-4 py-2.5 rounded-xl text-white transition shadow-sm text-sm">
+            <button type="submit" class="w-full bg-slate-900 hover:bg-slate-800 font-bold px-4 py-2.5 rounded-xl text-white transition shadow-sm text-sm">
               Subtract Expense
             </button>
           </form>
@@ -602,7 +684,7 @@
     <section id="food" class="tab-content space-y-6">
       <div id="food-lt-container" class="hidden"></div>
 
-      <!-- 14-Day Weight Trend Chart.js Canvas -->
+      <!-- 14-Day Weight Trend Chart -->
       <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
         <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
           <div>
@@ -612,7 +694,6 @@
             <p class="text-xs text-slate-500">Track body weight fluctuations over time.</p>
           </div>
 
-          <!-- Weight Goal Status & Entry -->
           <div class="flex items-center gap-2">
             <form id="form-log-weight" class="flex items-center gap-2">
               <input type="number" step="0.1" id="weight-input" placeholder="Weight (lbs)" required class="w-28 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-800 focus:outline-none focus:border-indigo-500">
@@ -644,16 +725,16 @@
             <h2 class="text-lg font-black text-slate-900 flex items-center gap-2">
               <span>✨</span> Gemini AI Nutrition Assistant
             </h2>
-            <p class="text-xs text-slate-600 font-medium">Type any food or meal in plain English (e.g., <em>"I ate a plain bagel with butter"</em> or <em>"3 slices of pepperoni pizza and a beer"</em>). Gemini will calculate calories, carbs, protein, and fat!</p>
+            <p class="text-xs text-slate-600 font-medium">Type any food or meal (e.g., <em>"plain bagel with butter"</em>). Gemini will calculate calories, carbs, protein, and fat!</p>
           </div>
           <span class="text-[10px] bg-emerald-100 text-emerald-800 font-extrabold px-3 py-1 rounded-full border border-emerald-300 flex items-center gap-1.5">
-            <span>🧠</span> AI Powered
+            <span>🧠</span> Gemini 3.8 Flash
           </span>
         </div>
 
         <form id="form-ai-food" onsubmit="handleAIFoodChat(event)" class="space-y-3">
           <div class="flex flex-col sm:flex-row gap-2">
-            <input type="text" id="ai-food-prompt" placeholder="Describe what you ate (e.g. 'I had a plain bagel with butter and a large black coffee')..." required class="flex-1 bg-white border border-emerald-200 px-4 py-3 rounded-2xl text-sm text-slate-800 focus:outline-none focus:border-emerald-500 shadow-inner">
+            <input type="text" id="ai-food-prompt" placeholder="Describe what you ate..." required class="flex-1 bg-white border border-emerald-200 px-4 py-3 rounded-2xl text-sm text-slate-800 focus:outline-none focus:border-emerald-500 shadow-inner">
             <select id="ai-food-mealtype" class="bg-white border border-emerald-200 px-3 py-2.5 rounded-2xl text-xs font-bold text-slate-700 focus:outline-none focus:border-emerald-500">
               <option value="Breakfast">Breakfast</option>
               <option value="Lunch" selected>Lunch</option>
@@ -759,7 +840,6 @@
     <section id="exercise" class="tab-content space-y-6">
       <div id="exercise-lt-container" class="hidden"></div>
 
-      <!-- Daily Exercise Goal Progress Banner -->
       <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
         <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
           <div>
@@ -782,13 +862,13 @@
             </div>
           </div>
 
-          <div class="p-4 bg-rose-50/60 rounded-2xl border border-rose-100">
+          <div class="p-4 bg-slate-100 rounded-2xl border border-slate-200">
             <div class="flex justify-between items-center text-xs mb-1">
-              <span class="text-slate-600 font-bold"><i class="fa-solid fa-bolt text-rose-500"></i> Calorie Burn Goal</span>
-              <span id="ex-cal-goal-lbl" class="text-rose-500 font-extrabold">0 / 400 kcal</span>
+              <span class="text-slate-600 font-bold"><i class="fa-solid fa-bolt text-indigo-600"></i> Calorie Burn Goal</span>
+              <span id="ex-cal-goal-lbl" class="text-indigo-600 font-extrabold">0 / 400 kcal</span>
             </div>
             <div class="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden mt-2">
-              <div id="bar-ex-cals" class="bg-rose-500 h-full w-0 transition-all duration-500"></div>
+              <div id="bar-ex-cals" class="bg-indigo-600 h-full w-0 transition-all duration-500"></div>
             </div>
           </div>
         </div>
@@ -801,16 +881,16 @@
             <h2 class="text-lg font-black text-slate-900 flex items-center gap-2">
               <span>✨</span> Gemini AI Exercise Assistant
             </h2>
-            <p class="text-xs text-slate-600 font-medium">Describe your workout or activity (e.g. <em>"Swam laps for 30 minutes vigorously"</em> or <em>"Played 1 hour of pickup basketball"</em>). Gemini calculates accurate calories burned based on your body weight!</p>
+            <p class="text-xs text-slate-600 font-medium">Describe your workout (e.g. <em>"Swam laps for 30 minutes vigorously"</em>). Gemini calculates accurate calories burned based on your body weight!</p>
           </div>
           <span class="text-[10px] bg-sky-100 text-sky-800 font-extrabold px-3 py-1 rounded-full border border-sky-300 flex items-center gap-1.5">
-            <span>🧠</span> AI Powered
+            <span>🧠</span> Gemini 3.8 Flash
           </span>
         </div>
 
         <form id="form-ai-ex" onsubmit="handleAIExerciseChat(event)" class="space-y-3">
           <div class="grid grid-cols-1 sm:grid-cols-4 gap-2">
-            <input type="text" id="ai-ex-prompt" placeholder="Describe workout (e.g. 'Swam laps freestyle for 35 minutes at moderate pace')..." required class="sm:col-span-3 bg-white border border-sky-200 px-4 py-3 rounded-2xl text-sm text-slate-800 focus:outline-none focus:border-sky-500 shadow-inner">
+            <input type="text" id="ai-ex-prompt" placeholder="Describe workout (e.g. 'Swam laps freestyle for 35 minutes')..." required class="sm:col-span-3 bg-white border border-sky-200 px-4 py-3 rounded-2xl text-sm text-slate-800 focus:outline-none focus:border-sky-500 shadow-inner">
             <div class="flex items-center gap-2">
               <input type="number" id="ai-ex-weight" placeholder="Weight (lbs)" value="175" class="w-28 bg-white border border-sky-200 px-3 py-3 rounded-2xl text-xs font-bold text-slate-800 focus:outline-none focus:border-sky-500 shadow-inner" title="Body weight used for MET burn calculation">
               <button type="submit" id="btn-ai-ex-submit" class="flex-1 bg-sky-600 hover:bg-sky-700 text-white font-extrabold py-3 px-4 rounded-2xl text-xs transition shadow-md shadow-sky-200 flex items-center justify-center gap-2">
@@ -823,7 +903,6 @@
         <div id="ai-ex-output" class="hidden mt-4 transition-all"></div>
       </div>
 
-      <!-- Standard Workout Logger Card -->
       <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
         <h2 class="text-xl font-bold text-slate-900 mb-2 flex items-center gap-2">
           <span>🏋️</span> Manual Exercise Log
@@ -843,7 +922,7 @@
       </div>
     </section>
 
-    <!-- 7. SCREEN TIME TAB (Multi-Category Breakdown) -->
+    <!-- 7. SCREEN TIME TAB -->
     <section id="screentime" class="tab-content space-y-6">
       <div id="screentime-lt-container" class="hidden"></div>
 
@@ -858,7 +937,7 @@
           <button id="btn-edit-st-limit" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-xl border border-slate-200"><i class="fa-solid fa-pen"></i> Daily Limit: <span id="st-limit-lbl">3h 0m</span></button>
         </div>
 
-        <div class="p-5 bg-gradient-to-r from-amber-50 via-orange-50 to-pink-50 border border-amber-200 rounded-2xl mb-6">
+        <div class="p-5 bg-gradient-to-r from-amber-50 via-orange-50 to-indigo-50 border border-amber-200 rounded-2xl mb-6">
           <h3 class="text-sm font-extrabold text-amber-900 uppercase tracking-wider mb-3 flex items-center gap-2">
             <span>🌅</span> Yesterday's Category Breakdown Reflection
           </h3>
@@ -866,75 +945,44 @@
           <form id="form-screentime" class="space-y-4">
             <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
               <div class="bg-white p-3 rounded-xl border border-amber-200 shadow-xs">
-                <label class="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1">
-                  <span>📱</span> Social Media
-                </label>
-                <div class="flex items-center gap-1">
-                  <input type="number" id="st-social" min="0" value="0" class="st-category-input w-full bg-slate-50 border border-slate-200 px-2.5 py-1.5 rounded-lg text-slate-800 text-xs font-bold focus:outline-none focus:border-amber-500">
-                  <span class="text-[11px] text-slate-400 font-semibold">min</span>
-                </div>
+                <label class="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1"><span>📱</span> Social</label>
+                <div class="flex items-center gap-1"><input type="number" id="st-social" min="0" value="0" class="st-category-input w-full bg-slate-50 border border-slate-200 px-2.5 py-1.5 rounded-lg text-slate-800 text-xs font-bold"><span class="text-[11px] text-slate-400">min</span></div>
               </div>
 
               <div class="bg-white p-3 rounded-xl border border-amber-200 shadow-xs">
-                <label class="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1">
-                  <span>🍿</span> Entertainment
-                </label>
-                <div class="flex items-center gap-1">
-                  <input type="number" id="st-entertain" min="0" value="0" class="st-category-input w-full bg-slate-50 border border-slate-200 px-2.5 py-1.5 rounded-lg text-slate-800 text-xs font-bold focus:outline-none focus:border-amber-500">
-                  <span class="text-[11px] text-slate-400 font-semibold">min</span>
-                </div>
+                <label class="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1"><span>🍿</span> Media</label>
+                <div class="flex items-center gap-1"><input type="number" id="st-entertain" min="0" value="0" class="st-category-input w-full bg-slate-50 border border-slate-200 px-2.5 py-1.5 rounded-lg text-slate-800 text-xs font-bold"><span class="text-[11px] text-slate-400">min</span></div>
               </div>
 
               <div class="bg-white p-3 rounded-xl border border-amber-200 shadow-xs">
-                <label class="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1">
-                  <span>💼</span> Productivity
-                </label>
-                <div class="flex items-center gap-1">
-                  <input type="number" id="st-work" min="0" value="0" class="st-category-input w-full bg-slate-50 border border-slate-200 px-2.5 py-1.5 rounded-lg text-slate-800 text-xs font-bold focus:outline-none focus:border-amber-500">
-                  <span class="text-[11px] text-slate-400 font-semibold">min</span>
-                </div>
+                <label class="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1"><span>💼</span> Work</label>
+                <div class="flex items-center gap-1"><input type="number" id="st-work" min="0" value="0" class="st-category-input w-full bg-slate-50 border border-slate-200 px-2.5 py-1.5 rounded-lg text-slate-800 text-xs font-bold"><span class="text-[11px] text-slate-400">min</span></div>
               </div>
 
               <div class="bg-white p-3 rounded-xl border border-amber-200 shadow-xs">
-                <label class="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1">
-                  <span>🎮</span> Gaming
-                </label>
-                <div class="flex items-center gap-1">
-                  <input type="number" id="st-gaming" min="0" value="0" class="st-category-input w-full bg-slate-50 border border-slate-200 px-2.5 py-1.5 rounded-lg text-slate-800 text-xs font-bold focus:outline-none focus:border-amber-500">
-                  <span class="text-[11px] text-slate-400 font-semibold">min</span>
-                </div>
+                <label class="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1"><span>🎮</span> Gaming</label>
+                <div class="flex items-center gap-1"><input type="number" id="st-gaming" min="0" value="0" class="st-category-input w-full bg-slate-50 border border-slate-200 px-2.5 py-1.5 rounded-lg text-slate-800 text-xs font-bold"><span class="text-[11px] text-slate-400">min</span></div>
               </div>
 
               <div class="bg-white p-3 rounded-xl border border-amber-200 shadow-xs">
-                <label class="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1">
-                  <span>💬</span> Messaging
-                </label>
-                <div class="flex items-center gap-1">
-                  <input type="number" id="st-messaging" min="0" value="0" class="st-category-input w-full bg-slate-50 border border-slate-200 px-2.5 py-1.5 rounded-lg text-slate-800 text-xs font-bold focus:outline-none focus:border-amber-500">
-                  <span class="text-[11px] text-slate-400 font-semibold">min</span>
-                </div>
+                <label class="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1"><span>💬</span> Messages</label>
+                <div class="flex items-center gap-1"><input type="number" id="st-messaging" min="0" value="0" class="st-category-input w-full bg-slate-50 border border-slate-200 px-2.5 py-1.5 rounded-lg text-slate-800 text-xs font-bold"><span class="text-[11px] text-slate-400">min</span></div>
               </div>
 
               <div class="bg-white p-3 rounded-xl border border-amber-200 shadow-xs">
-                <label class="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1">
-                  <span>🌐</span> Other
-                </label>
-                <div class="flex items-center gap-1">
-                  <input type="number" id="st-other" min="0" value="0" class="st-category-input w-full bg-slate-50 border border-slate-200 px-2.5 py-1.5 rounded-lg text-slate-800 text-xs font-bold focus:outline-none focus:border-amber-500">
-                  <span class="text-[11px] text-slate-400 font-semibold">min</span>
-                </div>
+                <label class="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1"><span>🌐</span> Other</label>
+                <div class="flex items-center gap-1"><input type="number" id="st-other" min="0" value="0" class="st-category-input w-full bg-slate-50 border border-slate-200 px-2.5 py-1.5 rounded-lg text-slate-800 text-xs font-bold"><span class="text-[11px] text-slate-400">min</span></div>
               </div>
             </div>
 
-            <!-- Dynamic Total and Percentage Bar Live Preview -->
             <div class="bg-white/90 p-4 rounded-xl border border-amber-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
                 <span class="text-xs font-bold text-slate-500">Calculated Total:</span>
                 <span class="text-lg font-black text-slate-800 ml-1.5" id="st-live-total">0h 0m (0 mins)</span>
                 <span class="text-xs font-bold ml-2" id="st-live-target-status"></span>
               </div>
-              <button type="submit" class="bg-amber-500 hover:bg-amber-600 font-bold px-6 py-2.5 rounded-xl text-white text-xs transition shadow-sm flex items-center justify-center gap-1.5">
-                <span>📝</span> Log Day Reflection
+              <button type="submit" class="bg-slate-900 hover:bg-slate-800 font-bold px-6 py-2.5 rounded-xl text-white text-xs transition shadow-sm">
+                Log Day Reflection
               </button>
             </div>
           </form>
@@ -951,7 +999,6 @@
     <section id="travel" class="tab-content space-y-6">
       <div id="travel-lt-container" class="hidden"></div>
 
-      <!-- Top Custom Buckets Overview Grid -->
       <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
         <div class="flex flex-wrap justify-between items-center mb-4 gap-2">
           <div>
@@ -960,28 +1007,26 @@
             </h2>
             <p class="text-xs text-slate-500 font-medium">Create goal counters for special milestones (e.g., Baseball Stadiums 0/30).</p>
           </div>
-          <button id="btn-create-travel-bucket" class="text-xs bg-pink-50 hover:bg-pink-100 text-pink-600 font-bold px-3.5 py-2 rounded-xl border border-pink-200 transition flex items-center gap-1.5">
+          <button id="btn-create-travel-bucket" class="text-xs bg-indigo-50 hover:bg-indigo-100 text-indigo-600 font-bold px-3.5 py-2 rounded-xl border border-indigo-200 transition flex items-center gap-1.5">
             <i class="fa-solid fa-plus"></i> Create Bucket
           </button>
         </div>
 
-        <!-- Dynamic Bucket Cards Grid -->
         <div id="travel-buckets-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 mb-2"></div>
       </div>
 
-      <!-- Log Destination Item Card -->
       <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
         <h2 class="text-lg font-bold text-slate-900 mb-2 flex items-center gap-2">
           <span>📍</span> Add Destination / Milestone Item
         </h2>
-        <p class="text-xs text-slate-500 font-medium mb-4">Check off destinations as you visit them to earn <strong class="text-pink-500">+30 XP</strong>!</p>
+        <p class="text-xs text-slate-500 font-medium mb-4">Check off destinations to earn <strong class="text-indigo-600">+30 XP</strong>!</p>
 
         <form id="form-travel" class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
-          <input type="text" id="travel-input" placeholder="e.g. PNC Park, Yankee Stadium, Acadia National Park" required class="sm:col-span-1 bg-slate-50 border border-slate-200 px-4 py-2.5 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-pink-500 text-sm">
-          <select id="travel-bucket-select" class="bg-slate-50 border border-slate-200 px-3 py-2.5 rounded-xl text-slate-800 focus:outline-none focus:border-pink-500 text-sm font-medium">
+          <input type="text" id="travel-input" placeholder="e.g. PNC Park, Yankee Stadium, Acadia National Park" required class="sm:col-span-1 bg-slate-50 border border-slate-200 px-4 py-2.5 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-indigo-500 text-sm">
+          <select id="travel-bucket-select" class="bg-slate-50 border border-slate-200 px-3 py-2.5 rounded-xl text-slate-800 focus:outline-none focus:border-indigo-500 text-sm font-medium">
             <option value="general">General Travel</option>
           </select>
-          <button type="submit" class="bg-pink-500 hover:bg-pink-600 font-bold px-5 py-2.5 rounded-xl text-white transition text-sm flex items-center justify-center gap-2 shadow-sm">
+          <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 font-bold px-5 py-2.5 rounded-xl text-white transition text-sm flex items-center justify-center gap-2 shadow-sm">
             <i class="fa-solid fa-plus"></i> Add Destination
           </button>
         </form>
@@ -1038,7 +1083,7 @@
     </div>
   </div>
 
-  <!-- ADD BANK ACCOUNT MODAL (STARTS AT ZERO, FUNDED THROUGH BUCKETS) -->
+  <!-- ADD BANK ACCOUNT MODAL -->
   <div id="modal-add-account" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white border border-slate-200 rounded-3xl p-6 max-w-sm w-full shadow-2xl">
       <h3 class="text-lg font-bold text-slate-900 mb-1">Add Bank Account</h3>
@@ -1059,7 +1104,7 @@
     </div>
   </div>
 
-  <!-- ADD BUDGET BUCKET MODAL (WITH INVESTMENT CHECKBOX) -->
+  <!-- ADD BUDGET BUCKET MODAL -->
   <div id="modal-add-bucket" class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div class="bg-white border border-slate-200 rounded-3xl p-6 max-w-sm w-full shadow-2xl">
       <h3 class="text-lg font-bold text-slate-900 mb-1">Add Budget Bucket</h3>
@@ -1083,7 +1128,6 @@
           <p class="text-[10px] text-slate-400 mt-1">This initial sum is automatically deposited into the tied bank account.</p>
         </div>
         
-        <!-- Investment Checkbox -->
         <div class="flex items-center gap-2.5 pt-1 bg-purple-50/70 p-3 rounded-xl border border-purple-100">
           <input type="checkbox" id="bkt-is-investment" class="w-4 h-4 accent-purple-600 rounded cursor-pointer">
           <label for="bkt-is-investment" class="text-xs font-bold text-purple-900 cursor-pointer">
@@ -1102,143 +1146,127 @@
 
   <!-- APPLICATION LOGIC SCRIPT -->
   <script>
-    // --- 1. CONNECT TO YOUR SUPABASE BACKEND ---
-const SUPABASE_URL = "https://byuunpkkwxrvmgbjjczi.supabase.co";
-// Replace the placeholder below with your actual anon key from Supabase (Project Settings -> API)
-const SUPABASE_ANON_KEY = "PASTE_YOUR_LONG_EYJ_ANON_KEY_HERE";
-const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    // =========================================================
+    // SUPABASE AUTH & CLOUD SYNC CONFIGURATION
+    // =========================================================
+    const SUPABASE_URL = "https://byuunpkkwxrvmgbjjczi.supabase.co";
+    // Replace with your anon key from Supabase (Project Settings -> API)
+    const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dXVucGtrd3hydm1nYmpqY3ppIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1NTkzMTksImV4cCI6MjEwOTEzNTMxOX0.WbqWDSS9DW7SgsgNpQ7_dhH4L1dfZ9wH871qvftQmKg";
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-let currentUser = null;
+    let currentUser = null;
 
-// --- 2. ONLY GOOGLE SIGN IN ---
-async function loginWithGoogle() {
-  const { error } = await supabaseClient.auth.signInWithOAuth({
-    provider: 'google',
-    options: {
-      redirectTo: window.location.origin
+    async function loginWithGoogle() {
+      const { error } = await supabaseClient.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: window.location.origin
+        }
+      });
+      if (error) alert("Sign-in failed: " + error.message);
     }
-  });
-  if (error) alert("Sign-in failed: " + error.message);
-}
 
-// --- 3. LOG OUT BUTTON FUNCTION ---
-async function logoutUser() {
-  await supabaseClient.auth.signOut({ scope: 'local' });
-  currentUser = null;
-  localStorage.removeItem('good_habits_state');
-  window.location.reload();
-}
-
-// --- 4. LOAD SAVED DATA FROM CLOUD ON LOGIN ---
-async function initAuthAndSync() {
-  supabaseClient.auth.onAuthStateChange(async (event, session) => {
-    if (session && session.user) {
-      currentUser = session.user;
-      renderAuthNav(true);
-      await loadUserDataFromCloud();
-    } else {
+    async function logoutUser() {
+      await supabaseClient.auth.signOut({ scope: 'local' });
       currentUser = null;
-      renderAuthNav(false);
-    }
-  });
-
-  const { data: { session } } = await supabaseClient.auth.getSession();
-  if (session && session.user) {
-    currentUser = session.user;
-    renderAuthNav(true);
-    await loadUserDataFromCloud();
-  } else {
-    renderAuthNav(false);
-  }
-}
-
-async function loadUserDataFromCloud() {
-  if (!currentUser) return;
-
-  const { data, error } = await supabaseClient
-    .from('user_data')
-    .select('app_state, finance_state')
-    .eq('user_id', currentUser.id)
-    .single();
-
-  if (data && data.app_state) {
-    // Overwrite default blank state with user's cloud save
-    state = { ...state, ...data.app_state };
-    if (data.finance_state) {
-      state.bankAccounts = data.finance_state.bankAccounts || state.bankAccounts;
-      state.budgetBuckets = data.finance_state.budgetBuckets || state.budgetBuckets;
-    }
-    localStorage.setItem('good_habits_state', JSON.stringify(state));
-    updateUI();
-  } else {
-    // If first time logging in, upload initial starter data
-    await pushStateToCloud();
-  }
-}
-
-// --- 5. AUTOMATICALLY PUSH ALL CHANGES TO CLOUD ---
-async function pushStateToCloud() {
-  if (!currentUser) return;
-  try {
-    await supabaseClient.from('user_data').upsert({
-      user_id: currentUser.id,
-      app_state: state,
-      finance_state: {
-        bankAccounts: state.bankAccounts || [],
-        budgetBuckets: state.budgetBuckets || []
-      },
-      updated_at: new Date().toISOString()
-    });
-  } catch (err) {
-    console.error("Auto-sync error:", err);
-  }
-}
-
-// Intercept your existing saveState function so it writes to the cloud every time
-const baseSaveState = typeof saveState === 'function' ? saveState : () => {};
-saveState = function() {
-  baseSaveState();
-  pushStateToCloud();
-};
-
-function renderAuthNav(isLoggedIn) {
-  const container = document.getElementById('auth-container');
-  if (!container) return;
-
-  if (isLoggedIn && currentUser) {
-    container.innerHTML = `
-      <div class="flex items-center gap-2">
-        <span class="text-xs font-bold text-slate-600 hidden md:inline">${currentUser.email}</span>
-        <button onclick="logoutUser()" class="text-xs bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-700 font-bold px-3 py-1.5 rounded-xl border border-slate-200 transition flex items-center gap-1.5 shadow-sm">
-          <span>🚪</span> Log Out
-        </button>
-      </div>
-    `;
-  } else {
-    container.innerHTML = `
-      <button onclick="loginWithGoogle()" class="text-xs bg-slate-900 hover:bg-slate-800 text-white font-extrabold px-3.5 py-1.5 rounded-xl transition flex items-center gap-2 shadow-sm">
-        <span>🔑</span> Sign in with Google
-      </button>
-    `;
-  }
-}
-
-// Start listener when page loads
-document.addEventListener('DOMContentLoaded', initAuthAndSync);
-    // Embedded API Key
-    const DEFAULT_GEMINI_API_KEY = "AQ.Ab8RN6KeBBvwxcUNNcCezPLFo6UV1bi1BgSECekGFTvvcPDIqA";
-
-    function getActiveGeminiKey() {
-      return localStorage.getItem('gemini_api_key') || DEFAULT_GEMINI_API_KEY;
+      localStorage.removeItem('good_habits_state');
+      window.location.reload();
     }
 
+    async function initAuthAndSync() {
+      supabaseClient.auth.onAuthStateChange(async (event, session) => {
+        if (session && session.user) {
+          currentUser = session.user;
+          renderAuthNav(true);
+          await loadUserDataFromCloud();
+        } else {
+          currentUser = null;
+          renderAuthNav(false);
+        }
+      });
+
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (session && session.user) {
+        currentUser = session.user;
+        renderAuthNav(true);
+        await loadUserDataFromCloud();
+      } else {
+        renderAuthNav(false);
+      }
+    }
+
+    async function loadUserDataFromCloud() {
+      if (!currentUser) return;
+
+      const { data, error } = await supabaseClient
+        .from('user_data')
+        .select('app_state, finance_state')
+        .eq('user_id', currentUser.id)
+        .single();
+
+      if (data && data.app_state) {
+        state = { ...state, ...data.app_state };
+        if (data.finance_state) {
+          state.bankAccounts = data.finance_state.bankAccounts || state.bankAccounts;
+          state.budgetBuckets = data.finance_state.budgetBuckets || state.budgetBuckets;
+        }
+        localStorage.setItem('good_habits_state', JSON.stringify(state));
+        updateUI();
+      } else {
+        await pushStateToCloud();
+      }
+    }
+
+    async function pushStateToCloud() {
+      if (!currentUser) return;
+      try {
+        await supabaseClient.from('user_data').upsert({
+          user_id: currentUser.id,
+          app_state: state,
+          finance_state: {
+            bankAccounts: state.bankAccounts || [],
+            budgetBuckets: state.budgetBuckets || []
+          },
+          updated_at: new Date().toISOString()
+        });
+      } catch (err) {
+        console.error("Auto-sync error:", err);
+      }
+    }
+
+    function renderAuthNav(isLoggedIn) {
+      const container = document.getElementById('auth-container');
+      if (!container) return;
+
+      if (isLoggedIn && currentUser) {
+        container.innerHTML = `
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold text-slate-600 hidden md:inline">${currentUser.email}</span>
+            <button onclick="logoutUser()" class="text-xs bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-700 font-bold px-3 py-1.5 rounded-xl border border-slate-200 transition flex items-center gap-1.5 shadow-sm">
+              <span>🚪</span> Log Out
+            </button>
+          </div>
+        `;
+      } else {
+        container.innerHTML = `
+          <button onclick="loginWithGoogle()" class="text-xs bg-slate-900 hover:bg-slate-800 text-white font-extrabold px-3 py-1.5 rounded-xl transition flex items-center gap-2 shadow-sm">
+            <span>🔑</span> Sign In with Google
+          </button>
+        `;
+      }
+    }
+
+    // =========================================================
+    // GLOBAL STATE & CORE ENGINE
+    // =========================================================
     let state = {
       xp: 0,
       level: 1,
       streak: 1,
       paycheck: 0.00,
-      bankAccounts: [], // [{ id, name, balance }]
-      budgetBuckets: [], // [{ id, name, accountId, pct, currentAmount, isInvestment }]
+      hasSeenTour: false,
+      bankAccounts: [],
+      budgetBuckets: [],
       macroGoals: { cals: 2000, p: 150, c: 200, f: 65 },
       waterGoal: 64,
       todayWater: 0,
@@ -1270,72 +1298,15 @@ document.addEventListener('DOMContentLoaded', initAuthAndSync);
 
     let weightChartInstance = null;
 
-    // Badges Master Definition
     const BADGES_CONFIG = [
-      {
-        id: 'streak_3',
-        name: 'Spark of Consistency',
-        desc: 'Maintain a 3-day habit streak',
-        emoji: '🔥',
-        xpReward: 100,
-        check: (s) => s.streak >= 3
-      },
-      {
-        id: 'task_master_5',
-        name: 'Task Crusher',
-        desc: 'Complete 5 or more to-do tasks',
-        emoji: '🎯',
-        xpReward: 100,
-        check: (s) => s.todos.filter(t => t.completed).length >= 5
-      },
-      {
-        id: 'water_champ',
-        name: 'Hydration Hero',
-        desc: 'Reach your daily water goal (100%)',
-        emoji: '🌊',
-        xpReward: 75,
-        check: (s) => s.todayWater >= s.waterGoal
-      },
-      {
-        id: 'sleep_master',
-        name: 'Circadian Sync',
-        desc: 'Log a night with target hours and on-time bedtime',
-        emoji: '🌙',
-        xpReward: 125,
-        check: (s) => s.sleepLogs.some(l => l.hours >= s.sleepGoals.duration)
-      },
-      {
-        id: 'workout_warrior',
-        name: 'Workout Warrior',
-        desc: 'Log at least 3 total workouts',
-        emoji: '💪',
-        xpReward: 150,
-        check: (s) => s.workouts.length >= 3
-      },
-      {
-        id: 'screentime_guru',
-        name: 'Digital Balance',
-        desc: 'Log a screen time day under your daily limit',
-        emoji: '🧘',
-        xpReward: 100,
-        check: (s) => s.screenTime.some(st => st.totalMins <= s.screenTimeLimitMins)
-      },
-      {
-        id: 'globe_trotter',
-        name: 'Globe Trotter',
-        desc: 'Check off at least 2 travel milestones',
-        emoji: '✈️',
-        xpReward: 150,
-        check: (s) => s.travel.filter(t => t.done).length >= 2
-      },
-      {
-        id: 'wealth_builder',
-        name: 'Wealth Builder',
-        desc: 'Achieve a Net Worth of over $100,000',
-        emoji: '💎',
-        xpReward: 250,
-        check: (s) => (s.bankAccounts || []).reduce((sum, a) => sum + (a.balance || 0), 0) >= 100000
-      }
+      { id: 'streak_3', name: 'Spark of Consistency', desc: 'Maintain a 3-day habit streak', emoji: '🔥', xpReward: 100, check: (s) => s.streak >= 3 },
+      { id: 'task_master_5', name: 'Task Crusher', desc: 'Complete 5 or more to-do tasks', emoji: '🎯', xpReward: 100, check: (s) => s.todos.filter(t => t.completed).length >= 5 },
+      { id: 'water_champ', name: 'Hydration Hero', desc: 'Reach your daily water goal (100%)', emoji: '🌊', xpReward: 75, check: (s) => s.todayWater >= s.waterGoal },
+      { id: 'sleep_master', name: 'Circadian Sync', desc: 'Log a night with target hours and on-time bedtime', emoji: '🌙', xpReward: 125, check: (s) => s.sleepLogs.some(l => l.hours >= s.sleepGoals.duration) },
+      { id: 'workout_warrior', name: 'Workout Warrior', desc: 'Log at least 3 total workouts', emoji: '💪', xpReward: 150, check: (s) => s.workouts.length >= 3 },
+      { id: 'screentime_guru', name: 'Digital Balance', desc: 'Log a screen time day under your daily limit', emoji: '🧘', xpReward: 100, check: (s) => s.screenTime.some(st => (st.totalMins || st.mins) <= s.screenTimeLimitMins) },
+      { id: 'globe_trotter', name: 'Globe Trotter', desc: 'Check off at least 2 travel milestones', emoji: '✈️', xpReward: 150, check: (s) => s.travel.filter(t => t.done).length >= 2 },
+      { id: 'wealth_builder', name: 'Wealth Builder', desc: 'Achieve a Net Worth of over $100,000', emoji: '💎', xpReward: 250, check: (s) => (s.bankAccounts || []).reduce((sum, a) => sum + (a.balance || 0), 0) >= 100000 }
     ];
 
     function loadState() {
@@ -1356,8 +1327,6 @@ document.addEventListener('DOMContentLoaded', initAuthAndSync);
       if (typeof state.paycheck !== 'number') state.paycheck = 0.00;
 
       const todayStr = new Date().toLocaleDateString();
-
-      // Check daily reset for water
       if (state.lastWaterDate !== todayStr) {
         state.todayWater = 0;
         state.lastWaterDate = todayStr;
@@ -1373,22 +1342,119 @@ document.addEventListener('DOMContentLoaded', initAuthAndSync);
       initChart();
       evaluateBadges(false);
       updateUI();
+      checkFirstTimeTour();
+      initAuthAndSync();
     }
 
     function saveState() {
       localStorage.setItem('good_habits_state', JSON.stringify(state));
       updateUI();
+      evaluateCalorieStatus();
+      pushStateToCloud();
+    }
+
+    // --- ONBOARDING TOUR LOGIC ---
+    let tourStep = 0;
+    const tourContent = [
+      { title: "Meet Beaty, Your Coach! ⚡", desc: "Beaty pulses along with your habits. When you exercise or eat healthy, Beaty thrives. When you are nearing your calorie budget or overspending, Beaty steps in with advice!" },
+      { title: "🥗 Calorie & Nutrition Guard", desc: "Type in any meal (like 'plain bagel with butter') and Gemini AI instantly calculates calories and macros. Beaty alerts you right at the 80% mark before you go over budget!" },
+      { title: "💰 Zero-Based Envelopes & Banking", desc: "Organize paychecks into virtual envelopes tied to your actual bank accounts. Log incomes, subtract expenses, and track your net worth and investments separately." },
+      { title: "⚡ Level Up & Earn Badges", desc: "Every clean habit earns XP! Early sleep (+20 XP bonus), water tracking, and crushing daily workout goals will level up your account. Everything syncs across devices when signed in!" }
+    ];
+
+    function checkFirstTimeTour() {
+      if (!state.hasSeenTour) {
+        document.getElementById('onboarding-modal').classList.remove('hidden');
+        renderTourStep();
+      }
+    }
+
+    function renderTourStep() {
+      document.getElementById('tour-title').textContent = tourContent[tourStep].title;
+      document.getElementById('tour-desc').textContent = tourContent[tourStep].desc;
+      for (let i = 0; i < 4; i++) {
+        const dot = document.getElementById(`dot-${i}`);
+        if (i === tourStep) dot.className = "w-2.5 h-2.5 rounded-full bg-indigo-600";
+        else dot.className = "w-2.5 h-2.5 rounded-full bg-slate-200";
+      }
+      document.getElementById('tour-next-btn').textContent = tourStep === 3 ? "Let's Begin! 🚀" : "Next →";
+    }
+
+    function nextTourStep() {
+      if (tourStep < 3) {
+        tourStep++;
+        renderTourStep();
+      } else {
+        skipTour();
+      }
+    }
+
+    function skipTour() {
+      state.hasSeenTour = true;
+      saveState();
+      document.getElementById('onboarding-modal').classList.add('hidden');
+      if (typeof confetti === 'function') confetti({ particleCount: 50, spread: 60 });
+    }
+
+    function openTourAgain() {
+      tourStep = 0;
+      renderTourStep();
+      document.getElementById('onboarding-modal').classList.remove('hidden');
+    }
+
+    // --- BEATY CALORIE WATCH & REAL-TIME STATUS ---
+    function evaluateCalorieStatus() {
+      const consumed = state.foodLogs.reduce((sum, f) => sum + (f.cals || 0), 0);
+      const limit = state.macroGoals.cals || 2000;
+      const ratio = consumed / limit;
+      const remaining = Math.max(0, limit - consumed);
+
+      const pill = document.getElementById('beaty-cal-pill');
+      const badge = document.getElementById('beaty-alert-badge');
+      const advice = document.getElementById('beaty-advice-text');
+
+      if (pill) pill.textContent = `${consumed} / ${limit} kcal`;
+
+      if (ratio >= 1.0) {
+        if (badge) {
+          badge.classList.remove('hidden');
+          badge.textContent = "🚨 Calorie Limit Exceeded!";
+          badge.className = "text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-rose-100 text-rose-800 animate-pulse";
+        }
+        if (advice) {
+          advice.textContent = `"Heads up! We've passed our ${limit} kcal target (${consumed} kcal). Drink some water or get in a brisk walk to keep our energy balanced!"`;
+        }
+      } else if (ratio >= 0.8) {
+        if (badge) {
+          badge.classList.remove('hidden');
+          badge.textContent = `⚠️ 80% Mark (${remaining} kcal left)`;
+          badge.className = "text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 animate-bounce";
+        }
+        if (advice) {
+          advice.textContent = `"Attention: We are at ${Math.round(ratio * 100)}% of our calorie budget (${consumed}/${limit} kcal). Only ${remaining} kcal left—keep your next meal light!"`;
+        }
+      } else {
+        if (badge) badge.classList.add('hidden');
+        if (advice) {
+          advice.textContent = `"Pacing looks solid! We're at ${consumed} kcal. Drink your water and log your meals as you eat to keep your routine balanced."`;
+        }
+      }
+    }
+
+    function pokeBeaty() {
+      const quotes = [
+        "Beaty says: Consistency is everything. Win the morning, win the day!",
+        "Every clean meal and brisk walk keeps your resting heart rate optimal!",
+        "Remember to hydrate: oxygen flows smoother when your fluids are topped up!",
+        "Sleeping before your target bedtime earns that +20 XP Schedule Bonus!"
+      ];
+      const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
+      triggerMascotPopup("Beaty Coach Tip", randomQuote);
     }
 
     function checkRecurringResets() {
       const now = Date.now();
-      const periods = {
-        daily: 24 * 60 * 60 * 1000,
-        weekly: 7 * 24 * 60 * 60 * 1000,
-        biweekly: 14 * 24 * 60 * 60 * 1000,
-        monthly: 30 * 24 * 60 * 60 * 1000
-      };
-
+      const periods = { daily: 86400000, weekly: 604800000, biweekly: 1209600000, monthly: 2592000000 };
       let stateChanged = false;
       state.todos = state.todos.map(t => {
         if (t.isRecurring && t.completed && t.completedAt) {
@@ -1401,7 +1467,6 @@ document.addEventListener('DOMContentLoaded', initAuthAndSync);
         }
         return t;
       });
-
       if (stateChanged) saveState();
     }
 
@@ -1409,22 +1474,18 @@ document.addEventListener('DOMContentLoaded', initAuthAndSync);
       document.getElementById('mascot-popup-title').textContent = title;
       document.getElementById('mascot-popup-msg').textContent = message;
       document.getElementById('mascot-popup').classList.remove('hidden');
-      
-      if (typeof confetti === 'function') {
-        confetti({ particleCount: 50, spread: 70, origin: { y: 0.6 } });
-      }
+      if (typeof confetti === 'function') confetti({ particleCount: 50, spread: 70, origin: { y: 0.6 } });
     }
 
     function awardXP(amount, reason = "Great Job!") {
       state.xp += amount;
       const nextLevelXP = state.level * 100;
-
       if (state.xp >= nextLevelXP) {
         state.xp -= nextLevelXP;
         state.level += 1;
-        triggerMascotPopup("LEVEL UP! 🎉", `Pulse is so proud! You reached Level ${state.level}!`);
+        triggerMascotPopup("LEVEL UP! 🎉", `Beaty is so proud! You reached Level ${state.level}!`);
       } else {
-        triggerMascotPopup(`+${amount} XP Earned! ❤️`, reason);
+        triggerMascotPopup(`+${amount} XP Earned! ⚡`, reason);
       }
       evaluateBadges(true);
       saveState();
@@ -1433,12 +1494,10 @@ document.addEventListener('DOMContentLoaded', initAuthAndSync);
     function deductXP(amount) {
       if (!amount || amount <= 0) return;
       state.xp -= amount;
-
       while (state.xp < 0 && state.level > 1) {
         state.level -= 1;
         state.xp += state.level * 100;
       }
-
       if (state.xp < 0) state.xp = 0;
       saveState();
     }
@@ -1449,42 +1508,26 @@ document.addEventListener('DOMContentLoaded', initAuthAndSync);
         if (!isUnlocked && b.check(state)) {
           state.unlockedBadges.push(b.id);
           state.xp += b.xpReward;
-          if (notify) {
-            triggerMascotPopup(`🏆 BADGE UNLOCKED: ${b.name}!`, `${b.desc} • You gained +${b.xpReward} XP!`);
-          }
+          if (notify) triggerMascotPopup(`🏆 BADGE UNLOCKED: ${b.name}!`, `${b.desc} • You gained +${b.xpReward} XP!`);
         }
       });
     }
 
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-      document.querySelectorAll('.nav-btn').forEach(btn => {
-        btn.classList.remove('active', 'bg-indigo-50', 'text-indigo-600', 'font-bold');
-      });
+      document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active', 'bg-indigo-50', 'text-indigo-600', 'font-bold'));
 
       const target = document.getElementById(tabId);
       if (target) target.classList.add('active');
 
       const activeBtn = document.getElementById(`btn-${tabId}`);
-      if (activeBtn) {
-        activeBtn.classList.add('active', 'bg-indigo-50', 'text-indigo-600', 'font-bold');
-      }
+      if (activeBtn) activeBtn.classList.add('active', 'bg-indigo-50', 'text-indigo-600', 'font-bold');
+      evaluateCalorieStatus();
     }
 
     function setupEventListeners() {
-      document.getElementById('header-mascot-trigger').addEventListener('click', () => {
-        const quotes = [
-          "Pulse says: Every small habit counts towards a big future!",
-          "Keep going! You're crushing your daily goals!",
-          "Remember to hydrate and take quick stretch breaks today!"
-        ];
-        const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
-        triggerMascotPopup("Pulse is Cheering For You!", randomQuote);
-      });
-
-      document.getElementById('btn-close-mascot').addEventListener('click', () => {
-        document.getElementById('mascot-popup').classList.add('hidden');
-      });
+      document.getElementById('header-mascot-trigger').addEventListener('click', pokeBeaty);
+      document.getElementById('btn-close-mascot').addEventListener('click', () => document.getElementById('mascot-popup').classList.add('hidden'));
 
       ['dashboard', 'todo', 'wellness', 'finance', 'food', 'exercise', 'screentime', 'travel', 'badges'].forEach(tab => {
         const btn = document.getElementById(`btn-${tab}`);
@@ -1508,7 +1551,6 @@ document.addEventListener('DOMContentLoaded', initAuthAndSync);
       document.getElementById('form-travel').addEventListener('submit', addTravelGoal);
       document.getElementById('form-custom-sec').addEventListener('submit', createCustomSection);
 
-      // FINANCE EVENT LISTENERS
       document.getElementById('btn-edit-paycheck').addEventListener('click', updatePaycheckAmount);
       document.getElementById('btn-add-account').addEventListener('click', openAddAccountModal);
       document.getElementById('btn-close-acc-modal').addEventListener('click', closeAddAccountModal);
@@ -1524,34 +1566,22 @@ document.addEventListener('DOMContentLoaded', initAuthAndSync);
       document.getElementById('inc-bucket-select').addEventListener('change', updateIncomeAccountPreview);
       document.getElementById('exp-bucket-select').addEventListener('change', updateExpenseAccountPreview);
 
-      // Wellness Events
       document.getElementById('btn-edit-macro-goals').addEventListener('click', updateMacroGoals);
       document.getElementById('btn-claim-cal-xp').addEventListener('click', claimCalorieXP);
       document.getElementById('btn-edit-water-goal').addEventListener('click', updateWaterGoal);
       document.getElementById('btn-edit-sleep-goals').addEventListener('click', updateSleepGoals);
       document.getElementById('form-sleep').addEventListener('submit', logSleep);
 
-      // Weight & Chart Events
       document.getElementById('form-log-weight').addEventListener('submit', logWeight);
       document.getElementById('btn-edit-st-limit').addEventListener('click', updateScreenTimeLimit);
-
-      // Travel Bucket Creation Event
       document.getElementById('btn-create-travel-bucket').addEventListener('click', createTravelBucket);
-
-      // Exercise Goals Edit Event
       document.getElementById('btn-edit-exercise-goals').addEventListener('click', updateExerciseGoals);
 
-      // Screen time live total calculator listener
-      document.querySelectorAll('.st-category-input').forEach(input => {
-        input.addEventListener('input', updateScreenTimeLivePreview);
-      });
+      document.querySelectorAll('.st-category-input').forEach(input => input.addEventListener('input', updateScreenTimeLivePreview));
     }
 
-    // =========================================================
-    // FINANCE LOGIC: ACCOUNTS + BUCKETS + SEPARATE INVESTMENTS
-    // =========================================================
+    // --- FINANCE LOGIC ---
     function getFinanceNetWorth() {
-      // Sum strictly across bank accounts (no double-counting with investment buckets)
       return (state.bankAccounts || []).reduce((sum, acc) => sum + (acc.balance || 0), 0);
     }
 
@@ -1563,24 +1593,13 @@ document.addEventListener('DOMContentLoaded', initAuthAndSync);
       }
     }
 
-    // Bank Account Modals (Starts at $0, money is added via bucket initial funds or deposits)
-    function openAddAccountModal() {
-      document.getElementById('modal-add-account').classList.remove('hidden');
-    }
-    function closeAddAccountModal() {
-      document.getElementById('modal-add-account').classList.add('hidden');
-    }
+    function openAddAccountModal() { document.getElementById('modal-add-account').classList.remove('hidden'); }
+    function closeAddAccountModal() { document.getElementById('modal-add-account').classList.add('hidden'); }
     function commitAddAccount(e) {
       e.preventDefault();
       const name = document.getElementById('acc-name-input').value.trim();
       if (!name) return;
-
-      state.bankAccounts.push({
-        id: 'acc_' + Date.now(),
-        name,
-        balance: 0.00 // Always starts at 0; funded through buckets
-      });
-
+      state.bankAccounts.push({ id: 'acc_' + Date.now(), name, balance: 0.00 });
       document.getElementById('acc-name-input').value = '';
       closeAddAccountModal();
       saveState();
@@ -1599,7 +1618,7 @@ document.addEventListener('DOMContentLoaded', initAuthAndSync);
     function deleteAccount(accId) {
       const tiedBuckets = state.budgetBuckets.filter(b => b.accountId === accId);
       if (tiedBuckets.length > 0) {
-        alert(`Cannot delete this account while ${tiedBuckets.length} bucket(s) are tied to it. Delete or reassign those buckets first.`);
+        alert(`Cannot delete this account while ${tiedBuckets.length} bucket(s) are tied to it.`);
         return;
       }
       if (confirm("Delete this bank account?")) {
@@ -1608,7 +1627,6 @@ document.addEventListener('DOMContentLoaded', initAuthAndSync);
       }
     }
 
-    // Budget Bucket Modals
     function openAddBucketModal() {
       if (state.bankAccounts.length === 0) {
         alert("Please add at least one Bank Account first so this bucket can be tied to it!");
@@ -1618,9 +1636,7 @@ document.addEventListener('DOMContentLoaded', initAuthAndSync);
       accSelect.innerHTML = state.bankAccounts.map(a => `<option value="${a.id}">${a.name}</option>`).join('');
       document.getElementById('modal-add-bucket').classList.remove('hidden');
     }
-    function closeAddBucketModal() {
-      document.getElementById('modal-add-bucket').classList.add('hidden');
-    }
+    function closeAddBucketModal() { document.getElementById('modal-add-bucket').classList.add('hidden'); }
     function commitAddBucket(e) {
       e.preventDefault();
       const name = document.getElementById('bkt-name-input').value.trim();
@@ -1630,22 +1646,10 @@ document.addEventListener('DOMContentLoaded', initAuthAndSync);
       const isInvestment = document.getElementById('bkt-is-investment').checked;
 
       if (!name || !accountId) return;
-
-      // Initial bucket funds directly increase the tied bank account balance
       const account = state.bankAccounts.find(a => a.id === accountId);
-      if (account && currentAmount > 0) {
-        account.balance = (account.balance || 0) + currentAmount;
-      }
+      if (account && currentAmount > 0) account.balance = (account.balance || 0) + currentAmount;
 
-      state.budgetBuckets.push({
-        id: 'bkt_' + Date.now(),
-        name,
-        accountId,
-        pct,
-        currentAmount,
-        isInvestment
-      });
-
+      state.budgetBuckets.push({ id: 'bkt_' + Date.now(), name, accountId, pct, currentAmount, isInvestment });
       document.getElementById('bkt-name-input').value = '';
       document.getElementById('bkt-pct-input').value = '0.00';
       document.getElementById('bkt-initial-funds').value = '0.00';
@@ -1659,12 +1663,10 @@ document.addEventListener('DOMContentLoaded', initAuthAndSync);
       if (!bkt) return;
       const newPct = prompt(`Paycheck allocation % for "${bkt.name}":`, bkt.pct);
       const newFunds = prompt(`Current funds in "${bkt.name}" ($):`, bkt.currentAmount);
-
       if (newPct !== null && !isNaN(newPct)) bkt.pct = parseFloat(newPct);
       if (newFunds !== null && !isNaN(newFunds)) {
         const diff = parseFloat(newFunds) - (bkt.currentAmount || 0);
         bkt.currentAmount = parseFloat(newFunds);
-        // Automatically sync difference to tied bank account
         const account = state.bankAccounts.find(a => a.id === bkt.accountId);
         if (account) account.balance = (account.balance || 0) + diff;
       }
@@ -1673,20 +1675,15 @@ document.addEventListener('DOMContentLoaded', initAuthAndSync);
 
     function toggleBucketInvestment(bktId) {
       const bkt = state.budgetBuckets.find(b => b.id === bktId);
-      if (bkt) {
-        bkt.isInvestment = !bkt.isInvestment;
-        saveState();
-      }
+      if (bkt) { bkt.isInvestment = !bkt.isInvestment; saveState(); }
     }
 
     function deleteBucket(bktId) {
       const bkt = state.budgetBuckets.find(b => b.id === bktId);
       if (!bkt) return;
-      if (confirm(`Delete bucket "${bkt.name}"? (Note: The tied bank account balance will decrease by this bucket's current funds: $${(bkt.currentAmount || 0).toFixed(2)})`)) {
+      if (confirm(`Delete bucket "${bkt.name}"? Tied bank balance will decrease by $${(bkt.currentAmount || 0).toFixed(2)}.`)) {
         const account = state.bankAccounts.find(a => a.id === bkt.accountId);
-        if (account) {
-          account.balance = Math.max(0, (account.balance || 0) - (bkt.currentAmount || 0));
-        }
+        if (account) account.balance = Math.max(0, (account.balance || 0) - (bkt.currentAmount || 0));
         state.budgetBuckets = state.budgetBuckets.filter(b => b.id !== bktId);
         saveState();
       }
@@ -1706,47 +1703,29 @@ document.addEventListener('DOMContentLoaded', initAuthAndSync);
       document.getElementById('exp-account-preview').innerHTML = `<option>${acc ? 'Deducts: ' + acc.name : 'Deducts From...'}</option>`;
     }
 
-    // Income submission (Savings & Investment receive DOUBLE XP: +100 XP)
     function handleIncomeSubmit(e) {
       e.preventDefault();
       const desc = document.getElementById('inc-desc').value.trim();
       const amount = parseFloat(document.getElementById('inc-amount').value);
       const bucketId = document.getElementById('inc-bucket-select').value;
-
       if (!bucketId || isNaN(amount) || amount <= 0) return;
 
       const bucket = state.budgetBuckets.find(b => b.id === bucketId);
       if (!bucket) return;
-
       const account = state.bankAccounts.find(a => a.id === bucket.accountId);
 
       bucket.currentAmount = (bucket.currentAmount || 0) + amount;
-      if (account) {
-        account.balance = (account.balance || 0) + amount;
-      }
+      if (account) account.balance = (account.balance || 0) + amount;
 
-      // Check for Savings or Investment for DOUBLE XP
       const nameLower = bucket.name.toLowerCase();
       const isSavingsOrInvest = bucket.isInvestment || nameLower.includes('saving') || nameLower.includes('invest') || nameLower.includes('retirement');
       const xpEarned = isSavingsOrInvest ? 100 : 50;
 
-      state.incomeLogs.unshift({
-        id: Date.now(),
-        desc,
-        amount,
-        bucketId,
-        bucketName: bucket.name,
-        accountName: account ? account.name : 'Unassigned',
-        xpEarned
-      });
-
+      state.incomeLogs.unshift({ id: Date.now(), desc, amount, bucketId, bucketName: bucket.name, accountName: account ? account.name : 'Unassigned', xpEarned });
       document.getElementById('inc-desc').value = '';
       document.getElementById('inc-amount').value = '';
-      
-      const reasonMsg = isSavingsOrInvest 
-        ? `DOUBLE XP BONUS! Added $${amount.toFixed(2)} to ${bucket.name} (+100 XP)!` 
-        : `Deposit logged: +$${amount.toFixed(2)} to ${bucket.name}!`;
 
+      const reasonMsg = isSavingsOrInvest ? `DOUBLE XP BONUS! Added $${amount.toFixed(2)} to ${bucket.name} (+100 XP)!` : `Deposit logged: +$${amount.toFixed(2)} to ${bucket.name}!`;
       awardXP(xpEarned, reasonMsg);
       saveState();
     }
@@ -1766,34 +1745,21 @@ document.addEventListener('DOMContentLoaded', initAuthAndSync);
       saveState();
     }
 
-    // Expense submission (Debits Bucket + Debits Linked Bank Account)
     function handleExpenseSubmit(e) {
       e.preventDefault();
       const desc = document.getElementById('exp-desc').value.trim();
       const amount = parseFloat(document.getElementById('exp-amount').value);
       const bucketId = document.getElementById('exp-bucket-select').value;
-
       if (!bucketId || isNaN(amount) || amount <= 0) return;
 
       const bucket = state.budgetBuckets.find(b => b.id === bucketId);
       if (!bucket) return;
-
       const account = state.bankAccounts.find(a => a.id === bucket.accountId);
 
       bucket.currentAmount = (bucket.currentAmount || 0) - amount;
-      if (account) {
-        account.balance = (account.balance || 0) - amount;
-      }
+      if (account) account.balance = (account.balance || 0) - amount;
 
-      state.expenseLogs.unshift({
-        id: Date.now(),
-        desc,
-        amount,
-        bucketId,
-        bucketName: bucket.name,
-        accountName: account ? account.name : 'Unassigned'
-      });
-
+      state.expenseLogs.unshift({ id: Date.now(), desc, amount, bucketId, bucketName: bucket.name, accountName: account ? account.name : 'Unassigned' });
       document.getElementById('exp-desc').value = '';
       document.getElementById('exp-amount').value = '';
       saveState();
@@ -1813,9 +1779,7 @@ document.addEventListener('DOMContentLoaded', initAuthAndSync);
       saveState();
     }
 
-    // =========================================================
-    // SCREEN TIME MULTI-CATEGORY BREAKDOWN
-    // =========================================================
+    // --- SCREEN TIME LOGIC ---
     function updateScreenTimeLivePreview() {
       const social = parseInt(document.getElementById('st-social').value) || 0;
       const entertain = parseInt(document.getElementById('st-entertain').value) || 0;
@@ -1828,10 +1792,8 @@ document.addEventListener('DOMContentLoaded', initAuthAndSync);
       const h = Math.floor(totalMins / 60);
       const m = totalMins % 60;
 
-      const liveLbl = document.getElementById('st-live-total');
+      document.getElementById('st-live-total').textContent = `${h}h ${m}m (${totalMins} mins)`;
       const targetLbl = document.getElementById('st-live-target-status');
-
-      liveLbl.textContent = `${h}h ${m}m (${totalMins} mins)`;
 
       if (totalMins <= state.screenTimeLimitMins) {
         targetLbl.textContent = `🎯 Under Daily Target Limit (${Math.floor(state.screenTimeLimitMins / 60)}h)`;
@@ -1860,23 +1822,14 @@ document.addEventListener('DOMContentLoaded', initAuthAndSync);
 
       let earnedXP = 10;
       let msg = "Yesterday's screen time breakdown logged (+10 XP)";
-
       if (totalMins <= state.screenTimeLimitMins) {
         earnedXP += 20;
         msg += " + Under Limit Bonus! (+20 XP)";
       }
 
-      state.screenTime.unshift({
-        id: Date.now(),
-        date: dateStr,
-        totalMins,
-        categories: { social, entertain, work, gaming, messaging, other },
-        xpEarned: earnedXP
-      });
-
+      state.screenTime.unshift({ id: Date.now(), date: dateStr, totalMins, categories: { social, entertain, work, gaming, messaging, other }, xpEarned: earnedXP });
       document.querySelectorAll('.st-category-input').forEach(i => i.value = '0');
       updateScreenTimeLivePreview();
-
       awardXP(earnedXP, msg);
       saveState();
     }
@@ -1896,31 +1849,22 @@ document.addEventListener('DOMContentLoaded', initAuthAndSync);
       }
     }
 
-    // =========================================================
-    // SECURE SERVERLESS GEMINI CALLER (VERCEL BACKEND)
-    // =========================================================
+    // --- GEMINI SERVERLESS CALLER ---
     async function callGeminiPrompt(promptText) {
       const response = await fetch('/api/gemini', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          systemInstruction: '',
-          userPrompt: promptText
-        })
+        body: JSON.stringify({ systemInstruction: '', userPrompt: promptText })
       });
-
       if (!response.ok) {
         const errData = await response.json().catch(() => ({}));
         throw new Error(errData.error || `HTTP ${response.status}`);
       }
-
       const data = await response.json();
       return typeof data === 'string' ? data : JSON.stringify(data);
     }
 
-    // =========================================================
-    // CONVERSATIONAL GEMINI AI NUTRITION ASSISTANT
-    // =========================================================
+    // --- GEMINI NUTRITION ASSISTANT ---
     async function handleAIFoodChat(e) {
       e.preventDefault();
       const promptInput = document.getElementById('ai-food-prompt');
@@ -1928,38 +1872,19 @@ document.addEventListener('DOMContentLoaded', initAuthAndSync);
       const output = document.getElementById('ai-food-output');
       const btn = document.getElementById('btn-ai-food-submit');
       const userText = promptInput.value.trim();
-
       if (!userText) return;
 
       btn.disabled = true;
       btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>`;
       output.classList.remove('hidden');
-      output.innerHTML = `
-        <div class="p-4 bg-white/90 border border-emerald-200 rounded-2xl flex items-center justify-center gap-3 text-xs text-slate-600 shadow-sm">
-          <span>✨</span>
-          <span>Gemini AI is analyzing "${userText.length > 30 ? userText.slice(0,27)+'...' : userText}"...</span>
-        </div>
-      `;
+      output.innerHTML = `<div class="p-4 bg-white/90 border border-emerald-200 rounded-2xl flex items-center justify-center gap-3 text-xs text-slate-600 shadow-sm"><span>✨</span><span>Gemini AI is analyzing "${userText.length > 30 ? userText.slice(0,27)+'...' : userText}"...</span></div>`;
 
       try {
         const fullPrompt = `You are an expert AI clinical nutritionist.
 The user describes a food or meal they ate: "${userText}" (Category: ${mealType}).
-Calculate the realistic total calories and complete macronutrient profile (Protein, Carbohydrates, Fat) using standard nutrition benchmarks.
-BENCHMARKS:
-- Plain bagel (~105g): ~290 kcal, ~56g carbs, ~10g protein, ~1.5g fat.
-- 1 tbsp butter: ~100 kcal, 0g carbs, 0g protein, ~11.5g fat.
-- Plain bagel with butter = ~390 kcal, ~56g carbs, ~10g protein, ~13g fat.
-- 1 standard chicken nugget = ~45 kcal, ~2.5g protein, ~2.5g carbs, ~3g fat.
-
-Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extra text) with this exact schema:
-{
-  "foodName": "Concise clean food name",
-  "calories": 390,
-  "protein": 10,
-  "carbs": 56,
-  "fat": 13,
-  "summary": "1 sentence explanation of calculation"
-}`;
+Calculate realistic total calories and complete macronutrient profile (Protein, Carbohydrates, Fat) using standard nutrition benchmarks.
+Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extra text):
+{"foodName": "Concise clean food name", "calories": 390, "protein": 10, "carbs": 56, "fat": 13, "summary": "1 sentence explanation"}`;
 
         const rawResponse = await callGeminiPrompt(fullPrompt);
         const cleanedJson = rawResponse.replace(/```json/g, '').replace(/```/g, '').trim();
@@ -1984,43 +1909,22 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
                 <span class="text-xs font-bold text-slate-500">kcal</span>
               </div>
             </div>
-
-            <!-- Macros Bar Display -->
             <div class="grid grid-cols-3 gap-2 text-center">
-              <div class="p-2.5 bg-rose-50 border border-rose-100 rounded-xl">
-                <p class="text-[10px] font-bold text-rose-500 uppercase tracking-wider">Protein</p>
-                <p class="text-base font-black text-rose-600">${p}g</p>
-              </div>
-              <div class="p-2.5 bg-amber-50 border border-amber-100 rounded-xl">
-                <p class="text-[10px] font-bold text-amber-500 uppercase tracking-wider">Carbs</p>
-                <p class="text-base font-black text-amber-600">${c}g</p>
-              </div>
-              <div class="p-2.5 bg-sky-50 border border-sky-100 rounded-xl">
-                <p class="text-[10px] font-bold text-sky-600 uppercase tracking-wider">Fats</p>
-                <p class="text-base font-black text-sky-600">${f}g</p>
-              </div>
+              <div class="p-2.5 bg-rose-50 border border-rose-100 rounded-xl"><p class="text-[10px] font-bold text-rose-500 uppercase">Protein</p><p class="text-base font-black text-rose-600">${p}g</p></div>
+              <div class="p-2.5 bg-amber-50 border border-amber-100 rounded-xl"><p class="text-[10px] font-bold text-amber-500 uppercase">Carbs</p><p class="text-base font-black text-amber-600">${c}g</p></div>
+              <div class="p-2.5 bg-sky-50 border border-sky-100 rounded-xl"><p class="text-[10px] font-bold text-sky-600 uppercase">Fats</p><p class="text-base font-black text-sky-600">${f}g</p></div>
             </div>
-
-            <p class="text-xs text-slate-600 font-medium leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-100">
-              <span>💡</span> ${summary}
-            </p>
-
+            <p class="text-xs text-slate-600 font-medium leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-100"><span>💡</span> ${summary}</p>
             <div class="flex items-center justify-between pt-1">
               <button type="button" onclick="document.getElementById('ai-food-output').classList.add('hidden')" class="text-xs font-bold text-slate-400 hover:text-slate-600">Dismiss</button>
-              <button type="button" onclick="commitAIFoodDirect('${foodName.replace(/'/g, "\\'")}', '${mealType}', ${cals}, ${p}, ${c}, ${f})" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-extrabold px-5 py-2.5 rounded-xl text-xs transition shadow-md shadow-emerald-100 flex items-center gap-2">
+              <button type="button" onclick="commitAIFoodDirect('${foodName.replace(/'/g, "\\'")}', '${mealType}', ${cals}, ${p}, ${c}, ${f})" class="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white font-extrabold px-5 py-2.5 rounded-xl text-xs transition shadow-md flex items-center gap-2">
                 <i class="fa-solid fa-plus"></i> Log This Meal
               </button>
             </div>
           </div>
         `;
       } catch (err) {
-        console.error("AI Nutrition Assistant Error:", err);
-        output.innerHTML = `
-          <div class="p-4 bg-rose-50 border border-rose-200 rounded-2xl text-xs text-rose-700 space-y-2">
-            <p class="font-bold flex items-center gap-1.5"><i class="fa-solid fa-triangle-exclamation"></i> AI Analysis Error</p>
-            <p>${err.message || "Failed to contact Gemini. Please verify your connection or API key."}</p>
-          </div>
-        `;
+        output.innerHTML = `<div class="p-4 bg-rose-50 border border-rose-200 rounded-2xl text-xs text-rose-700 font-bold">${err.message || "Failed to contact Gemini."}</div>`;
       } finally {
         btn.disabled = false;
         btn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Ask AI`;
@@ -2028,27 +1932,14 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
     }
 
     function commitAIFoodDirect(name, mealType, cals, p, c, f) {
-      state.foodLogs.push({
-        id: Date.now(),
-        name,
-        mealType: mealType || 'Lunch',
-        cals: parseInt(cals),
-        p: parseInt(p),
-        c: parseInt(c),
-        f: parseInt(f),
-        qty: 1
-      });
-
+      state.foodLogs.push({ id: Date.now(), name, mealType: mealType || 'Lunch', cals: parseInt(cals), p: parseInt(p), c: parseInt(c), f: parseInt(f), qty: 1 });
       document.getElementById('ai-food-output').classList.add('hidden');
       document.getElementById('ai-food-prompt').value = '';
-
-      triggerMascotPopup("Meal Logged!", `Added ${mealType}: ${name} (${cals} kcal) to your nutrition log!`);
+      triggerMascotPopup("Meal Logged!", `Added ${mealType}: ${name} (${cals} kcal)!`);
       saveState();
     }
 
-    // =========================================================
-    // CONVERSATIONAL GEMINI AI EXERCISE ASSISTANT
-    // =========================================================
+    // --- GEMINI EXERCISE ASSISTANT ---
     async function handleAIExerciseChat(e) {
       e.preventDefault();
       const promptInput = document.getElementById('ai-ex-prompt');
@@ -2057,40 +1948,19 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
       const btn = document.getElementById('btn-ai-ex-submit');
       const userText = promptInput.value.trim();
       const weightLbs = parseFloat(weightInput.value) || 175;
-
       if (!userText) return;
 
       btn.disabled = true;
       btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i>`;
       output.classList.remove('hidden');
-      output.innerHTML = `
-        <div class="p-4 bg-white/90 border border-sky-200 rounded-2xl flex items-center justify-center gap-3 text-xs text-slate-600 shadow-sm">
-          <span>✨</span>
-          <span>Gemini AI is analyzing "${userText.length > 30 ? userText.slice(0,27)+'...' : userText}"...</span>
-        </div>
-      `;
+      output.innerHTML = `<div class="p-4 bg-white/90 border border-sky-200 rounded-2xl flex items-center justify-center gap-3 text-xs text-slate-600 shadow-sm"><span>✨</span><span>Gemini AI is analyzing "${userText.length > 30 ? userText.slice(0,27)+'...' : userText}"...</span></div>`;
 
       try {
         const fullPrompt = `You are an expert exercise physiologist.
-The user describes a workout or physical activity: "${userText}".
-User's body weight is ${weightLbs} lbs (${Math.round(weightLbs / 2.20462)} kg).
-Calculate:
-1. Standard clean workout title.
-2. Estimated duration in minutes (if unspecified, default to 30 mins).
-3. Realistic calories burned using Compendium MET formula: Burn = MET × Weight_kg × (Duration_mins / 60).
-   - Swimming laps vigorous: 10.0 MET | Moderate: 8.0 MET
-   - Basketball game: 8.0 MET
-   - Running (6 mph): 9.8 MET
-   - Brisk walking (3.5 mph): 4.3 MET
-   - Weight lifting: 4.5 MET
-
-Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extra text) with this exact schema:
-{
-  "workoutName": "Clean Title (e.g. Vigorous Lap Swimming)",
-  "durationMins": 30,
-  "caloriesBurned": 275,
-  "summary": "1 sentence explanation of MET rating and energy expenditure"
-}`;
+User describes activity: "${userText}". Body weight: ${weightLbs} lbs (${Math.round(weightLbs / 2.20462)} kg).
+Calculate clean title, duration in mins, realistic calories burned using Compendium MET formula.
+Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extra text):
+{"workoutName": "Clean Title", "durationMins": 30, "caloriesBurned": 275, "summary": "1 sentence explanation"}`;
 
         const rawResponse = await callGeminiPrompt(fullPrompt);
         const cleanedJson = rawResponse.replace(/```json/g, '').replace(/```/g, '').trim();
@@ -2113,38 +1983,21 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
                 <span class="text-xs font-bold text-slate-500">kcal burned</span>
               </div>
             </div>
-
             <div class="grid grid-cols-2 gap-3 text-center">
-              <div class="p-3 bg-sky-50 border border-sky-100 rounded-xl">
-                <p class="text-[10px] font-bold text-sky-500 uppercase tracking-wider">Duration</p>
-                <p class="text-lg font-black text-sky-700">${mins} mins</p>
-              </div>
-              <div class="p-3 bg-indigo-50 border border-indigo-100 rounded-xl">
-                <p class="text-[10px] font-bold text-indigo-500 uppercase tracking-wider">Body Weight</p>
-                <p class="text-lg font-black text-indigo-700">${weightLbs} lbs</p>
-              </div>
+              <div class="p-3 bg-sky-50 border border-sky-100 rounded-xl"><p class="text-[10px] font-bold text-sky-500 uppercase">Duration</p><p class="text-lg font-black text-sky-700">${mins} mins</p></div>
+              <div class="p-3 bg-indigo-50 border border-indigo-100 rounded-xl"><p class="text-[10px] font-bold text-indigo-500 uppercase">Body Weight</p><p class="text-lg font-black text-indigo-700">${weightLbs} lbs</p></div>
             </div>
-
-            <p class="text-xs text-slate-600 font-medium leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-100">
-              <span>💡</span> ${summary}
-            </p>
-
+            <p class="text-xs text-slate-600 font-medium leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-100"><span>💡</span> ${summary}</p>
             <div class="flex items-center justify-between pt-1">
               <button type="button" onclick="document.getElementById('ai-ex-output').classList.add('hidden')" class="text-xs font-bold text-slate-400 hover:text-slate-600">Dismiss</button>
-              <button type="button" onclick="commitAIWorkoutDirect('${workoutName.replace(/'/g, "\\'")}', ${mins}, ${cals})" class="bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white font-extrabold px-5 py-2.5 rounded-xl text-xs transition shadow-md shadow-sky-100 flex items-center gap-2">
+              <button type="button" onclick="commitAIWorkoutDirect('${workoutName.replace(/'/g, "\\'")}', ${mins}, ${cals})" class="bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white font-extrabold px-5 py-2.5 rounded-xl text-xs transition shadow-md flex items-center gap-2">
                 <i class="fa-solid fa-plus"></i> Log Workout (+25 XP)
               </button>
             </div>
           </div>
         `;
       } catch (err) {
-        console.error("AI Exercise Assistant Error:", err);
-        output.innerHTML = `
-          <div class="p-4 bg-rose-50 border border-rose-200 rounded-2xl text-xs text-rose-700 space-y-2">
-            <p class="font-bold flex items-center gap-1.5"><i class="fa-solid fa-triangle-exclamation"></i> AI Analysis Error</p>
-            <p>${err.message || "Failed to contact Gemini. Please verify your connection or API key."}</p>
-          </div>
-        `;
+        output.innerHTML = `<div class="p-4 bg-rose-50 border border-rose-200 rounded-2xl text-xs text-rose-700 font-bold">${err.message || "Failed to contact Gemini."}</div>`;
       } finally {
         btn.disabled = false;
         btn.innerHTML = `<i class="fa-solid fa-paper-plane"></i> Ask AI`;
@@ -2154,10 +2007,8 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
     function commitAIWorkoutDirect(name, mins, cals) {
       const xpEarned = 25;
       state.workouts.push({ id: Date.now(), name, mins: parseInt(mins), cals: parseInt(cals), xpEarned });
-
       document.getElementById('ai-ex-output').classList.add('hidden');
       document.getElementById('ai-ex-prompt').value = '';
-
       checkExerciseGoalsBonus();
       awardXP(xpEarned, `Workout logged: ${name} (${cals} kcal)!`);
       saveState();
@@ -2173,7 +2024,6 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
     function updateExerciseGoals() {
       const mins = prompt("Daily Workout Duration Target (mins):", state.exerciseGoals ? state.exerciseGoals.mins : 45);
       const cals = prompt("Daily Calories Burned Target (kcal):", state.exerciseGoals ? state.exerciseGoals.cals : 400);
-
       if (mins && cals) {
         state.exerciseGoals = { mins: parseInt(mins), cals: parseInt(cals) };
         saveState();
@@ -2183,10 +2033,8 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
     function checkExerciseGoalsBonus() {
       const todayStr = new Date().toLocaleDateString();
       const todayWorkouts = state.workouts.filter(w => new Date(w.id).toLocaleDateString() === todayStr);
-
       const todayMins = todayWorkouts.reduce((s, w) => s + w.mins, 0);
       const todayCals = todayWorkouts.reduce((s, w) => s + w.cals, 0);
-
       const targetMins = state.exerciseGoals ? state.exerciseGoals.mins : 45;
       const targetCals = state.exerciseGoals ? state.exerciseGoals.cals : 400;
 
@@ -2201,13 +2049,12 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
       saveState();
     }
 
-    // Travel Bucket Functions
+    // --- TRAVEL BUCKETS ---
     function createTravelBucket() {
       const name = prompt("Enter Bucket Goal Name (e.g., Baseball Stadiums, National Parks):");
       if (!name) return;
       const targetStr = prompt(`Target amount for '${name}' (e.g. 30):`, "30");
       const target = parseInt(targetStr) || 10;
-
       const id = 'b_' + Date.now();
       if (!state.travelBuckets) state.travelBuckets = [];
       state.travelBuckets.push({ id, name, target });
@@ -2215,7 +2062,7 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
     }
 
     function deleteTravelBucket(bucketId) {
-      if (confirm("Delete this travel bucket? Associated items will revert to general travel.")) {
+      if (confirm("Delete this travel bucket? Items will revert to general travel.")) {
         state.travelBuckets = state.travelBuckets.filter(b => b.id !== bucketId);
         state.travel = state.travel.map(t => t.bucketId === bucketId ? { ...t, bucketId: 'general' } : t);
         saveState();
@@ -2226,7 +2073,6 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
       e.preventDefault();
       const input = document.getElementById('travel-input');
       const bucketId = document.getElementById('travel-bucket-select').value;
-
       if (!state.travel) state.travel = [];
       state.travel.push({ id: Date.now(), text: input.value, done: false, bucketId, xpEarned: 0 });
       input.value = '';
@@ -2239,7 +2085,7 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
           const nextDone = !t.done;
           if (nextDone) {
             const xp = 30;
-            awardXP(xp, "Travel destination checked off! Wandering heart bonus!");
+            awardXP(xp, "Travel destination checked off!");
             return { ...t, done: nextDone, xpEarned: xp };
           } else {
             deductXP(t.xpEarned || 30);
@@ -2258,20 +2104,18 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
       saveState();
     }
 
-    // Wellness Logic (Water & Sleep Precision)
+    // --- WELLNESS: EDITABLE WATER & SLEEP ---
     function addWater(oz) {
       const todayStr = new Date().toLocaleDateString();
       if (state.lastWaterDate !== todayStr) {
         state.todayWater = 0;
         state.lastWaterDate = todayStr;
       }
-
       const prev = state.todayWater;
       state.todayWater += oz;
       state.lastWaterDate = todayStr;
-
       if (prev < state.waterGoal && state.todayWater >= state.waterGoal) {
-        awardXP(15, "Hydration Goal Reached! Pulse loves water!");
+        awardXP(15, "Hydration Goal Reached! Beaty is energized!");
       } else {
         saveState();
       }
@@ -2282,6 +2126,24 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
       if (oz && !isNaN(oz)) addWater(parseInt(oz));
     }
 
+    function setWaterDirect(glassesCount) {
+      state.todayWater = glassesCount * 8;
+      const todayStr = new Date().toLocaleDateString();
+      state.lastWaterDate = todayStr;
+      if (state.todayWater >= state.waterGoal) {
+        awardXP(15, "Hydration Goal Reached!");
+      } else {
+        saveState();
+      }
+    }
+
+    function resetWaterToday() {
+      if (confirm("Reset today's water counter back to 0 oz?")) {
+        state.todayWater = 0;
+        saveState();
+      }
+    }
+
     function updateWaterGoal() {
       const oz = prompt("Daily Hydration Target (oz):", state.waterGoal || 64);
       if (oz && !isNaN(oz)) {
@@ -2290,11 +2152,28 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
       }
     }
 
+    function renderWaterRack() {
+      const rack = document.getElementById('water-glasses-rack');
+      if (!rack) return;
+      rack.innerHTML = '';
+      const currentGlasses = Math.floor(state.todayWater / 8);
+
+      for (let i = 1; i <= 8; i++) {
+        const drop = document.createElement('span');
+        const isActive = i <= currentGlasses;
+        drop.className = `text-2xl cursor-pointer transition select-none ${isActive ? 'opacity-100 scale-110 drop-shadow' : 'opacity-30 hover:opacity-70'}`;
+        drop.innerText = '💧';
+        drop.title = `Click to set ${i * 8} oz`;
+        drop.onclick = () => setWaterDirect(i);
+        rack.appendChild(drop);
+      }
+      document.getElementById('water-glasses-count').textContent = `${Math.min(currentGlasses, 8)} / 8 glasses`;
+    }
+
     function updateSleepGoals() {
       const bedtime = prompt("Bedtime Target Goal (HH:MM):", state.sleepGoals.bedtime);
       const waketime = prompt("Wake Time Target Goal (HH:MM):", state.sleepGoals.waketime);
       const duration = prompt("Target Sleep Hours (e.g. 8.0):", state.sleepGoals.duration);
-
       if (bedtime && waketime && duration) {
         state.sleepGoals = { bedtime, waketime, duration: parseFloat(duration) };
         saveState();
@@ -2316,7 +2195,6 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
       if (end <= start) end.setDate(end.getDate() + 1);
 
       const hours = ((end - start) / (1000 * 60 * 60)).toFixed(1);
-
       const targetBedMins = timeToMins(state.sleepGoals.bedtime);
       const actualBedMins = timeToMins(bed);
 
@@ -2325,7 +2203,6 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
       if (bedDiff > 720) bedDiff -= 1440;
 
       const onTimeOrEarlier = bedDiff <= 15;
-
       let totalXP = 0;
       let msgParts = [];
 
@@ -2341,9 +2218,7 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
         msgParts.push("Sleep logged (+10 XP)");
       }
 
-      const entry = { id: Date.now(), date: new Date().toLocaleDateString(), bed, wake, hours: parseFloat(hours), xpEarned: totalXP };
-      state.sleepLogs.unshift(entry);
-
+      state.sleepLogs.unshift({ id: Date.now(), date: new Date().toLocaleDateString(), bed, wake, hours: parseFloat(hours), xpEarned: totalXP });
       awardXP(totalXP, msgParts.join(" + "));
       saveState();
     }
@@ -2355,7 +2230,7 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
       saveState();
     }
 
-    // Weight & Chart Logic
+    // --- WEIGHT & CHART LOGIC ---
     function logWeight(e) {
       e.preventDefault();
       const val = parseFloat(document.getElementById('weight-input').value);
@@ -2371,10 +2246,7 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
         if (goalType === 'loss' && val < lastLog.weight) progressBonus = true;
         if (goalType === 'gain' && val > lastLog.weight) progressBonus = true;
       }
-
-      if (progressBonus) {
-        earnedXP += 30;
-      }
+      if (progressBonus) earnedXP += 30;
 
       state.weightLogs.push({ id: Date.now(), date: dateStr, weight: val, xpEarned: earnedXP });
       document.getElementById('weight-input').value = '';
@@ -2405,18 +2277,16 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
         type: 'line',
         data: {
           labels: [],
-          datasets: [
-            {
-              label: 'Weight (lbs)',
-              data: [],
-              borderColor: 'rgba(244, 63, 94, 1)',
-              backgroundColor: 'rgba(244, 63, 94, 0.1)',
-              borderWidth: 3,
-              tension: 0.3,
-              pointRadius: 4,
-              fill: true
-            }
-          ]
+          datasets: [{
+            label: 'Weight (lbs)',
+            data: [],
+            borderColor: 'rgba(79, 70, 229, 1)',
+            backgroundColor: 'rgba(79, 70, 229, 0.08)',
+            borderWidth: 3,
+            tension: 0.3,
+            pointRadius: 4,
+            fill: true
+          }]
         },
         options: {
           responsive: true,
@@ -2435,7 +2305,6 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
 
     function updateChartData() {
       if (!weightChartInstance) return;
-
       const dates = [];
       const now = new Date();
       for (let i = 13; i >= 0; i--) {
@@ -2443,23 +2312,20 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
         d.setDate(now.getDate() - i);
         dates.push(d.toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' }));
       }
-
       const weightData = dates.map(d => {
         const match = state.weightLogs.find(w => w.date === d);
         return match ? match.weight : null;
       });
-
       weightChartInstance.data.labels = dates;
       weightChartInstance.data.datasets[0].data = weightData;
       weightChartInstance.update();
     }
 
-    // Long Term Goals Logic
+    // --- LONG TERM GOALS ---
     function addLongTermGoal(e) {
       e.preventDefault();
       const text = document.getElementById('lt-goal-text').value;
       const category = document.getElementById('lt-goal-category').value;
-
       state.longTermGoals.push({ id: Date.now(), text, category, completed: false, xpEarned: 0 });
       document.getElementById('lt-goal-text').value = '';
       saveState();
@@ -2490,7 +2356,7 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
       saveState();
     }
 
-    // To-Do Logic
+    // --- TO-DO LIST ---
     function addTodoTask(e) {
       e.preventDefault();
       const input = document.getElementById('todo-input');
@@ -2500,18 +2366,7 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
       const isRecurring = document.getElementById('todo-is-recurring').checked;
       const recurrence = document.getElementById('todo-recurrence').value;
 
-      state.todos.push({
-        id: Date.now(),
-        text: input.value,
-        category,
-        xp,
-        isRecurring,
-        recurrence,
-        completed: false,
-        completedAt: null,
-        xpEarned: 0
-      });
-
+      state.todos.push({ id: Date.now(), text: input.value, category, xp, isRecurring, recurrence, completed: false, completedAt: null, xpEarned: 0 });
       input.value = '';
       document.getElementById('todo-is-recurring').checked = false;
       saveState();
@@ -2523,21 +2378,11 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
           const nextCompleted = !t.completed;
           if (nextCompleted) {
             const earned = t.xp || 10;
-            awardXP(earned, `${t.category || 'Task'} completed! Pulse loves your productivity!`);
-            return {
-              ...t,
-              completed: nextCompleted,
-              completedAt: Date.now(),
-              xpEarned: earned
-            };
+            awardXP(earned, `${t.category || 'Task'} completed!`);
+            return { ...t, completed: nextCompleted, completedAt: Date.now(), xpEarned: earned };
           } else {
             deductXP(t.xpEarned || t.xp || 10);
-            return {
-              ...t,
-              completed: nextCompleted,
-              completedAt: null,
-              xpEarned: 0
-            };
+            return { ...t, completed: nextCompleted, completedAt: null, xpEarned: 0 };
           }
         }
         return t;
@@ -2552,7 +2397,7 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
       saveState();
     }
 
-    // Food & Macro Logic
+    // --- MANUAL MEALS ---
     function addFoodLog(e) {
       e.preventDefault();
       const name = document.getElementById('food-name').value;
@@ -2580,7 +2425,6 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
       const p = prompt("Daily Protein Target (g):", state.macroGoals.p);
       const c = prompt("Daily Carbs Target (g):", state.macroGoals.c);
       const f = prompt("Daily Fat Target (g):", state.macroGoals.f);
-
       if (cals && p && c && f) {
         state.macroGoals = { cals: parseInt(cals), p: parseInt(p), c: parseInt(c), f: parseInt(f) };
         saveState();
@@ -2596,31 +2440,28 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
       }
     }
 
-    // Exercise Logic
+    // --- WORKOUTS ---
     function addWorkout(e) {
       e.preventDefault();
       const name = document.getElementById('ex-name').value;
       const mins = parseInt(document.getElementById('ex-mins').value);
       const cals = parseInt(document.getElementById('ex-cals').value);
       const xpEarned = 25;
-      
       state.workouts.push({ id: Date.now(), name, mins, cals, xpEarned });
       document.getElementById('ex-name').value = '';
       document.getElementById('ex-mins').value = '';
       document.getElementById('ex-cals').value = '';
-      
       checkExerciseGoalsBonus();
-      awardXP(xpEarned, "Workout logged! Pulse's heart is pumping!");
+      awardXP(xpEarned, "Workout logged! Heart pumping strong!");
       saveState();
     }
 
-    // Custom Section Creation & Goals
+    // --- CUSTOM TABS ---
     function createCustomSection(e) {
       e.preventDefault();
       const title = document.getElementById('modal-sec-title').value;
       const icon = document.getElementById('modal-sec-icon').value || '⭐';
       const id = 'custom_' + Date.now();
-
       state.customSections.push({ id, title, icon });
       state.customLogs[id] = [];
       state.customGoals[id] = [];
@@ -2634,11 +2475,10 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
       const input = document.getElementById(`input_${secId}`);
       if (!input || !input.value.trim()) return;
       if (!state.customLogs[secId]) state.customLogs[secId] = [];
-
       const xpEarned = 15;
       state.customLogs[secId].unshift({ id: Date.now(), text: input.value.trim(), date: new Date().toLocaleDateString(), xpEarned });
       input.value = '';
-      awardXP(xpEarned, "Custom habit logged! Pulse is cheering!");
+      awardXP(xpEarned, "Custom habit logged!");
       saveState();
     }
 
@@ -2654,31 +2494,20 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
       const textInput = document.getElementById(`goal_text_${secId}`);
       const typeSelect = document.getElementById(`goal_type_${secId}`);
       if (!textInput || !textInput.value.trim()) return;
-
       if (!state.customGoals[secId]) state.customGoals[secId] = [];
-
-      state.customGoals[secId].unshift({
-        id: Date.now(),
-        text: textInput.value.trim(),
-        type: typeSelect.value,
-        completed: false,
-        xpEarned: 0
-      });
-
+      state.customGoals[secId].unshift({ id: Date.now(), text: textInput.value.trim(), type: typeSelect.value, completed: false, xpEarned: 0 });
       textInput.value = '';
       saveState();
     }
 
     function toggleCustomGoal(secId, goalId) {
       if (!state.customGoals[secId]) return;
-
       state.customGoals[secId] = state.customGoals[secId].map(g => {
         if (g.id === goalId) {
           const nextDone = !g.completed;
           if (nextDone) {
             const xp = g.type === 'long' ? 1000 : 50;
-            const msg = g.type === 'long' ? "MAJOR CUSTOM GOAL COMPLETED! +1,000 XP!" : "Short-Term Goal Completed! +50 XP!";
-            awardXP(xp, msg);
+            awardXP(xp, g.type === 'long' ? "MAJOR CUSTOM GOAL COMPLETED! +1,000 XP!" : "Short-Term Goal Completed! +50 XP!");
             return { ...g, completed: nextDone, xpEarned: xp };
           } else {
             deductXP(g.xpEarned || (g.type === 'long' ? 1000 : 50));
@@ -2702,7 +2531,6 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
     // MASTER UI RENDER
     // =========================================================
     function updateUI() {
-      // Level & XP
       document.getElementById('user-level').textContent = state.level;
       const maxXP = state.level * 100;
       document.getElementById('user-xp').textContent = `${state.xp} / ${maxXP} XP`;
@@ -2710,48 +2538,37 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
       document.getElementById('xp-bar').style.width = pct + '%';
       document.getElementById('xp-percentage').textContent = pct + '% to Lvl UP';
 
-      // Current Weight Dashboard Card
       const latestWeight = state.weightLogs.length > 0 ? state.weightLogs[state.weightLogs.length - 1].weight : null;
       document.getElementById('dash-weight').textContent = latestWeight ? `${latestWeight} lbs` : '-- lbs';
 
       const aiWeightInput = document.getElementById('ai-ex-weight');
       if (aiWeightInput && latestWeight) aiWeightInput.value = latestWeight;
 
-      // Weight History
       document.getElementById('weight-history-list').innerHTML = state.weightLogs.map(w => `
         <li class="flex items-center justify-between p-2.5 bg-slate-50 rounded-xl border border-slate-200 text-xs">
-          <div>
-            <span class="font-bold text-slate-800">${w.date}</span>
-            <span class="text-rose-500 font-extrabold ml-2">${w.weight} lbs</span>
-          </div>
+          <div><span class="font-bold text-slate-800">${w.date}</span><span class="text-indigo-600 font-extrabold ml-2">${w.weight} lbs</span></div>
           <button onclick="deleteWeightLog(${w.id})" class="text-slate-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button>
         </li>
       `).join('');
 
-      // Water UI Render
       const wPct = Math.min(100, Math.round((state.todayWater / state.waterGoal) * 100));
       document.getElementById('water-fill').style.height = wPct + '%';
       document.getElementById('water-fill-pct').textContent = wPct + '%';
       document.getElementById('water-count-label').textContent = `${state.todayWater} / ${state.waterGoal} oz`;
       document.getElementById('water-status-msg').textContent = wPct >= 100 ? "🎉 Daily hydration target crushed!" : "Keep drinking water today!";
+      renderWaterRack();
 
-      // Sleep UI Render
       document.getElementById('goal-bedtime-lbl').textContent = state.sleepGoals.bedtime;
       document.getElementById('goal-waketime-lbl').textContent = state.sleepGoals.waketime;
       document.getElementById('goal-sleep-hrs-lbl').textContent = `${state.sleepGoals.duration} hrs`;
 
       document.getElementById('sleep-history-list').innerHTML = state.sleepLogs.map(s => `
         <li class="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs">
-          <div>
-            <span class="font-bold text-slate-800">${s.date}</span>
-            <span class="text-slate-500 ml-2">(${s.bed} to ${s.wake})</span>
-            <span class="font-extrabold text-indigo-600 ml-2">${s.hours} hrs slept</span>
-          </div>
+          <div><span class="font-bold text-slate-800">${s.date}</span><span class="text-slate-500 ml-2">(${s.bed} to ${s.wake})</span><span class="font-extrabold text-indigo-600 ml-2">${s.hours} hrs slept</span></div>
           <button onclick="deleteSleepLog(${s.id})" class="text-slate-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button>
         </li>
       `).join('');
 
-      // Screen Time Limit Label & Multi-Category History
       const limitHrs = (state.screenTimeLimitMins / 60).toFixed(1);
       document.getElementById('st-limit-lbl').textContent = `${limitHrs}h`;
 
@@ -2768,132 +2585,83 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
         const total = st.totalMins || st.mins || 0;
         const under = total <= state.screenTimeLimitMins;
         const cats = st.categories || {};
-
         const pills = categoryBadges.map(b => {
           const val = cats[b.key] || 0;
           if (val <= 0) return '';
-          return `
-            <span class="text-[10px] ${b.color} font-bold px-2 py-0.5 rounded-md border flex items-center gap-1">
-              <span>${b.icon}</span> ${b.label}: ${val}m
-            </span>
-          `;
+          return `<span class="text-[10px] ${b.color} font-bold px-2 py-0.5 rounded-md border flex items-center gap-1"><span>${b.icon}</span> ${b.label}: ${val}m</span>`;
         }).join('');
 
         return `
           <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 text-xs space-y-2">
             <div class="flex justify-between items-center">
-              <div class="flex items-center gap-2">
-                <span class="font-extrabold text-slate-800">${st.date}</span>
-                <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${under ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">
-                  ${under ? '✓ Under Target' : '⚠️ Over Target'}
-                </span>
-              </div>
-              <div class="flex items-center gap-3">
-                <span class="font-black ${under ? 'text-emerald-600' : 'text-amber-500'} text-sm">
-                  ${Math.floor(total / 60)}h ${total % 60}m
-                </span>
-                <button onclick="deleteScreenTimeLog(${st.id})" class="text-slate-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button>
-              </div>
+              <div class="flex items-center gap-2"><span class="font-extrabold text-slate-800">${st.date}</span><span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${under ? 'bg-emerald-100 text-emerald-800' : 'bg-amber-100 text-amber-800'}">${under ? '✓ Under Target' : '⚠️ Over Target'}</span></div>
+              <div class="flex items-center gap-3"><span class="font-black ${under ? 'text-emerald-600' : 'text-amber-500'} text-sm">${Math.floor(total / 60)}h ${total % 60}m</span><button onclick="deleteScreenTimeLog(${st.id})" class="text-slate-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button></div>
             </div>
             ${pills ? `<div class="flex flex-wrap items-center gap-1.5 pt-1">${pills}</div>` : ''}
           </div>
         `;
       }).join('');
 
-      // Travel Buckets & Items Render
       if (!state.travelBuckets) state.travelBuckets = [];
       if (!state.travel) state.travel = [];
 
-      const bucketsGrid = document.getElementById('travel-buckets-grid');
-      bucketsGrid.innerHTML = state.travelBuckets.map(b => {
+      document.getElementById('travel-buckets-grid').innerHTML = state.travelBuckets.map(b => {
         const doneCount = state.travel.filter(t => t.bucketId === b.id && t.done).length;
         const totalItems = state.travel.filter(t => t.bucketId === b.id).length;
         const bPct = Math.min(100, Math.round((doneCount / b.target) * 100));
 
         return `
-          <div class="p-4 bg-gradient-to-br from-pink-50 to-rose-50 rounded-2xl border border-pink-200 shadow-sm relative group">
+          <div class="p-4 bg-gradient-to-br from-indigo-50/60 to-slate-50 rounded-2xl border border-indigo-100 shadow-sm relative group">
             <div class="flex justify-between items-start mb-2">
-              <h3 class="font-extrabold text-slate-900 text-sm flex items-center gap-1.5">
-                <span>🏆</span> ${b.name}
-              </h3>
+              <h3 class="font-extrabold text-slate-900 text-sm flex items-center gap-1.5"><span>🏆</span> ${b.name}</h3>
               <button onclick="deleteTravelBucket('${b.id}')" class="text-xs text-slate-400 hover:text-rose-500 transition"><i class="fa-solid fa-trash"></i></button>
             </div>
-            
             <div class="flex items-baseline justify-between mb-1">
-              <span class="text-2xl font-black text-pink-600">${doneCount} <span class="text-xs font-bold text-slate-500">/ ${b.target}</span></span>
-              <span class="text-xs font-bold text-pink-600">${bPct}%</span>
+              <span class="text-2xl font-black text-indigo-600">${doneCount} <span class="text-xs font-bold text-slate-500">/ ${b.target}</span></span>
+              <span class="text-xs font-bold text-indigo-600">${bPct}%</span>
             </div>
-
-            <div class="w-full bg-pink-200/60 h-2 rounded-full overflow-hidden">
-              <div class="bg-gradient-to-r from-pink-500 to-rose-500 h-full transition-all duration-500" style="width: ${bPct}%"></div>
-            </div>
+            <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden"><div class="bg-indigo-600 h-full transition-all duration-500" style="width: ${bPct}%"></div></div>
             <p class="text-[10px] text-slate-500 font-medium mt-2">${totalItems} items added to bucket</p>
           </div>
         `;
       }).join('');
 
-      // Travel Bucket Options Dropdown
-      const bucketSelect = document.getElementById('travel-bucket-select');
-      bucketSelect.innerHTML = `<option value="general">General Travel</option>` + state.travelBuckets.map(b => `
-        <option value="${b.id}">${b.name}</option>
-      `).join('');
+      document.getElementById('travel-bucket-select').innerHTML = `<option value="general">General Travel</option>` + state.travelBuckets.map(b => `<option value="${b.id}">${b.name}</option>`).join('');
 
-      // Travel Items Render
       document.getElementById('travel-list').innerHTML = state.travel.map(t => {
         const bMatch = state.travelBuckets.find(b => b.id === t.bucketId);
         const bName = bMatch ? bMatch.name : 'General';
-
         return `
           <li class="flex items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-200">
-            <div class="flex items-center gap-3">
-              <input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTravel(${t.id})" class="w-4 h-4 accent-pink-500 rounded cursor-pointer">
-              <span class="${t.done ? 'line-through text-slate-400' : 'text-slate-800 font-bold'}">${t.text}</span>
-              <span class="text-[10px] bg-pink-50 text-pink-600 font-bold px-2 py-0.5 rounded-md border border-pink-200">${bName}</span>
-            </div>
+            <div class="flex items-center gap-3"><input type="checkbox" ${t.done ? 'checked' : ''} onchange="toggleTravel(${t.id})" class="w-4 h-4 accent-indigo-600 rounded cursor-pointer"><span class="${t.done ? 'line-through text-slate-400' : 'text-slate-800 font-bold'}">${t.text}</span><span class="text-[10px] bg-indigo-50 text-indigo-600 font-bold px-2 py-0.5 rounded-md border border-indigo-200">${bName}</span></div>
             <button onclick="deleteTravelItem(${t.id})" class="text-xs text-slate-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button>
           </li>
         `;
       }).join('');
 
-      // Badges Render
       renderBadgesUI();
-
-      // Update Chart
       updateChartData();
 
-      // Long Term Goals Dashboard Render
-      const dashLTList = document.getElementById('dash-lt-goals-list');
-      dashLTList.innerHTML = state.longTermGoals.map(g => `
+      document.getElementById('dash-lt-goals-list').innerHTML = state.longTermGoals.map(g => `
         <li class="flex items-center justify-between p-3.5 bg-slate-50 hover:bg-slate-100 rounded-xl border border-slate-200 transition">
-          <div class="flex items-center gap-3">
-            <input type="checkbox" ${g.completed ? 'checked' : ''} onchange="toggleLTGoal(${g.id})" class="w-4 h-4 accent-rose-500 rounded cursor-pointer">
-            <span class="${g.completed ? 'line-through text-slate-400' : 'text-slate-800 font-bold'}">${g.text}</span>
-            <span class="text-[10px] bg-rose-50 text-rose-600 font-bold px-2 py-0.5 rounded-md border border-rose-200 capitalize">${g.category}</span>
-          </div>
+          <div class="flex items-center gap-3"><input type="checkbox" ${g.completed ? 'checked' : ''} onchange="toggleLTGoal(${g.id})" class="w-4 h-4 accent-indigo-600 rounded cursor-pointer"><span class="${g.completed ? 'line-through text-slate-400' : 'text-slate-800 font-bold'}">${g.text}</span><span class="text-[10px] bg-indigo-50 text-indigo-600 font-bold px-2 py-0.5 rounded-md border border-indigo-200 capitalize">${g.category}</span></div>
           <button onclick="deleteLTGoal(${g.id})" class="text-xs text-slate-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button>
         </li>
       `).join('');
 
-      // Render Category Tab Long-Term Goals
       ['exercise', 'food', 'wellness', 'finance', 'screentime', 'travel', 'todo'].forEach(cat => {
         const container = document.getElementById(`${cat}-lt-container`);
         if (!container) return;
-
         const catGoals = state.longTermGoals.filter(g => g.category === cat);
         if (catGoals.length > 0) {
           container.classList.remove('hidden');
           container.innerHTML = `
-            <div class="bg-gradient-to-r from-rose-50 to-pink-50 border border-rose-200 p-4 rounded-2xl">
-              <h3 class="text-xs font-extrabold text-rose-600 uppercase tracking-wider mb-2 flex items-center gap-1.5">
-                <span>🏆</span> Long-Term Goals (${cat})
-              </h3>
+            <div class="bg-gradient-to-r from-indigo-50 to-slate-50 border border-indigo-200 p-4 rounded-2xl">
+              <h3 class="text-xs font-extrabold text-indigo-600 uppercase tracking-wider mb-2 flex items-center gap-1.5"><span>🏆</span> Long-Term Goals (${cat})</h3>
               <div class="space-y-2">
                 ${catGoals.map(g => `
-                  <div class="flex items-center justify-between p-2.5 bg-white rounded-xl border border-rose-100 shadow-sm">
-                    <div class="flex items-center gap-2">
-                      <input type="checkbox" ${g.completed ? 'checked' : ''} onchange="toggleLTGoal(${g.id})" class="w-4 h-4 accent-rose-500 rounded cursor-pointer">
-                      <span class="${g.completed ? 'line-through text-slate-400' : 'text-slate-800 font-bold text-sm'}">${g.text}</span>
-                    </div>
+                  <div class="flex items-center justify-between p-2.5 bg-white rounded-xl border border-indigo-100 shadow-sm">
+                    <div class="flex items-center gap-2"><input type="checkbox" ${g.completed ? 'checked' : ''} onchange="toggleLTGoal(${g.id})" class="w-4 h-4 accent-indigo-600 rounded cursor-pointer"><span class="${g.completed ? 'line-through text-slate-400' : 'text-slate-800 font-bold text-sm'}">${g.text}</span></div>
                     <span class="text-xs font-bold text-amber-500">+1,000 XP</span>
                   </div>
                 `).join('')}
@@ -2905,36 +2673,18 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
         }
       });
 
-      // To-Do List Render
-      const todoList = document.getElementById('todo-list');
-      todoList.innerHTML = state.todos.map(t => `
+      document.getElementById('todo-list').innerHTML = state.todos.map(t => `
         <li class="flex items-center justify-between p-3.5 bg-slate-50 hover:bg-slate-100/80 rounded-xl border border-slate-200 transition">
-          <div class="flex items-center gap-3">
-            <input type="checkbox" ${t.completed ? 'checked' : ''} onchange="toggleTodo(${t.id})" class="w-4 h-4 accent-indigo-600 rounded cursor-pointer">
-            <span class="${t.completed ? 'line-through text-slate-400' : 'text-slate-800 font-medium'}">${t.text}</span>
-            <span class="text-[10px] bg-indigo-50 text-indigo-600 font-bold px-2 py-0.5 rounded-md border border-indigo-200">${t.category || 'Task'} (+${t.xp || 10} XP)</span>
-            ${t.isRecurring ? `<span class="text-[10px] bg-purple-50 text-purple-600 font-bold px-2 py-0.5 rounded-md border border-purple-200 flex items-center gap-1"><i class="fa-solid fa-rotate text-[8px]"></i> ${t.recurrence}</span>` : ''}
-          </div>
+          <div class="flex items-center gap-3"><input type="checkbox" ${t.completed ? 'checked' : ''} onchange="toggleTodo(${t.id})" class="w-4 h-4 accent-indigo-600 rounded cursor-pointer"><span class="${t.completed ? 'line-through text-slate-400' : 'text-slate-800 font-medium'}">${t.text}</span><span class="text-[10px] bg-indigo-50 text-indigo-600 font-bold px-2 py-0.5 rounded-md border border-indigo-200">${t.category || 'Task'} (+${t.xp || 10} XP)</span>${t.isRecurring ? `<span class="text-[10px] bg-purple-50 text-purple-600 font-bold px-2 py-0.5 rounded-md border border-purple-200 flex items-center gap-1"><i class="fa-solid fa-rotate text-[8px]"></i> ${t.recurrence}</span>` : ''}</div>
           <button onclick="deleteTodo(${t.id})" class="text-xs text-rose-500 hover:text-rose-700 p-1"><i class="fa-solid fa-trash"></i></button>
         </li>
       `).join('');
       document.getElementById('todo-count').textContent = `${state.todos.filter(t => t.completed).length} Completed`;
 
-      // Food & Macros Render
-      const foodList = document.getElementById('food-list');
-      foodList.innerHTML = state.foodLogs.map(f => `
+      document.getElementById('food-list').innerHTML = state.foodLogs.map(f => `
         <li class="flex items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-200">
-          <div>
-            <div class="flex items-center gap-2">
-              <span class="text-slate-800 font-bold">${f.name}</span>
-              <span class="text-[10px] bg-emerald-50 text-emerald-600 font-bold px-2 py-0.5 rounded-md border border-emerald-200">${f.mealType || 'Meal'}</span>
-            </div>
-            <p class="text-xs text-slate-500 font-medium mt-0.5">P: ${f.p || 0}g | C: ${f.c || 0}g | F: ${f.f || 0}g</p>
-          </div>
-          <div class="flex items-center gap-3">
-            <span class="text-xs font-extrabold text-emerald-600 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg">${f.cals} kcal</span>
-            <button onclick="deleteFoodLog(${f.id})" class="text-slate-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button>
-          </div>
+          <div><div class="flex items-center gap-2"><span class="text-slate-800 font-bold">${f.name}</span><span class="text-[10px] bg-emerald-50 text-emerald-600 font-bold px-2 py-0.5 rounded-md border border-emerald-200">${f.mealType || 'Meal'}</span></div><p class="text-xs text-slate-500 font-medium mt-0.5">P: ${f.p || 0}g | C: ${f.c || 0}g | F: ${f.f || 0}g</p></div>
+          <div class="flex items-center gap-3"><span class="text-xs font-extrabold text-emerald-600 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg">${f.cals} kcal</span><button onclick="deleteFoodLog(${f.id})" class="text-slate-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button></div>
         </li>
       `).join('');
 
@@ -2954,44 +2704,29 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
       document.getElementById('bar-c').style.width = Math.min(100, (totalC / state.macroGoals.c) * 100) + '%';
       document.getElementById('bar-f').style.width = Math.min(100, (totalF / state.macroGoals.f) * 100) + '%';
 
-      // Exercise Goals & Logs Render
       const todayStr = new Date().toLocaleDateString();
       const todayWorkouts = state.workouts.filter(w => new Date(w.id).toLocaleDateString() === todayStr);
-
       const todayMins = todayWorkouts.reduce((s, w) => s + w.mins, 0);
       const todayCals = todayWorkouts.reduce((s, w) => s + w.cals, 0);
-
       const targetMins = state.exerciseGoals ? state.exerciseGoals.mins : 45;
       const targetCals = state.exerciseGoals ? state.exerciseGoals.cals : 400;
 
       document.getElementById('ex-time-goal-lbl').textContent = `${todayMins} / ${targetMins} mins`;
       document.getElementById('ex-cal-goal-lbl').textContent = `${todayCals} / ${targetCals} kcal`;
-
       document.getElementById('bar-ex-time').style.width = Math.min(100, (todayMins / targetMins) * 100) + '%';
       document.getElementById('bar-ex-cals').style.width = Math.min(100, (todayCals / targetCals) * 100) + '%';
 
-      const exList = document.getElementById('workout-list');
-      exList.innerHTML = state.workouts.map(w => {
+      document.getElementById('workout-list').innerHTML = state.workouts.map(w => {
         const logDate = new Date(w.id).toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' });
         return `
           <li class="flex items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-200">
-            <div>
-              <span class="text-slate-800 font-bold">${w.name} (${w.mins} mins)</span>
-              <span class="text-[10px] bg-slate-200 text-slate-600 font-bold px-1.5 py-0.5 rounded-md ml-2">${logDate}</span>
-            </div>
-            <div class="flex items-center gap-3">
-              <span class="text-xs font-extrabold text-sky-600 bg-sky-50 border border-sky-200 px-2.5 py-1 rounded-lg">-${w.cals} kcal</span>
-              <button onclick="deleteWorkout(${w.id})" class="text-slate-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button>
-            </div>
+            <div><span class="text-slate-800 font-bold">${w.name} (${w.mins} mins)</span><span class="text-[10px] bg-slate-200 text-slate-600 font-bold px-1.5 py-0.5 rounded-md ml-2">${logDate}</span></div>
+            <div class="flex items-center gap-3"><span class="text-xs font-extrabold text-sky-600 bg-sky-50 border border-sky-200 px-2.5 py-1 rounded-lg">-${w.cals} kcal</span><button onclick="deleteWorkout(${w.id})" class="text-slate-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button></div>
           </li>
         `;
       }).join('');
-
       document.getElementById('dash-workout').textContent = `${todayMins} mins`;
 
-      // =========================================================
-      // FINANCE TAB RENDER
-      // =========================================================
       const netWorth = getFinanceNetWorth();
       const netWorthFormatted = '$' + netWorth.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
       document.getElementById('fin-net-worth').textContent = netWorthFormatted;
@@ -3000,7 +2735,6 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
       const paycheckVal = state.paycheck || 0;
       document.getElementById('fin-paycheck-amount').textContent = '$' + paycheckVal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-      // Percent Allocated
       const totalPct = (state.budgetBuckets || []).reduce((sum, b) => sum + (b.pct || 0), 0);
       document.getElementById('fin-total-allocated-pct').textContent = totalPct.toFixed(2) + '%';
       document.getElementById('fin-pct-bar').style.width = Math.min(100, totalPct) + '%';
@@ -3017,27 +2751,18 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
         pctBadge.textContent = `${(100 - totalPct).toFixed(1)}% Unallocated`;
       }
 
-      // Bank Accounts UI
       const accList = document.getElementById('bank-accounts-list');
       if (state.bankAccounts.length === 0) {
         accList.innerHTML = `<div class="p-6 text-center text-xs text-slate-400 bg-slate-50 border border-dashed border-slate-200 rounded-2xl">No bank accounts added yet. Click "+ Add Account" to start.</div>`;
       } else {
         accList.innerHTML = state.bankAccounts.map(acc => `
           <div class="flex justify-between items-center p-3.5 bg-slate-50 hover:bg-slate-100/80 rounded-2xl border border-slate-200 transition">
-            <div>
-              <span class="text-sm font-bold text-slate-800">${acc.name}</span>
-              <p class="text-[11px] text-slate-400 mt-0.5">Physical Bank Balance</p>
-            </div>
-            <div class="flex items-center gap-3">
-              <span class="text-base font-extrabold text-slate-900">$${(acc.balance || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
-              <button onclick="editAccountBalance('${acc.id}')" title="Edit Balance" class="text-xs text-slate-400 hover:text-indigo-600 transition"><i class="fa-solid fa-pen"></i></button>
-              <button onclick="deleteAccount('${acc.id}')" title="Delete Account" class="text-xs text-slate-400 hover:text-rose-500 transition"><i class="fa-solid fa-trash"></i></button>
-            </div>
+            <div><span class="text-sm font-bold text-slate-800">${acc.name}</span><p class="text-[11px] text-slate-400 mt-0.5">Physical Bank Balance</p></div>
+            <div class="flex items-center gap-3"><span class="text-base font-extrabold text-slate-900">$${(acc.balance || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span><button onclick="editAccountBalance('${acc.id}')" title="Edit Balance" class="text-xs text-slate-400 hover:text-indigo-600 transition"><i class="fa-solid fa-pen"></i></button><button onclick="deleteAccount('${acc.id}')" title="Delete Account" class="text-xs text-slate-400 hover:text-rose-500 transition"><i class="fa-solid fa-trash"></i></button></div>
           </div>
         `).join('');
       }
 
-      // Budget Buckets UI
       const bktList = document.getElementById('budget-buckets-list');
       if (state.budgetBuckets.length === 0) {
         bktList.innerHTML = `<div class="p-6 text-center text-xs text-slate-400 bg-slate-50 border border-dashed border-slate-200 rounded-2xl">No budget buckets created yet. Click "+ Add Bucket" to assign categories.</div>`;
@@ -3058,15 +2783,11 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
                     <span class="text-[10px] bg-indigo-50 text-indigo-600 font-bold px-2 py-0.5 rounded-md border border-indigo-200">${bkt.pct}%</span>
                     ${bkt.isInvestment ? `<span class="text-[9px] bg-purple-100 text-purple-700 font-extrabold px-1.5 py-0.5 rounded-md border border-purple-200 flex items-center gap-1"><span>📈</span> Invest</span>` : ''}
                   </div>
-                  <p class="text-[11px] text-slate-500 mt-0.5 flex items-center gap-1">
-                    <i class="fa-solid fa-link text-[9px] text-slate-400"></i> Tied to: <strong class="text-slate-700">${accName}</strong>
-                  </p>
+                  <p class="text-[11px] text-slate-500 mt-0.5 flex items-center gap-1"><i class="fa-solid fa-link text-[9px] text-slate-400"></i> Tied to: <strong class="text-slate-700">${accName}</strong></p>
                   <p class="text-[10px] text-slate-400 mt-0.5">$${perCheck.toFixed(2)} / paycheck • $${perMonth.toFixed(2)} / mo</p>
                 </div>
                 <div class="text-right flex flex-col items-end">
-                  <span class="text-sm font-black ${funds < 0 ? 'text-rose-500' : 'text-emerald-600'}">
-                    $${funds.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                  </span>
+                  <span class="text-sm font-black ${funds < 0 ? 'text-rose-500' : 'text-emerald-600'}">$${funds.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
                   <div class="flex items-center gap-2 mt-2">
                     <button onclick="toggleBucketInvestment('${bkt.id}')" title="Toggle Investment Status" class="text-xs ${bkt.isInvestment ? 'text-purple-600' : 'text-slate-300 hover:text-purple-500'} transition"><i class="fa-solid fa-chart-line"></i></button>
                     <button onclick="editBucketFunds('${bkt.id}')" title="Adjust Bucket Funds / Pct" class="text-xs text-slate-400 hover:text-indigo-600 transition"><i class="fa-solid fa-pen"></i></button>
@@ -3079,81 +2800,49 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
         }).join('');
       }
 
-      // Investment Buckets Section Rendering
       const investBuckets = state.budgetBuckets.filter(b => b.isInvestment);
       const investTotal = investBuckets.reduce((sum, b) => sum + (b.currentAmount || 0), 0);
       document.getElementById('fin-investments-total').textContent = '$' + investTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
       const investGrid = document.getElementById('investment-buckets-grid');
       if (investBuckets.length === 0) {
-        investGrid.innerHTML = `
-          <div class="col-span-full p-4 text-center text-xs text-purple-600/70 bg-white/70 border border-dashed border-purple-200 rounded-2xl">
-            No investment buckets designated yet. Check "Investment Bucket" when creating or click the <i class="fa-solid fa-chart-line"></i> icon on any bucket.
-          </div>
-        `;
+        investGrid.innerHTML = `<div class="col-span-full p-4 text-center text-xs text-purple-600/70 bg-white/70 border border-dashed border-purple-200 rounded-2xl">No investment buckets designated yet. Check "Investment Bucket" when creating or click the <i class="fa-solid fa-chart-line"></i> icon on any bucket.</div>`;
       } else {
         investGrid.innerHTML = investBuckets.map(b => {
           const tiedAcc = state.bankAccounts.find(a => a.id === b.accountId);
           return `
             <div class="p-3.5 bg-white rounded-2xl border border-purple-100 shadow-sm flex items-center justify-between">
-              <div>
-                <span class="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-                  <span class="text-purple-500">📈</span> ${b.name}
-                </span>
-                <span class="text-[10px] text-slate-400 block mt-0.5">Tied: ${tiedAcc ? tiedAcc.name : 'None'}</span>
-              </div>
-              <div class="text-right">
-                <span class="text-sm font-extrabold text-purple-700">
-                  $${(b.currentAmount || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                </span>
-                <span class="text-[10px] text-slate-400 block">${b.pct}% alloc</span>
-              </div>
+              <div><span class="text-xs font-bold text-slate-800 flex items-center gap-1.5"><span class="text-purple-500">📈</span> ${b.name}</span><span class="text-[10px] text-slate-400 block mt-0.5">Tied: ${tiedAcc ? tiedAcc.name : 'None'}</span></div>
+              <div class="text-right"><span class="text-sm font-extrabold text-purple-700">$${(b.currentAmount || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span><span class="text-[10px] text-slate-400 block">${b.pct}% alloc</span></div>
             </div>
           `;
         }).join('');
       }
 
-      // Populate Select Options for Income & Expense Forms
-      const bktOptions = `<option value="" disabled selected>Select Bucket...</option>` + state.budgetBuckets.map(b => {
-        return `<option value="${b.id}">${b.name} (${b.pct}%)${b.isInvestment ? ' [Invest 2X XP]' : ''}</option>`;
-      }).join('');
-
+      const bktOptions = `<option value="" disabled selected>Select Bucket...</option>` + state.budgetBuckets.map(b => `<option value="${b.id}">${b.name} (${b.pct}%)${b.isInvestment ? ' [Invest 2X XP]' : ''}</option>`).join('');
       document.getElementById('inc-bucket-select').innerHTML = bktOptions;
       document.getElementById('exp-bucket-select').innerHTML = bktOptions;
       updateIncomeAccountPreview();
       updateExpenseAccountPreview();
 
-      // Income Logs
       document.getElementById('income-list').innerHTML = state.incomeLogs.map(i => `
         <li class="flex items-center justify-between p-2.5 bg-slate-50 rounded-xl border border-slate-200 text-xs">
-          <div>
-            <span class="font-bold text-slate-800">${i.desc}</span>
-            <span class="text-emerald-600 font-extrabold ml-2">+$${i.amount.toFixed(2)}</span>
-            <span class="text-[10px] bg-emerald-50 text-emerald-600 font-bold px-1.5 py-0.5 rounded ml-2">${i.bucketName || 'Bucket'} (${i.accountName || 'Bank'})</span>
-            ${i.xpEarned === 100 ? `<span class="text-[9px] bg-amber-100 text-amber-800 font-bold px-1 py-0.2 rounded ml-1">2X XP</span>` : ''}
-          </div>
+          <div><span class="font-bold text-slate-800">${i.desc}</span><span class="text-emerald-600 font-extrabold ml-2">+$${i.amount.toFixed(2)}</span><span class="text-[10px] bg-emerald-50 text-emerald-600 font-bold px-1.5 py-0.5 rounded ml-2">${i.bucketName || 'Bucket'} (${i.accountName || 'Bank'})</span>${i.xpEarned === 100 ? `<span class="text-[9px] bg-amber-100 text-amber-800 font-bold px-1 py-0.2 rounded ml-1">2X XP</span>` : ''}</div>
           <button onclick="deleteIncomeLog(${i.id})" class="text-slate-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button>
         </li>
       `).join('');
 
-      // Expense Logs
       document.getElementById('expense-list').innerHTML = state.expenseLogs.map(e => `
         <li class="flex items-center justify-between p-2.5 bg-slate-50 rounded-xl border border-slate-200 text-xs">
-          <div>
-            <span class="font-bold text-slate-800">${e.desc}</span>
-            <span class="text-rose-500 font-extrabold ml-2">-$${e.amount.toFixed(2)}</span>
-            <span class="text-[10px] bg-rose-50 text-rose-600 font-bold px-1.5 py-0.5 rounded ml-2">${e.bucketName || 'Bucket'} (${e.accountName || 'Bank'})</span>
-          </div>
+          <div><span class="font-bold text-slate-800">${e.desc}</span><span class="text-rose-500 font-extrabold ml-2">-$${e.amount.toFixed(2)}</span><span class="text-[10px] bg-rose-50 text-rose-600 font-bold px-1.5 py-0.5 rounded ml-2">${e.bucketName || 'Bucket'} (${e.accountName || 'Bank'})</span></div>
           <button onclick="deleteExpenseLog(${e.id})" class="text-slate-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button>
         </li>
       `).join('');
 
       renderCustomTabs();
+      evaluateCalorieStatus();
     }
 
-    // =========================================================
-    // BADGES & REWARDS RENDER
-    // =========================================================
     function renderBadgesUI() {
       const grid = document.getElementById('badges-grid');
       const countEl = document.getElementById('badges-unlocked-count');
@@ -3168,12 +2857,8 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
         return `
           <div class="p-5 rounded-2xl border transition-all duration-300 ${isUnlocked ? 'bg-gradient-to-br from-amber-50 to-orange-50 border-amber-300 shadow-sm' : 'bg-slate-50/80 border-slate-200 opacity-60'}">
             <div class="flex items-center justify-between mb-3">
-              <span class="text-3xl p-2 rounded-2xl ${isUnlocked ? 'bg-amber-100 shadow-xs' : 'bg-slate-200 grayscale'}">
-                ${b.emoji}
-              </span>
-              <span class="text-[10px] font-extrabold px-2.5 py-1 rounded-full border ${isUnlocked ? 'bg-amber-200/80 text-amber-900 border-amber-300' : 'bg-slate-200 text-slate-500 border-slate-300'}">
-                ${isUnlocked ? '✓ UNLOCKED' : 'LOCKED'}
-              </span>
+              <span class="text-3xl p-2 rounded-2xl ${isUnlocked ? 'bg-amber-100 shadow-xs' : 'bg-slate-200 grayscale'}">${b.emoji}</span>
+              <span class="text-[10px] font-extrabold px-2.5 py-1 rounded-full border ${isUnlocked ? 'bg-amber-200/80 text-amber-900 border-amber-300' : 'bg-slate-200 text-slate-500 border-slate-300'}">${isUnlocked ? '✓ UNLOCKED' : 'LOCKED'}</span>
             </div>
             <h3 class="font-extrabold text-sm text-slate-900 mb-1">${b.name}</h3>
             <p class="text-xs text-slate-500 font-medium leading-relaxed">${b.desc}</p>
@@ -3189,7 +2874,6 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
     function renderCustomTabs() {
       const navContainer = document.getElementById('nav-tabs');
       const contentContainer = document.getElementById('custom-sections-container');
-
       const currentActive = document.querySelector('.tab-content.active');
       const activeId = currentActive ? currentActive.id : 'dashboard';
 
@@ -3211,59 +2895,34 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
         sectionEl.id = sec.id;
         sectionEl.className = `tab-content space-y-6 ${activeId === sec.id ? 'active' : ''}`;
         sectionEl.innerHTML = `
-          <!-- Custom Section Header & Goals -->
           <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
-            <h2 class="text-xl font-bold text-slate-900 mb-2 flex items-center gap-2">
-              <span>${sec.icon}</span> ${sec.title} Goals
-            </h2>
+            <h2 class="text-xl font-bold text-slate-900 mb-2 flex items-center gap-2"><span>${sec.icon}</span> ${sec.title} Goals</h2>
             <p class="text-xs text-slate-500 font-medium mb-4">Add short-term (+50 XP) or long-term (+1,000 XP) goals for this custom section.</p>
-
             <form onsubmit="addCustomGoal(event, '${sec.id}')" class="grid grid-cols-1 sm:grid-cols-4 gap-2 mb-6">
               <input type="text" id="goal_text_${sec.id}" placeholder="Enter goal description..." required class="sm:col-span-2 bg-slate-50 border border-slate-200 px-4 py-2 rounded-xl text-sm text-slate-800 focus:outline-none focus:border-indigo-500">
-              <select id="goal_type_${sec.id}" class="bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 focus:outline-none focus:border-indigo-500">
-                <option value="short">Short-Term (+50 XP)</option>
-                <option value="long">Long-Term (+1,000 XP)</option>
-              </select>
-              <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 font-bold px-4 py-2 rounded-xl text-white text-xs transition shadow-sm">
-                Add Goal
-              </button>
+              <select id="goal_type_${sec.id}" class="bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 focus:outline-none focus:border-indigo-500"><option value="short">Short-Term (+50 XP)</option><option value="long">Long-Term (+1,000 XP)</option></select>
+              <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 font-bold px-4 py-2 rounded-xl text-white text-xs transition shadow-sm">Add Goal</button>
             </form>
-
             <ul class="space-y-2">
               ${goals.map(g => `
                 <li class="flex items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-200">
-                  <div class="flex items-center gap-3">
-                    <input type="checkbox" ${g.completed ? 'checked' : ''} onchange="toggleCustomGoal('${sec.id}', ${g.id})" class="w-4 h-4 accent-indigo-600 rounded cursor-pointer">
-                    <span class="${g.completed ? 'line-through text-slate-400' : 'text-slate-800 font-bold text-sm'}">${g.text}</span>
-                    <span class="text-[10px] ${g.type === 'long' ? 'bg-amber-50 text-amber-600 border-amber-200' : 'bg-indigo-50 text-indigo-600 border-indigo-200'} font-bold px-2 py-0.5 rounded-md border uppercase">
-                      ${g.type === 'long' ? 'Long-Term (+1,000 XP)' : 'Short-Term (+50 XP)'}
-                    </span>
-                  </div>
+                  <div class="flex items-center gap-3"><input type="checkbox" ${g.completed ? 'checked' : ''} onchange="toggleCustomGoal('${sec.id}', ${g.id})" class="w-4 h-4 accent-indigo-600 rounded cursor-pointer"><span class="${g.completed ? 'line-through text-slate-400' : 'text-slate-800 font-bold text-sm'}">${g.text}</span><span class="text-[10px] ${g.type === 'long' ? 'bg-amber-50 text-amber-600 border-amber-200' : 'bg-indigo-50 text-indigo-600 border-indigo-200'} font-bold px-2 py-0.5 rounded-md border uppercase">${g.type === 'long' ? 'Long-Term (+1,000 XP)' : 'Short-Term (+50 XP)'}</span></div>
                   <button onclick="deleteCustomGoal('${sec.id}', ${g.id})" class="text-xs text-slate-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button>
                 </li>
               `).join('')}
             </ul>
           </div>
-
-          <!-- Custom Log Entries -->
           <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
-            <h3 class="text-lg font-bold text-slate-900 mb-2 flex items-center gap-2">
-              <span>📝</span> ${sec.title} Activity Log
-            </h3>
-            <p class="text-xs text-slate-500 font-medium mb-4">Log daily notes or progress entries to earn <strong class="text-indigo-600">+15 XP</strong> each!</p>
-
+            <h3 class="text-lg font-bold text-slate-900 mb-2 flex items-center gap-2"><span>📝</span> ${sec.title} Activity Log</h3>
+            <p class="text-xs text-slate-500 font-medium mb-4">Log daily notes to earn <strong class="text-indigo-600">+15 XP</strong> each!</p>
             <form onsubmit="addCustomLog(event, '${sec.id}')" class="flex gap-2 mb-6">
               <input type="text" id="input_${sec.id}" placeholder="Log progress or notes..." required class="flex-1 bg-slate-50 border border-slate-200 px-4 py-2.5 rounded-xl text-slate-800 focus:outline-none focus:border-indigo-500">
               <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 font-bold px-5 py-2.5 rounded-xl text-white transition shadow-sm">Log Entry</button>
             </form>
-
             <ul class="space-y-2">
               ${logs.map(l => `
                 <li class="flex items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-200">
-                  <div>
-                    <span class="text-slate-800 font-medium">${l.text}</span>
-                    <span class="text-xs text-slate-400 font-medium ml-2">(${l.date})</span>
-                  </div>
+                  <div><span class="text-slate-800 font-medium">${l.text}</span><span class="text-xs text-slate-400 font-medium ml-2">(${l.date})</span></div>
                   <button onclick="deleteCustomLog('${sec.id}', ${l.id})" class="text-slate-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button>
                 </li>
               `).join('')}
