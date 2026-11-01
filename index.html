@@ -10,6 +10,7 @@
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <!-- Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   
@@ -88,7 +89,7 @@
   <!-- Header / Navigation Bar -->
   <header class="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40 shadow-sm">
     <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
-      
+      <div id="auth-container"></div>
       <!-- Logo, Mascot & Level Indicator -->
       <div class="flex items-center gap-3 cursor-pointer" id="header-mascot-trigger" title="Click Pulse for a boost!">
         <div class="relative w-11 h-11 bg-rose-50 border border-rose-200 rounded-2xl shadow-sm flex items-center justify-center overflow-hidden">
@@ -1101,6 +1102,129 @@
 
   <!-- APPLICATION LOGIC SCRIPT -->
   <script>
+    // --- 1. CONNECT TO YOUR SUPABASE BACKEND ---
+const SUPABASE_URL = "https://byuunpkkwxrvmgbjjczi.supabase.co";
+// Replace the placeholder below with your actual anon key from Supabase (Project Settings -> API)
+const SUPABASE_ANON_KEY = "PASTE_YOUR_LONG_EYJ_ANON_KEY_HERE";
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+let currentUser = null;
+
+// --- 2. ONLY GOOGLE SIGN IN ---
+async function loginWithGoogle() {
+  const { error } = await supabaseClient.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: window.location.origin
+    }
+  });
+  if (error) alert("Sign-in failed: " + error.message);
+}
+
+// --- 3. LOG OUT BUTTON FUNCTION ---
+async function logoutUser() {
+  await supabaseClient.auth.signOut({ scope: 'local' });
+  currentUser = null;
+  localStorage.removeItem('good_habits_state');
+  window.location.reload();
+}
+
+// --- 4. LOAD SAVED DATA FROM CLOUD ON LOGIN ---
+async function initAuthAndSync() {
+  supabaseClient.auth.onAuthStateChange(async (event, session) => {
+    if (session && session.user) {
+      currentUser = session.user;
+      renderAuthNav(true);
+      await loadUserDataFromCloud();
+    } else {
+      currentUser = null;
+      renderAuthNav(false);
+    }
+  });
+
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  if (session && session.user) {
+    currentUser = session.user;
+    renderAuthNav(true);
+    await loadUserDataFromCloud();
+  } else {
+    renderAuthNav(false);
+  }
+}
+
+async function loadUserDataFromCloud() {
+  if (!currentUser) return;
+
+  const { data, error } = await supabaseClient
+    .from('user_data')
+    .select('app_state, finance_state')
+    .eq('user_id', currentUser.id)
+    .single();
+
+  if (data && data.app_state) {
+    // Overwrite default blank state with user's cloud save
+    state = { ...state, ...data.app_state };
+    if (data.finance_state) {
+      state.bankAccounts = data.finance_state.bankAccounts || state.bankAccounts;
+      state.budgetBuckets = data.finance_state.budgetBuckets || state.budgetBuckets;
+    }
+    localStorage.setItem('good_habits_state', JSON.stringify(state));
+    updateUI();
+  } else {
+    // If first time logging in, upload initial starter data
+    await pushStateToCloud();
+  }
+}
+
+// --- 5. AUTOMATICALLY PUSH ALL CHANGES TO CLOUD ---
+async function pushStateToCloud() {
+  if (!currentUser) return;
+  try {
+    await supabaseClient.from('user_data').upsert({
+      user_id: currentUser.id,
+      app_state: state,
+      finance_state: {
+        bankAccounts: state.bankAccounts || [],
+        budgetBuckets: state.budgetBuckets || []
+      },
+      updated_at: new Date().toISOString()
+    });
+  } catch (err) {
+    console.error("Auto-sync error:", err);
+  }
+}
+
+// Intercept your existing saveState function so it writes to the cloud every time
+const baseSaveState = typeof saveState === 'function' ? saveState : () => {};
+saveState = function() {
+  baseSaveState();
+  pushStateToCloud();
+};
+
+function renderAuthNav(isLoggedIn) {
+  const container = document.getElementById('auth-container');
+  if (!container) return;
+
+  if (isLoggedIn && currentUser) {
+    container.innerHTML = `
+      <div class="flex items-center gap-2">
+        <span class="text-xs font-bold text-slate-600 hidden md:inline">${currentUser.email}</span>
+        <button onclick="logoutUser()" class="text-xs bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-700 font-bold px-3 py-1.5 rounded-xl border border-slate-200 transition flex items-center gap-1.5 shadow-sm">
+          <span>🚪</span> Log Out
+        </button>
+      </div>
+    `;
+  } else {
+    container.innerHTML = `
+      <button onclick="loginWithGoogle()" class="text-xs bg-slate-900 hover:bg-slate-800 text-white font-extrabold px-3.5 py-1.5 rounded-xl transition flex items-center gap-2 shadow-sm">
+        <span>🔑</span> Sign in with Google
+      </button>
+    `;
+  }
+}
+
+// Start listener when page loads
+document.addEventListener('DOMContentLoaded', initAuthAndSync);
     // Embedded API Key
     const DEFAULT_GEMINI_API_KEY = "AQ.Ab8RN6KeBBvwxcUNNcCezPLFo6UV1bi1BgSECekGFTvvcPDIqA";
 
