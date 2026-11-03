@@ -383,7 +383,7 @@
             <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
               <span class="text-xl">✅</span> To-Do List
             </h2>
-            <p class="text-xs text-slate-500 font-medium">Complete tasks to earn category XP bonuses!</p>
+            <p class="text-xs text-slate-500 font-medium">Complete tasks to earn category XP bonuses! Recurring tasks reset at midnight local time.</p>
           </div>
           <span class="text-xs font-bold bg-indigo-50 text-indigo-600 border border-indigo-200 px-3 py-1 rounded-full" id="todo-count">0 Completed</span>
         </div>
@@ -411,7 +411,7 @@
             <div class="flex items-center gap-2">
               <span class="text-xs font-medium text-slate-500">Frequency:</span>
               <select id="todo-recurrence" class="bg-white border border-slate-200 px-2.5 py-1 rounded-lg text-xs font-semibold text-slate-700 focus:outline-none focus:border-indigo-500">
-                <option value="daily">Daily</option>
+                <option value="daily">Daily (Resets midnight)</option>
                 <option value="weekly">Weekly</option>
                 <option value="biweekly">Bi-weekly</option>
                 <option value="monthly">Monthly</option>
@@ -440,7 +440,7 @@
               <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
                 <span class="text-xl">💧</span> Water & Hydration
               </h2>
-              <p class="text-xs text-slate-500">Click a drop to set count directly, or use the quick buttons below (+15 XP goal)!</p>
+              <p class="text-xs text-slate-500">Resets daily at midnight. Click a drop or use buttons below (+15 XP goal)!</p>
             </div>
             <button id="btn-edit-water-goal" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-xl border border-slate-200">
               <i class="fa-solid fa-pen"></i> Edit Goal
@@ -449,7 +449,7 @@
 
           <div class="p-4 bg-sky-50/70 rounded-2xl border border-sky-100 mb-4">
             <div class="flex items-center justify-between mb-2">
-              <span class="text-xs font-bold text-slate-600">Quick-Tap 8oz Glasses:</span>
+              <span class="text-xs font-bold text-slate-600">Quick-Tap 8oz Glasses (Today):</span>
               <span class="text-xs font-black text-sky-700" id="water-glasses-count">0 / 8</span>
             </div>
             <div id="water-glasses-rack" class="flex justify-between items-center py-2 px-1"></div>
@@ -560,7 +560,6 @@
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        
         <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
           <div class="flex justify-between items-center mb-4">
             <div>
@@ -681,7 +680,7 @@
             <span id="day-locked-badge" class="hidden text-[10px] font-extrabold uppercase bg-slate-200 text-slate-700 px-2 py-0.5 rounded-md">Locked for Today</span>
           </div>
           <p class="text-xs text-slate-600 font-medium">
-            Done eating for the day? Lock in your meals to earn or lose XP based on your calorie cap and macro split directions.
+            Done eating for today? Lock in your meals to earn or lose XP based on your calorie cap and macro split directions. Resets automatically tomorrow morning!
           </p>
         </div>
         <button id="btn-lock-eating" onclick="handleEndOfDayLockIn()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-extrabold text-xs px-6 py-3 rounded-2xl shadow-md transition flex items-center justify-center gap-2 shrink-0">
@@ -697,7 +696,7 @@
             <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
               <span>🎯</span> Daily Macro Split Targets & Rules
             </h2>
-            <p class="text-xs text-slate-500">Targets are set as % of total calories. Toggle whether you aim to be Over or Under each target.</p>
+            <p class="text-xs text-slate-500">Targets are set as % of total calories. Toggle whether you aim to be Over (≥) or Under (≤) each target.</p>
           </div>
           <button onclick="editMacroPercentages()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-xl border border-slate-200 transition">
             <i class="fa-solid fa-pen"></i> Edit Target %
@@ -824,7 +823,7 @@
             <h2 class="text-lg font-black text-slate-900 flex items-center gap-2">
               <span>✨</span> Gemini AI Nutrition Assistant
             </h2>
-            <p class="text-xs text-slate-600 font-medium">Type any food or meal (e.g., <em>"plain bagel with butter"</em>). Gemini will calculate calories, carbs, protein, and fat!</p>
+            <p class="text-xs text-slate-600 font-medium">Type any food or meal (e.g., <em>"plain bagel with butter"</em>). Gemini calculates calories, carbs, protein, and fat!</p>
           </div>
           <span class="text-[10px] bg-emerald-100 text-emerald-800 font-extrabold px-3 py-1 rounded-full border border-emerald-300 flex items-center gap-1.5">
             <span>🧠</span> Gemini 3.8 Flash
@@ -850,30 +849,46 @@
         <div id="ai-food-output" class="hidden mt-4 transition-all"></div>
       </div>
 
-      <!-- Manual Meal Logger -->
-      <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
-        <h2 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
-          <span>🥗</span> Manual Meal Log
-        </h2>
+      <!-- Manual Meal Logger & Daily History Review -->
+      <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4">
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-slate-100 pb-3">
+          <div>
+            <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
+              <span>🥗</span> Meal Log
+            </h2>
+            <p class="text-xs text-slate-500">Today's meals reset freshly each morning. Use the date selector to view past days.</p>
+          </div>
+          
+          <!-- History Date Filter -->
+          <div class="flex items-center gap-2">
+            <span class="text-xs font-bold text-slate-500">Viewing Day:</span>
+            <select id="nutrition-history-date-select" onchange="renderFoodUI()" class="bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-indigo-500">
+              <option value="today" selected>Today (Active Log)</option>
+            </select>
+          </div>
+        </div>
 
-        <form id="form-food" class="grid grid-cols-1 sm:grid-cols-7 gap-3 mb-6">
-          <input type="text" id="food-name" placeholder="Meal Name" required class="sm:col-span-1 bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500">
-          <input type="number" id="food-qty" placeholder="Qty" value="1" min="1" required class="bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500">
-          <select id="food-type" class="bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-slate-800 text-xs font-bold focus:outline-none focus:border-emerald-500">
-            <option value="Breakfast">Breakfast</option>
-            <option value="Lunch" selected>Lunch</option>
-            <option value="Dinner">Dinner</option>
-            <option value="Snack">Snack</option>
-            <option value="Dessert">Dessert</option>
-          </select>
-          <input type="number" id="food-cals" placeholder="Calories" required class="bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500">
-          <input type="number" id="food-protein" placeholder="Protein (g)" value="0" class="bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500">
-          <input type="number" id="food-carbs" placeholder="Carbs (g)" value="0" class="bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500">
-          <input type="number" id="food-fat" placeholder="Fat (g)" value="0" class="bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500">
-          <button type="submit" class="sm:col-span-7 bg-emerald-600 hover:bg-emerald-700 font-bold px-4 py-2.5 rounded-xl text-white transition shadow-sm">
-            Log Meal & Macros
-          </button>
-        </form>
+        <!-- Add Meal Form (Only active when viewing today) -->
+        <div id="add-meal-form-container">
+          <form id="form-food" class="grid grid-cols-1 sm:grid-cols-7 gap-3 mb-4">
+            <input type="text" id="food-name" placeholder="Meal Name" required class="sm:col-span-1 bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500">
+            <input type="number" id="food-qty" placeholder="Qty" value="1" min="1" required class="bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500">
+            <select id="food-type" class="bg-slate-50 border border-slate-200 px-3 py-2 rounded-xl text-slate-800 text-xs font-bold focus:outline-none focus:border-emerald-500">
+              <option value="Breakfast">Breakfast</option>
+              <option value="Lunch" selected>Lunch</option>
+              <option value="Dinner">Dinner</option>
+              <option value="Snack">Snack</option>
+              <option value="Dessert">Dessert</option>
+            </select>
+            <input type="number" id="food-cals" placeholder="Calories" required class="bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500">
+            <input type="number" id="food-protein" placeholder="Protein (g)" value="0" class="bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500">
+            <input type="number" id="food-carbs" placeholder="Carbs (g)" value="0" class="bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500">
+            <input type="number" id="food-fat" placeholder="Fat (g)" value="0" class="bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500">
+            <button type="submit" class="sm:col-span-7 bg-emerald-600 hover:bg-emerald-700 font-bold px-4 py-2.5 rounded-xl text-white transition shadow-sm">
+              Log Meal & Macros
+            </button>
+          </form>
+        </div>
 
         <ul id="food-list" class="space-y-2"></ul>
       </div>
@@ -889,7 +904,7 @@
             <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
               <span>🔥</span> Daily Exercise Goals (+30 XP Bonus)
             </h2>
-            <p class="text-xs text-slate-500">Hit both duration and burn goals today to trigger the daily Master Bonus! Resets daily.</p>
+            <p class="text-xs text-slate-500">Hit both duration and burn goals today to trigger the daily Master Bonus! Resets daily at midnight.</p>
           </div>
           <button id="btn-edit-exercise-goals" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-xl border border-slate-200"><i class="fa-solid fa-pen"></i> Edit Daily Goals</button>
         </div>
@@ -897,7 +912,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div class="p-4 bg-sky-50/60 rounded-2xl border border-sky-100">
             <div class="flex justify-between items-center text-xs mb-1">
-              <span class="text-slate-600 font-bold"><i class="fa-solid fa-clock text-sky-600"></i> Active Time Goal</span>
+              <span class="text-slate-600 font-bold"><i class="fa-solid fa-clock text-sky-600"></i> Active Time Goal (Today)</span>
               <span id="ex-time-goal-lbl" class="text-sky-600 font-extrabold">0 / 45 mins</span>
             </div>
             <div class="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden mt-2">
@@ -907,7 +922,7 @@
 
           <div class="p-4 bg-slate-100 rounded-2xl border border-slate-200">
             <div class="flex justify-between items-center text-xs mb-1">
-              <span class="text-slate-600 font-bold"><i class="fa-solid fa-bolt text-indigo-600"></i> Calorie Burn Goal</span>
+              <span class="text-slate-600 font-bold"><i class="fa-solid fa-bolt text-indigo-600"></i> Calorie Burn Goal (Today)</span>
               <span id="ex-cal-goal-lbl" class="text-indigo-600 font-extrabold">0 / 400 kcal</span>
             </div>
             <div class="w-full bg-slate-200 h-2.5 rounded-full overflow-hidden mt-2">
@@ -1196,7 +1211,6 @@
     // Replace with your anon key from Supabase (Project Settings -> API)
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJ5dXVucGtrd3hydm1nYmpqY3ppIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTM1NTkzMTksImV4cCI6MjEwOTEzNTMxOX0.WbqWDSS9DW7SgsgNpQ7_dhH4L1dfZ9wH871qvftQmKg";
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
     let currentUser = null;
 
     async function loginWithGoogle() {
@@ -1253,6 +1267,7 @@
           state.bankAccounts = data.finance_state.bankAccounts || state.bankAccounts;
           state.budgetBuckets = data.finance_state.budgetBuckets || state.budgetBuckets;
         }
+        checkDailyMidnightResets();
         localStorage.setItem('good_habits_state', JSON.stringify(state));
         updateUI();
       } else {
@@ -1308,6 +1323,7 @@
       streak: 1,
       paycheck: 0.00,
       hasSeenTour: false,
+      lastActiveDate: null,
       bankAccounts: [],
       budgetBuckets: [],
       macroGoals: { 
@@ -1323,7 +1339,6 @@
       waterGoal: 64,
       todayWater: 0,
       lastWaterDate: null,
-      lastExerciseDate: null,
       exerciseGoals: { mins: 45, cals: 400 },
       exerciseBonusClaimedDate: null,
       sleepGoals: { bedtime: '22:30', waketime: '06:30', duration: 8.0 },
@@ -1335,7 +1350,8 @@
       screenTimeLimitMins: 180,
       todos: [],
       longTermGoals: [],
-      foodLogs: [],
+      foodLogs: [], // Always holds TODAY's fresh meals
+      foodHistory: {}, // Stores past meals keyed by date: { "11/3/2026": [meals...] }
       workouts: [],
       screenTime: [],
       travelBuckets: [
@@ -1361,6 +1377,80 @@
       { id: 'wealth_builder', name: 'Wealth Builder', desc: 'Achieve a Net Worth of over $100,000', emoji: '💎', xpReward: 250, check: (s) => (s.bankAccounts || []).reduce((sum, a) => sum + (a.balance || 0), 0) >= 100000 }
     ];
 
+    // =========================================================
+    // MIDNIGHT RESET ENGINE (DAILY REFRESH)
+    // =========================================================
+    function checkDailyMidnightResets() {
+      const todayStr = new Date().toLocaleDateString();
+      if (!state.lastActiveDate) {
+        state.lastActiveDate = todayStr;
+      }
+
+      if (!state.foodHistory) state.foodHistory = {};
+
+      // If the calendar day has changed past midnight
+      if (state.lastActiveDate !== todayStr) {
+        const prevDate = state.lastActiveDate;
+
+        // 1. Archive previous day's food logs into history
+        if (state.foodLogs && state.foodLogs.length > 0) {
+          state.foodHistory[prevDate] = [...state.foodLogs];
+        }
+        // Fresh meal log for today
+        state.foodLogs = [];
+
+        // 2. Refresh Water tracker
+        state.todayWater = 0;
+        state.lastWaterDate = todayStr;
+
+        // 3. Reset daily exercise bonus claim check
+        state.exerciseBonusClaimedDate = null;
+
+        // 4. Reset recurring tasks at midnight local time
+        state.todos = state.todos.map(t => {
+          if (t.isRecurring && t.recurrence === 'daily') {
+            return { ...t, completed: false, completedAt: null, completedDate: null };
+          }
+          return t;
+        });
+
+        // 5. Update streak calculation
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        if (prevDate === yesterday.toLocaleDateString()) {
+          state.streak = (state.streak || 1) + 1;
+        } else {
+          state.streak = 1;
+        }
+
+        state.lastActiveDate = todayStr;
+        saveState();
+      }
+
+      // Check non-daily recurring task resets (weekly, biweekly, monthly)
+      checkLongerRecurringResets();
+    }
+
+    function checkLongerRecurringResets() {
+      const now = Date.now();
+      const periods = { weekly: 604800000, biweekly: 1209600000, monthly: 2592000000 };
+      let changed = false;
+
+      state.todos = state.todos.map(t => {
+        if (t.isRecurring && t.recurrence !== 'daily' && t.completed && t.completedAt) {
+          const elapsed = now - t.completedAt;
+          const targetPeriod = periods[t.recurrence] || periods.weekly;
+          if (elapsed >= targetPeriod) {
+            changed = true;
+            return { ...t, completed: false, completedAt: null, completedDate: null };
+          }
+        }
+        return t;
+      });
+
+      if (changed) saveState();
+    }
+
     function loadState() {
       const saved = localStorage.getItem('good_habits_state');
       if (saved) {
@@ -1376,14 +1466,9 @@
       if (!Array.isArray(state.budgetBuckets)) state.budgetBuckets = [];
       if (!Array.isArray(state.incomeLogs)) state.incomeLogs = [];
       if (!Array.isArray(state.expenseLogs)) state.expenseLogs = [];
+      if (!Array.isArray(state.foodLogs)) state.foodLogs = [];
+      if (!state.foodHistory) state.foodHistory = {};
       if (typeof state.paycheck !== 'number') state.paycheck = 0.00;
-
-      const todayStr = new Date().toLocaleDateString();
-      if (state.lastWaterDate !== todayStr) {
-        state.todayWater = 0;
-        state.lastWaterDate = todayStr;
-        saveState();
-      }
 
       if (!state.macroGoals) {
         state.macroGoals = { cals: 2000, pPct: 40, cPct: 30, fPct: 30, pDir: 'over', cDir: 'under', fDir: 'under' };
@@ -1392,13 +1477,16 @@
       if (!state.customGoals) state.customGoals = {};
       if (!state.unlockedBadges) state.unlockedBadges = [];
 
-      checkRecurringResets();
+      checkDailyMidnightResets();
       setupEventListeners();
       initChart();
       evaluateBadges(false);
       updateUI();
       checkFirstTimeTour();
       initAuthAndSync();
+
+      // Check midnight rollover automatically every 60 seconds
+      setInterval(checkDailyMidnightResets, 60000);
     }
 
     function saveState() {
@@ -1412,7 +1500,7 @@
     let tourStep = 0;
     const tourContent = [
       { title: "Meet Beaty, Your Coach! ⚡", desc: "Beaty pulses along with your habits. When you exercise or eat healthy, Beaty thrives. When you are nearing your calorie budget or overspending, Beaty steps in with advice!" },
-      { title: "🥗 Calorie & Nutrition Guard", desc: "Type in any meal (like 'plain bagel with butter') and Gemini AI instantly calculates calories and macros. Beaty alerts you right at the 80% mark before you go over budget!" },
+      { title: "🥗 Calorie & Nutrition Guard", desc: "Type in any meal and Gemini AI calculates calories and macros. Your logs reset cleanly every morning at midnight, with past days archived in history!" },
       { title: "💰 Zero-Based Envelopes & Banking", desc: "Organize paychecks into virtual envelopes tied to your actual bank accounts. Log incomes, subtract expenses, and track your net worth and investments separately." },
       { title: "⚡ Level Up & Earn Badges", desc: "Every clean habit earns XP! Early sleep (+20 XP bonus), water tracking, and crushing daily workout goals will level up your account. Everything syncs across devices when signed in!" }
     ];
@@ -1491,7 +1579,7 @@
       } else {
         if (badge) badge.classList.add('hidden');
         if (advice) {
-          advice.textContent = `"Pacing looks solid! We're at ${consumed} kcal. Drink your water and log your meals as you eat to keep your routine balanced."`;
+          advice.textContent = `"Pacing looks solid! We're at ${consumed} kcal today. Drink your water and log your meals as you eat to keep your routine balanced."`;
         }
       }
     }
@@ -1505,24 +1593,6 @@
       ];
       const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
       triggerMascotPopup("Beaty Coach Tip", randomQuote);
-    }
-
-    function checkRecurringResets() {
-      const now = Date.now();
-      const periods = { daily: 86400000, weekly: 604800000, biweekly: 1209600000, monthly: 2592000000 };
-      let stateChanged = false;
-      state.todos = state.todos.map(t => {
-        if (t.isRecurring && t.completed && t.completedAt) {
-          const elapsed = now - t.completedAt;
-          const targetPeriod = periods[t.recurrence] || periods.daily;
-          if (elapsed >= targetPeriod) {
-            stateChanged = true;
-            return { ...t, completed: false, completedAt: null };
-          }
-        }
-        return t;
-      });
-      if (stateChanged) saveState();
     }
 
     function triggerMascotPopup(title, message) {
@@ -1673,12 +1743,12 @@
       const todayStr = new Date().toLocaleDateString();
 
       if (state.lastNutritionLockedDate === todayStr) {
-        alert("You have already locked in your nutrition for today!");
+        alert("You have already locked in your nutrition for today! It unlocks tomorrow morning.");
         return;
       }
 
       if (state.foodLogs.length === 0) {
-        alert("Log at least one meal before locking in your day!");
+        alert("Log at least one meal today before locking in your day!");
         return;
       }
 
@@ -2535,7 +2605,7 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
       saveState();
     }
 
-    // --- TO-DO LIST ---
+    // --- TO-DO LIST (RECURRING MIDNIGHT AWARE) ---
     function addTodoTask(e) {
       e.preventDefault();
       const input = document.getElementById('todo-input');
@@ -2545,23 +2615,47 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
       const isRecurring = document.getElementById('todo-is-recurring').checked;
       const recurrence = document.getElementById('todo-recurrence').value;
 
-      state.todos.push({ id: Date.now(), text: input.value, category, xp, isRecurring, recurrence, completed: false, completedAt: null, xpEarned: 0 });
+      state.todos.push({ 
+        id: Date.now(), 
+        text: input.value, 
+        category, 
+        xp, 
+        isRecurring, 
+        recurrence, 
+        completed: false, 
+        completedAt: null, 
+        completedDate: null,
+        xpEarned: 0 
+      });
       input.value = '';
       document.getElementById('todo-is-recurring').checked = false;
       saveState();
     }
 
     function toggleTodo(id) {
+      const todayStr = new Date().toLocaleDateString();
       state.todos = state.todos.map(t => {
         if (t.id === id) {
           const nextCompleted = !t.completed;
           if (nextCompleted) {
             const earned = t.xp || 10;
             awardXP(earned, `${t.category || 'Task'} completed!`);
-            return { ...t, completed: nextCompleted, completedAt: Date.now(), xpEarned: earned };
+            return { 
+              ...t, 
+              completed: nextCompleted, 
+              completedAt: Date.now(),
+              completedDate: todayStr,
+              xpEarned: earned 
+            };
           } else {
             deductXP(t.xpEarned || t.xp || 10);
-            return { ...t, completed: nextCompleted, completedAt: null, xpEarned: 0 };
+            return { 
+              ...t, 
+              completed: nextCompleted, 
+              completedAt: null, 
+              completedDate: null,
+              xpEarned: 0 
+            };
           }
         }
         return t;
@@ -2687,6 +2781,52 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
     }
 
     // =========================================================
+    // NUTRITION & MEAL LOG DISPLAY WITH HISTORICAL ARCHIVE
+    // =========================================================
+    function renderFoodUI() {
+      const dateSelect = document.getElementById('nutrition-history-date-select');
+      const selectedDate = dateSelect ? dateSelect.value : 'today';
+      const formContainer = document.getElementById('add-meal-form-container');
+
+      // Update date picker options
+      if (dateSelect) {
+        const historyDates = Object.keys(state.foodHistory || {}).sort((a,b) => new Date(b) - new Date(a));
+        dateSelect.innerHTML = `<option value="today" ${selectedDate === 'today' ? 'selected' : ''}>Today (Active Log)</option>` + 
+          historyDates.map(d => `<option value="${d}" ${selectedDate === d ? 'selected' : ''}>${d} (Archive)</option>`).join('');
+      }
+
+      const isViewingToday = selectedDate === 'today';
+      if (formContainer) {
+        formContainer.style.display = isViewingToday ? 'block' : 'none';
+      }
+
+      const activeMeals = isViewingToday ? (state.foodLogs || []) : (state.foodHistory[selectedDate] || []);
+
+      const listEl = document.getElementById('food-list');
+      if (listEl) {
+        if (activeMeals.length === 0) {
+          listEl.innerHTML = `<li class="p-4 text-center text-xs text-slate-400 bg-slate-50 border border-dashed border-slate-200 rounded-xl">${isViewingToday ? 'No meals logged yet today. Use Ask AI or log manually above!' : 'No meals recorded for this archived date.'}</li>`;
+        } else {
+          listEl.innerHTML = activeMeals.map(f => `
+            <li class="flex items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-200">
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="text-slate-800 font-bold">${f.name}</span>
+                  <span class="text-[10px] bg-emerald-50 text-emerald-600 font-bold px-2 py-0.5 rounded-md border border-emerald-200">${f.mealType || 'Meal'}</span>
+                </div>
+                <p class="text-xs text-slate-500 font-medium mt-0.5">P: ${f.p || 0}g | C: ${f.c || 0}g | F: ${f.f || 0}g</p>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-xs font-extrabold text-emerald-600 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg">${f.cals} kcal</span>
+                ${isViewingToday ? `<button onclick="deleteFoodLog(${f.id})" class="text-slate-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button>` : ''}
+              </div>
+            </li>
+          `).join('');
+        }
+      }
+    }
+
+    // =========================================================
     // MASTER UI RENDER
     // =========================================================
     function updateUI() {
@@ -2696,6 +2836,8 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
       const pct = Math.min(100, Math.round((state.xp / maxXP) * 100));
       document.getElementById('xp-bar').style.width = pct + '%';
       document.getElementById('xp-percentage').textContent = pct + '% to Lvl UP';
+
+      document.getElementById('dash-streak').textContent = state.streak || 1;
 
       const latestWeight = state.weightLogs.length > 0 ? state.weightLogs[state.weightLogs.length - 1].weight : null;
       document.getElementById('dash-weight').textContent = latestWeight ? `${latestWeight} lbs` : '-- lbs';
@@ -2710,6 +2852,7 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
         </li>
       `).join('');
 
+      // Water UI
       const wPct = Math.min(100, Math.round((state.todayWater / state.waterGoal) * 100));
       document.getElementById('water-fill').style.height = wPct + '%';
       document.getElementById('water-fill-pct').textContent = wPct + '%';
@@ -2717,6 +2860,7 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
       document.getElementById('water-status-msg').textContent = wPct >= 100 ? "🎉 Daily hydration target crushed!" : "Keep drinking water today!";
       renderWaterRack();
 
+      // Sleep UI
       document.getElementById('goal-bedtime-lbl').textContent = state.sleepGoals.bedtime;
       document.getElementById('goal-waketime-lbl').textContent = state.sleepGoals.waketime;
       document.getElementById('goal-sleep-hrs-lbl').textContent = `${state.sleepGoals.duration} hrs`;
@@ -2728,6 +2872,7 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
         </li>
       `).join('');
 
+      // Screen Time UI
       const limitHrs = (state.screenTimeLimitMins / 60).toFixed(1);
       document.getElementById('st-limit-lbl').textContent = `${limitHrs}h`;
 
@@ -2761,6 +2906,7 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
         `;
       }).join('');
 
+      // Travel UI
       if (!state.travelBuckets) state.travelBuckets = [];
       if (!state.travel) state.travel = [];
 
@@ -2801,6 +2947,7 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
       renderBadgesUI();
       updateChartData();
 
+      // Long Term Goals
       document.getElementById('dash-lt-goals-list').innerHTML = state.longTermGoals.map(g => `
         <li class="flex items-center justify-between p-3.5 bg-slate-50 hover:bg-slate-100 rounded-xl border border-slate-200 transition">
           <div class="flex items-center gap-3"><input type="checkbox" ${g.completed ? 'checked' : ''} onchange="toggleLTGoal(${g.id})" class="w-4 h-4 accent-indigo-600 rounded cursor-pointer"><span class="${g.completed ? 'line-through text-slate-400' : 'text-slate-800 font-bold'}">${g.text}</span><span class="text-[10px] bg-indigo-50 text-indigo-600 font-bold px-2 py-0.5 rounded-md border border-indigo-200 capitalize">${g.category}</span></div>
@@ -2832,6 +2979,7 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
         }
       });
 
+      // To-Do List
       document.getElementById('todo-list').innerHTML = state.todos.map(t => `
         <li class="flex items-center justify-between p-3.5 bg-slate-50 hover:bg-slate-100/80 rounded-xl border border-slate-200 transition">
           <div class="flex items-center gap-3"><input type="checkbox" ${t.completed ? 'checked' : ''} onchange="toggleTodo(${t.id})" class="w-4 h-4 accent-indigo-600 rounded cursor-pointer"><span class="${t.completed ? 'line-through text-slate-400' : 'text-slate-800 font-medium'}">${t.text}</span><span class="text-[10px] bg-indigo-50 text-indigo-600 font-bold px-2 py-0.5 rounded-md border border-indigo-200">${t.category || 'Task'} (+${t.xp || 10} XP)</span>${t.isRecurring ? `<span class="text-[10px] bg-purple-50 text-purple-600 font-bold px-2 py-0.5 rounded-md border border-purple-200 flex items-center gap-1"><i class="fa-solid fa-rotate text-[8px]"></i> ${t.recurrence}</span>` : ''}</div>
@@ -2920,12 +3068,7 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
         if (lockBadge) lockBadge.classList.add('hidden');
       }
 
-      document.getElementById('food-list').innerHTML = state.foodLogs.map(f => `
-        <li class="flex items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-200">
-          <div><div class="flex items-center gap-2"><span class="text-slate-800 font-bold">${f.name}</span><span class="text-[10px] bg-emerald-50 text-emerald-600 font-bold px-2 py-0.5 rounded-md border border-emerald-200">${f.mealType || 'Meal'}</span></div><p class="text-xs text-slate-500 font-medium mt-0.5">P: ${f.p || 0}g | C: ${f.c || 0}g | F: ${f.f || 0}g</p></div>
-          <div class="flex items-center gap-3"><span class="text-xs font-extrabold text-emerald-600 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg">${f.cals} kcal</span><button onclick="deleteFoodLog(${f.id})" class="text-slate-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button></div>
-        </li>
-      `).join('');
+      renderFoodUI();
 
       // Exercise
       const todayWorkouts = state.workouts.filter(w => new Date(w.id).toLocaleDateString() === todayStr);
