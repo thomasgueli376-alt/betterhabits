@@ -186,7 +186,7 @@
         </button>
       </nav>
 
-      <!-- Right Actions: Auth Slot + Guide + Add Tab + Export -->
+      <!-- Right Header Actions -->
       <div class="flex items-center gap-2">
         <div id="auth-container"></div>
         <button onclick="openTourAgain()" title="First-Time Guide" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-2 rounded-xl border border-slate-200 transition flex items-center gap-1.5">
@@ -346,10 +346,10 @@
             <span class="text-xl">📋</span>
           </button>
 
-          <button id="quick-cal-xp" class="p-4 bg-slate-50 hover:bg-slate-100 rounded-2xl border border-slate-200 text-left transition flex items-center justify-between group">
+          <button onclick="switchTab('food')" class="p-4 bg-slate-50 hover:bg-slate-100 rounded-2xl border border-slate-200 text-left transition flex items-center justify-between group">
             <div>
-              <p class="font-bold text-slate-800 group-hover:text-emerald-600 transition">Stay Under Calorie Target</p>
-              <p class="text-xs text-emerald-600 mt-0.5 font-bold">+25 XP</p>
+              <p class="font-bold text-slate-800 group-hover:text-emerald-600 transition">Lock Nutrition Day</p>
+              <p class="text-xs text-emerald-600 mt-0.5 font-bold">Up to +75 XP</p>
             </div>
             <span class="text-xl">🥗</span>
           </button>
@@ -434,7 +434,6 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
-        <!-- Editable Water Tracker Card with Interactive Rack -->
         <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
           <div class="flex justify-between items-center mb-4">
             <div>
@@ -448,7 +447,6 @@
             </button>
           </div>
 
-          <!-- Interactive Glass Rack -->
           <div class="p-4 bg-sky-50/70 rounded-2xl border border-sky-100 mb-4">
             <div class="flex items-center justify-between mb-2">
               <span class="text-xs font-bold text-slate-600">Quick-Tap 8oz Glasses:</span>
@@ -457,7 +455,6 @@
             <div id="water-glasses-rack" class="flex justify-between items-center py-2 px-1"></div>
           </div>
 
-          <!-- Bottle Progress Container -->
           <div class="p-5 bg-sky-50/60 rounded-2xl border border-sky-100 mb-6 flex items-center gap-6">
             <div class="relative w-16 h-32 bg-slate-200 border-2 border-sky-300 rounded-3xl overflow-hidden flex flex-col justify-end">
               <div id="water-fill" class="bg-gradient-to-t from-sky-500 to-sky-400 w-full h-0 transition-all duration-500"></div>
@@ -473,7 +470,6 @@
             </div>
           </div>
 
-          <!-- Add Water Action Buttons -->
           <div class="grid grid-cols-4 gap-2">
             <button onclick="addWater(8)" class="py-2.5 bg-sky-50 hover:bg-sky-100 text-sky-700 font-bold rounded-xl border border-sky-200 transition text-xs flex items-center justify-center gap-1">
               <i class="fa-solid fa-plus"></i> 8 oz
@@ -490,7 +486,6 @@
           </div>
         </div>
 
-        <!-- Sleep Tracker Card -->
         <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
           <div class="flex justify-between items-center mb-4">
             <div>
@@ -566,7 +561,6 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
-        <!-- BANK ACCOUNTS LIST CARD -->
         <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
           <div class="flex justify-between items-center mb-4">
             <div>
@@ -582,7 +576,6 @@
           <div class="space-y-2.5" id="bank-accounts-list"></div>
         </div>
 
-        <!-- BUDGET BUCKETS LIST CARD -->
         <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
           <div class="flex justify-between items-center mb-4">
             <div>
@@ -599,7 +592,6 @@
         </div>
       </div>
 
-      <!-- SEPARATE INVESTMENT OVERVIEW SECTION -->
       <div class="bg-gradient-to-br from-purple-50/70 via-indigo-50/40 to-white border border-purple-200 p-6 rounded-3xl shadow-sm">
         <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
           <div>
@@ -618,10 +610,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3" id="investment-buckets-grid"></div>
       </div>
 
-      <!-- Income & Expense Transactions -->
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        
-        <!-- LOG INCOME / DEPOSIT -->
         <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
           <div class="flex items-center justify-between mb-4">
             <h3 class="text-lg font-bold flex items-center gap-2 text-emerald-600">
@@ -652,7 +641,6 @@
           </div>
         </div>
 
-        <!-- LOG EXPENSE -->
         <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
           <h3 class="text-lg font-bold mb-4 flex items-center gap-2 text-rose-500">
             <span>🧾</span> Log Expense
@@ -683,6 +671,117 @@
     <!-- 5. NUTRITION & MACROS TAB -->
     <section id="food" class="tab-content space-y-6">
       <div id="food-lt-container" class="hidden"></div>
+
+      <!-- END OF DAY FINISH EATING CARD -->
+      <div class="bg-gradient-to-r from-emerald-50 via-teal-50 to-indigo-50 border-2 border-emerald-300 rounded-3xl p-6 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+        <div class="space-y-1 text-center sm:text-left">
+          <div class="flex items-center justify-center sm:justify-start gap-2">
+            <span class="text-xl">🌙</span>
+            <h3 class="text-base font-black text-slate-900">End-of-Day Nutrition Lock-In</h3>
+            <span id="day-locked-badge" class="hidden text-[10px] font-extrabold uppercase bg-slate-200 text-slate-700 px-2 py-0.5 rounded-md">Locked for Today</span>
+          </div>
+          <p class="text-xs text-slate-600 font-medium">
+            Done eating for the day? Lock in your meals to earn or lose XP based on your calorie cap and macro split directions.
+          </p>
+        </div>
+        <button id="btn-lock-eating" onclick="handleEndOfDayLockIn()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-extrabold text-xs px-6 py-3 rounded-2xl shadow-md transition flex items-center justify-center gap-2 shrink-0">
+          <span>🔒</span>
+          <span>I'm Done Eating Today</span>
+        </button>
+      </div>
+
+      <!-- PERCENTAGE-BASED MACRO GOALS & TOGGLES -->
+      <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4">
+        <div class="flex flex-wrap justify-between items-center gap-2">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <span>🎯</span> Daily Macro Split Targets & Rules
+            </h2>
+            <p class="text-xs text-slate-500">Targets are set as % of total calories. Toggle whether you aim to be Over or Under each target.</p>
+          </div>
+          <button onclick="editMacroPercentages()" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-xl border border-slate-200 transition">
+            <i class="fa-solid fa-pen"></i> Edit Target %
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
+          
+          <!-- Calories -->
+          <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between text-xs mb-1">
+                <span class="text-slate-500 font-bold">Calories (Cap)</span>
+                <span id="cal-count-label" class="text-indigo-600 font-black">0 / 2,000 kcal</span>
+              </div>
+              <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden mt-2">
+                <div id="bar-cal" class="bg-indigo-500 h-full w-0 transition-all"></div>
+              </div>
+            </div>
+            <span class="text-[10px] font-extrabold text-slate-400 mt-3 block uppercase">Goal: Stay Under Limit</span>
+          </div>
+
+          <!-- Protein % & Toggle -->
+          <div class="p-4 bg-rose-50/60 rounded-2xl border border-rose-100 flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-center text-xs mb-1">
+                <span class="text-rose-700 font-bold">Protein %</span>
+                <span id="p-pct-label" class="text-rose-600 font-black">0% / 40%</span>
+              </div>
+              <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden mt-2">
+                <div id="bar-p" class="bg-rose-500 h-full w-0 transition-all"></div>
+              </div>
+              <p class="text-[11px] text-slate-400 mt-1 font-semibold" id="p-grams-label">0g (0 kcal)</p>
+            </div>
+            <div class="mt-3 pt-2 border-t border-rose-200/60 flex items-center justify-between">
+              <span class="text-[10px] font-bold text-slate-500 uppercase">Target:</span>
+              <button onclick="toggleMacroDirection('p')" id="btn-toggle-p" class="text-[10px] font-black px-2 py-0.5 rounded-lg bg-rose-600 text-white shadow-xs">
+                OVER (≥)
+              </button>
+            </div>
+          </div>
+
+          <!-- Carbs % & Toggle -->
+          <div class="p-4 bg-amber-50/60 rounded-2xl border border-amber-100 flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-center text-xs mb-1">
+                <span class="text-amber-700 font-bold">Carbs %</span>
+                <span id="c-pct-label" class="text-amber-600 font-black">0% / 30%</span>
+              </div>
+              <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden mt-2">
+                <div id="bar-c" class="bg-amber-500 h-full w-0 transition-all"></div>
+              </div>
+              <p class="text-[11px] text-slate-400 mt-1 font-semibold" id="c-grams-label">0g (0 kcal)</p>
+            </div>
+            <div class="mt-3 pt-2 border-t border-amber-200/60 flex items-center justify-between">
+              <span class="text-[10px] font-bold text-slate-500 uppercase">Target:</span>
+              <button onclick="toggleMacroDirection('c')" id="btn-toggle-c" class="text-[10px] font-black px-2 py-0.5 rounded-lg bg-amber-600 text-white shadow-xs">
+                UNDER (≤)
+              </button>
+            </div>
+          </div>
+
+          <!-- Fats % & Toggle -->
+          <div class="p-4 bg-sky-50/60 rounded-2xl border border-sky-100 flex flex-col justify-between">
+            <div>
+              <div class="flex justify-between items-center text-xs mb-1">
+                <span class="text-sky-700 font-bold">Fats %</span>
+                <span id="f-pct-label" class="text-sky-600 font-black">0% / 30%</span>
+              </div>
+              <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden mt-2">
+                <div id="bar-f" class="bg-sky-500 h-full w-0 transition-all"></div>
+              </div>
+              <p class="text-[11px] text-slate-400 mt-1 font-semibold" id="f-grams-label">0g (0 kcal)</p>
+            </div>
+            <div class="mt-3 pt-2 border-t border-sky-200/60 flex items-center justify-between">
+              <span class="text-[10px] font-bold text-slate-500 uppercase">Target:</span>
+              <button onclick="toggleMacroDirection('f')" id="btn-toggle-f" class="text-[10px] font-black px-2 py-0.5 rounded-lg bg-sky-600 text-white shadow-xs">
+                UNDER (≤)
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
 
       <!-- 14-Day Weight Trend Chart -->
       <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
@@ -751,67 +850,11 @@
         <div id="ai-food-output" class="hidden mt-4 transition-all"></div>
       </div>
 
-      <!-- Macro Goals Setup Banner -->
+      <!-- Manual Meal Logger -->
       <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
-        <div class="flex justify-between items-center mb-4">
-          <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
-            <span>🎯</span> Daily Target Goals
-          </h2>
-          <button id="btn-edit-macro-goals" class="text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold px-3 py-1.5 rounded-xl border border-slate-200"><i class="fa-solid fa-pen"></i> Edit Goals</button>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
-          <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
-            <div class="flex justify-between text-xs mb-1">
-              <span class="text-slate-500 font-bold">Calories</span>
-              <span id="cal-count-label" class="text-indigo-600 font-bold">0 / 2,000 kcal</span>
-            </div>
-            <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden mt-2">
-              <div id="bar-cal" class="bg-indigo-500 h-full w-0 transition-all"></div>
-            </div>
-          </div>
-
-          <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
-            <div class="flex justify-between text-xs mb-1">
-              <span class="text-slate-500 font-bold">Protein</span>
-              <span id="p-count-label" class="text-rose-500 font-bold">0 / 150g</span>
-            </div>
-            <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden mt-2">
-              <div id="bar-p" class="bg-rose-500 h-full w-0 transition-all"></div>
-            </div>
-          </div>
-
-          <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
-            <div class="flex justify-between text-xs mb-1">
-              <span class="text-slate-500 font-bold">Carbs</span>
-              <span id="c-count-label" class="text-amber-500 font-bold">0 / 200g</span>
-            </div>
-            <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden mt-2">
-              <div id="bar-c" class="bg-amber-500 h-full w-0 transition-all"></div>
-            </div>
-          </div>
-
-          <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200">
-            <div class="flex justify-between text-xs mb-1">
-              <span class="text-slate-500 font-bold">Fats</span>
-              <span id="f-count-label" class="text-sky-600 font-bold">0 / 65g</span>
-            </div>
-            <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden mt-2">
-              <div id="bar-f" class="bg-sky-500 h-full w-0 transition-all"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
-        <div class="flex items-center justify-between mb-4">
-          <h2 class="text-xl font-bold text-slate-900 flex items-center gap-2">
-            <span>🥗</span> Manual Meal Log
-          </h2>
-          <button id="btn-claim-cal-xp" class="text-xs bg-emerald-50 text-emerald-600 font-bold px-3 py-1.5 rounded-xl border border-emerald-200 hover:bg-emerald-100 transition">
-            Claim Goal XP (+25 XP)
-          </button>
-        </div>
+        <h2 class="text-xl font-bold text-slate-900 mb-4 flex items-center gap-2">
+          <span>🥗</span> Manual Meal Log
+        </h2>
 
         <form id="form-food" class="grid grid-cols-1 sm:grid-cols-7 gap-3 mb-6">
           <input type="text" id="food-name" placeholder="Meal Name" required class="sm:col-span-1 bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-emerald-500">
@@ -1249,7 +1292,7 @@
         `;
       } else {
         container.innerHTML = `
-          <button onclick="loginWithGoogle()" class="text-xs bg-slate-900 hover:bg-slate-800 text-white font-extrabold px-3 py-1.5 rounded-xl transition flex items-center gap-2 shadow-sm">
+          <button onclick="loginWithGoogle()" class="text-xs bg-slate-900 hover:bg-slate-800 text-white font-extrabold px-3.5 py-1.5 rounded-xl transition flex items-center gap-2 shadow-sm">
             <span>🔑</span> Sign In with Google
           </button>
         `;
@@ -1257,7 +1300,7 @@
     }
 
     // =========================================================
-    // GLOBAL STATE & CORE ENGINE
+    // GLOBAL STATE & MASTER DATA OBJECT
     // =========================================================
     let state = {
       xp: 0,
@@ -1267,7 +1310,16 @@
       hasSeenTour: false,
       bankAccounts: [],
       budgetBuckets: [],
-      macroGoals: { cals: 2000, p: 150, c: 200, f: 65 },
+      macroGoals: { 
+        cals: 2000, 
+        pPct: 40, 
+        cPct: 30, 
+        fPct: 30,
+        pDir: 'over',
+        cDir: 'under',
+        fDir: 'under'
+      },
+      lastNutritionLockedDate: null,
       waterGoal: 64,
       todayWater: 0,
       lastWaterDate: null,
@@ -1333,6 +1385,9 @@
         saveState();
       }
 
+      if (!state.macroGoals) {
+        state.macroGoals = { cals: 2000, pPct: 40, cPct: 30, fPct: 30, pDir: 'over', cDir: 'under', fDir: 'under' };
+      }
       if (!state.exerciseGoals) state.exerciseGoals = { mins: 45, cals: 400 };
       if (!state.customGoals) state.customGoals = {};
       if (!state.unlockedBadges) state.unlockedBadges = [];
@@ -1535,7 +1590,6 @@
       });
 
       document.getElementById('quick-todo').addEventListener('click', () => switchTab('todo'));
-      document.getElementById('quick-cal-xp').addEventListener('click', claimCalorieXP);
       document.getElementById('quick-exercise').addEventListener('click', () => switchTab('exercise'));
       document.getElementById('quick-finance').addEventListener('click', () => switchTab('finance'));
 
@@ -1566,8 +1620,6 @@
       document.getElementById('inc-bucket-select').addEventListener('change', updateIncomeAccountPreview);
       document.getElementById('exp-bucket-select').addEventListener('change', updateExpenseAccountPreview);
 
-      document.getElementById('btn-edit-macro-goals').addEventListener('click', updateMacroGoals);
-      document.getElementById('btn-claim-cal-xp').addEventListener('click', claimCalorieXP);
       document.getElementById('btn-edit-water-goal').addEventListener('click', updateWaterGoal);
       document.getElementById('btn-edit-sleep-goals').addEventListener('click', updateSleepGoals);
       document.getElementById('form-sleep').addEventListener('submit', logSleep);
@@ -1578,6 +1630,133 @@
       document.getElementById('btn-edit-exercise-goals').addEventListener('click', updateExerciseGoals);
 
       document.querySelectorAll('.st-category-input').forEach(input => input.addEventListener('input', updateScreenTimeLivePreview));
+    }
+
+    // --- NUTRITION PERCENTAGE SPLIT & LOCK-IN ENGINE ---
+    function toggleMacroDirection(macro) {
+      if (!state.macroGoals) return;
+      const key = `${macro}Dir`;
+      state.macroGoals[key] = state.macroGoals[key] === 'over' ? 'under' : 'over';
+      saveState();
+    }
+
+    function editMacroPercentages() {
+      const cals = prompt("Daily Calorie Target (kcal):", state.macroGoals.cals || 2000);
+      const p = prompt("Protein Target (% of calories):", state.macroGoals.pPct || 40);
+      const c = prompt("Carbs Target (% of calories):", state.macroGoals.cPct || 30);
+      const f = prompt("Fat Target (% of calories):", state.macroGoals.fPct || 30);
+
+      const parsedCals = parseInt(cals);
+      const parsedP = parseInt(p);
+      const parsedC = parseInt(c);
+      const parsedF = parseInt(f);
+
+      if (isNaN(parsedP) || isNaN(parsedC) || isNaN(parsedF)) {
+        alert("Please enter valid percentage numbers.");
+        return;
+      }
+
+      if (parsedP + parsedC + parsedF !== 100) {
+        alert(`Percentages must equal 100%! (Your total was: ${parsedP + parsedC + parsedF}%)`);
+        return;
+      }
+
+      state.macroGoals.cals = parsedCals || 2000;
+      state.macroGoals.pPct = parsedP;
+      state.macroGoals.cPct = parsedC;
+      state.macroGoals.fPct = parsedF;
+
+      saveState();
+    }
+
+    function handleEndOfDayLockIn() {
+      const todayStr = new Date().toLocaleDateString();
+
+      if (state.lastNutritionLockedDate === todayStr) {
+        alert("You have already locked in your nutrition for today!");
+        return;
+      }
+
+      if (state.foodLogs.length === 0) {
+        alert("Log at least one meal before locking in your day!");
+        return;
+      }
+
+      const totalCals = state.foodLogs.reduce((s, f) => s + f.cals, 0);
+      const totalP = state.foodLogs.reduce((s, f) => s + (f.p || 0), 0);
+      const totalC = state.foodLogs.reduce((s, f) => s + (f.c || 0), 0);
+      const totalF = state.foodLogs.reduce((s, f) => s + (f.f || 0), 0);
+
+      const pCals = totalP * 4;
+      const cCals = totalC * 4;
+      const fCals = totalF * 9;
+      const macroCalSum = Math.max(1, pCals + cCals + fCals);
+
+      const actualPPct = Math.round((pCals / macroCalSum) * 100);
+      const actualCPct = Math.round((cCals / macroCalSum) * 100);
+      const actualFPct = Math.round((fCals / macroCalSum) * 100);
+
+      const targetCals = state.macroGoals.cals || 2000;
+      const pTarget = state.macroGoals.pPct || 40;
+      const cTarget = state.macroGoals.cPct || 30;
+      const fTarget = state.macroGoals.fPct || 30;
+
+      const pDir = state.macroGoals.pDir || 'over';
+      const cDir = state.macroGoals.cDir || 'under';
+      const fDir = state.macroGoals.fDir || 'under';
+
+      let netXP = 0;
+      let summaryLines = [];
+
+      // 1. Calorie Cap
+      if (totalCals <= targetCals) {
+        netXP += 30;
+        summaryLines.push(`✅ Under Calorie Limit: +30 XP (${totalCals}/${targetCals} kcal)`);
+      } else {
+        netXP -= 25;
+        summaryLines.push(`❌ Exceeded Calorie Limit: -25 XP (${totalCals}/${targetCals} kcal)`);
+      }
+
+      // 2. Protein Target
+      const pPassed = pDir === 'over' ? actualPPct >= pTarget : actualPPct <= pTarget;
+      if (pPassed) {
+        netXP += 15;
+        summaryLines.push(`✅ Protein Goal Met (${actualPPct}% vs ${pTarget}% ${pDir.toUpperCase()}): +15 XP`);
+      } else {
+        netXP -= 10;
+        summaryLines.push(`❌ Protein Goal Missed (${actualPPct}% vs ${pTarget}% ${pDir.toUpperCase()}): -10 XP`);
+      }
+
+      // 3. Carbs Target
+      const cPassed = cDir === 'over' ? actualCPct >= cTarget : actualCPct <= cTarget;
+      if (cPassed) {
+        netXP += 15;
+        summaryLines.push(`✅ Carbs Goal Met (${actualCPct}% vs ${cTarget}% ${cDir.toUpperCase()}): +15 XP`);
+      } else {
+        netXP -= 10;
+        summaryLines.push(`❌ Carbs Goal Missed (${actualCPct}% vs ${cTarget}% ${cDir.toUpperCase()}): -10 XP`);
+      }
+
+      // 4. Fat Target
+      const fPassed = fDir === 'over' ? actualFPct >= fTarget : actualFPct <= fTarget;
+      if (fPassed) {
+        netXP += 15;
+        summaryLines.push(`✅ Fat Goal Met (${actualFPct}% vs ${fTarget}% ${fDir.toUpperCase()}): +15 XP`);
+      } else {
+        netXP -= 10;
+        summaryLines.push(`❌ Fat Goal Missed (${actualFPct}% vs ${fTarget}% ${fDir.toUpperCase()}): -10 XP`);
+      }
+
+      state.lastNutritionLockedDate = todayStr;
+
+      if (netXP >= 0) {
+        awardXP(netXP, summaryLines.join("\n"));
+      } else {
+        deductXP(Math.abs(netXP));
+        triggerMascotPopup(`${netXP} XP Deduction`, summaryLines.join("\n"));
+      }
+
+      saveState();
     }
 
     // --- FINANCE LOGIC ---
@@ -2420,26 +2599,6 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
       saveState();
     }
 
-    function updateMacroGoals() {
-      const cals = prompt("Daily Calorie Target (kcal):", state.macroGoals.cals);
-      const p = prompt("Daily Protein Target (g):", state.macroGoals.p);
-      const c = prompt("Daily Carbs Target (g):", state.macroGoals.c);
-      const f = prompt("Daily Fat Target (g):", state.macroGoals.f);
-      if (cals && p && c && f) {
-        state.macroGoals = { cals: parseInt(cals), p: parseInt(p), c: parseInt(c), f: parseInt(f) };
-        saveState();
-      }
-    }
-
-    function claimCalorieXP() {
-      const totalCals = state.foodLogs.reduce((sum, item) => sum + item.cals, 0);
-      if (totalCals <= state.macroGoals.cals && totalCals > 0) {
-        awardXP(25, "Awesome nutrition discipline staying under budget!");
-      } else {
-        triggerMascotPopup("Nutrition Note", "You have exceeded your calorie budget or haven't logged meals today.");
-      }
-    }
-
     // --- WORKOUTS ---
     function addWorkout(e) {
       e.preventDefault();
@@ -2681,6 +2840,86 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
       `).join('');
       document.getElementById('todo-count').textContent = `${state.todos.filter(t => t.completed).length} Completed`;
 
+      // Percentage-Based Macro & Meal Log Render
+      const totalCals = state.foodLogs.reduce((s, f) => s + f.cals, 0);
+      const totalP = state.foodLogs.reduce((s, f) => s + (f.p || 0), 0);
+      const totalC = state.foodLogs.reduce((s, f) => s + (f.c || 0), 0);
+      const totalF = state.foodLogs.reduce((s, f) => s + (f.f || 0), 0);
+
+      const pCals = totalP * 4;
+      const cCals = totalC * 4;
+      const fCals = totalF * 9;
+      const macroCalSum = Math.max(1, pCals + cCals + fCals);
+
+      const actualPPct = Math.round((pCals / macroCalSum) * 100);
+      const actualCPct = Math.round((cCals / macroCalSum) * 100);
+      const actualFPct = Math.round((fCals / macroCalSum) * 100);
+
+      const targetCals = state.macroGoals.cals || 2000;
+      const pTarget = state.macroGoals.pPct || 40;
+      const cTarget = state.macroGoals.cPct || 30;
+      const fTarget = state.macroGoals.fPct || 30;
+
+      document.getElementById('dash-cals').textContent = `${totalCals} / ${targetCals} kcal`;
+      document.getElementById('cal-count-label').textContent = `${totalCals} / ${targetCals} kcal`;
+      document.getElementById('bar-cal').style.width = Math.min(100, (totalCals / targetCals) * 100) + '%';
+
+      // Protein UI
+      document.getElementById('p-pct-label').textContent = `${actualPPct}% / ${pTarget}%`;
+      document.getElementById('p-grams-label').textContent = `${totalP}g (${pCals} kcal)`;
+      document.getElementById('bar-p').style.width = Math.min(100, (actualPPct / pTarget) * 100) + '%';
+      const btnP = document.getElementById('btn-toggle-p');
+      if (btnP) {
+        btnP.textContent = (state.macroGoals.pDir || 'over') === 'over' ? 'OVER (≥)' : 'UNDER (≤)';
+        btnP.className = (state.macroGoals.pDir || 'over') === 'over'
+          ? 'text-[10px] font-black px-2 py-0.5 rounded-lg bg-rose-600 text-white shadow-xs'
+          : 'text-[10px] font-black px-2 py-0.5 rounded-lg bg-slate-200 text-slate-700 shadow-xs';
+      }
+
+      // Carbs UI
+      document.getElementById('c-pct-label').textContent = `${actualCPct}% / ${cTarget}%`;
+      document.getElementById('c-grams-label').textContent = `${totalC}g (${cCals} kcal)`;
+      document.getElementById('bar-c').style.width = Math.min(100, (actualCPct / cTarget) * 100) + '%';
+      const btnC = document.getElementById('btn-toggle-c');
+      if (btnC) {
+        btnC.textContent = (state.macroGoals.cDir || 'under') === 'over' ? 'OVER (≥)' : 'UNDER (≤)';
+        btnC.className = (state.macroGoals.cDir || 'under') === 'over'
+          ? 'text-[10px] font-black px-2 py-0.5 rounded-lg bg-amber-600 text-white shadow-xs'
+          : 'text-[10px] font-black px-2 py-0.5 rounded-lg bg-slate-200 text-slate-700 shadow-xs';
+      }
+
+      // Fats UI
+      document.getElementById('f-pct-label').textContent = `${actualFPct}% / ${fTarget}%`;
+      document.getElementById('f-grams-label').textContent = `${totalF}g (${fCals} kcal)`;
+      document.getElementById('bar-f').style.width = Math.min(100, (actualFPct / fTarget) * 100) + '%';
+      const btnF = document.getElementById('btn-toggle-f');
+      if (btnF) {
+        btnF.textContent = (state.macroGoals.fDir || 'under') === 'over' ? 'OVER (≥)' : 'UNDER (≤)';
+        btnF.className = (state.macroGoals.fDir || 'under') === 'over'
+          ? 'text-[10px] font-black px-2 py-0.5 rounded-lg bg-sky-600 text-white shadow-xs'
+          : 'text-[10px] font-black px-2 py-0.5 rounded-lg bg-slate-200 text-slate-700 shadow-xs';
+      }
+
+      // Lock-In Button State
+      const todayStr = new Date().toLocaleDateString();
+      const lockBtn = document.getElementById('btn-lock-eating');
+      const lockBadge = document.getElementById('day-locked-badge');
+      if (state.lastNutritionLockedDate === todayStr) {
+        if (lockBtn) {
+          lockBtn.disabled = true;
+          lockBtn.className = "w-full sm:w-auto bg-slate-200 text-slate-400 font-extrabold text-xs px-6 py-3 rounded-2xl cursor-not-allowed flex items-center justify-center gap-2 shrink-0";
+          lockBtn.innerHTML = `<span>✓</span><span>Day Complete & Locked</span>`;
+        }
+        if (lockBadge) lockBadge.classList.remove('hidden');
+      } else {
+        if (lockBtn) {
+          lockBtn.disabled = false;
+          lockBtn.className = "w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white font-extrabold text-xs px-6 py-3 rounded-2xl shadow-md transition flex items-center justify-center gap-2 shrink-0";
+          lockBtn.innerHTML = `<span>🔒</span><span>I'm Done Eating Today</span>`;
+        }
+        if (lockBadge) lockBadge.classList.add('hidden');
+      }
+
       document.getElementById('food-list').innerHTML = state.foodLogs.map(f => `
         <li class="flex items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-200">
           <div><div class="flex items-center gap-2"><span class="text-slate-800 font-bold">${f.name}</span><span class="text-[10px] bg-emerald-50 text-emerald-600 font-bold px-2 py-0.5 rounded-md border border-emerald-200">${f.mealType || 'Meal'}</span></div><p class="text-xs text-slate-500 font-medium mt-0.5">P: ${f.p || 0}g | C: ${f.c || 0}g | F: ${f.f || 0}g</p></div>
@@ -2688,33 +2927,17 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
         </li>
       `).join('');
 
-      const totalCals = state.foodLogs.reduce((s, f) => s + f.cals, 0);
-      const totalP = state.foodLogs.reduce((s, f) => s + (f.p || 0), 0);
-      const totalC = state.foodLogs.reduce((s, f) => s + (f.c || 0), 0);
-      const totalF = state.foodLogs.reduce((s, f) => s + (f.f || 0), 0);
-
-      document.getElementById('dash-cals').textContent = `${totalCals} / ${state.macroGoals.cals} kcal`;
-      document.getElementById('cal-count-label').textContent = `${totalCals} / ${state.macroGoals.cals} kcal`;
-      document.getElementById('p-count-label').textContent = `${totalP} / ${state.macroGoals.p}g`;
-      document.getElementById('c-count-label').textContent = `${totalC} / ${state.macroGoals.c}g`;
-      document.getElementById('f-count-label').textContent = `${totalF} / ${state.macroGoals.f}g`;
-
-      document.getElementById('bar-cal').style.width = Math.min(100, (totalCals / state.macroGoals.cals) * 100) + '%';
-      document.getElementById('bar-p').style.width = Math.min(100, (totalP / state.macroGoals.p) * 100) + '%';
-      document.getElementById('bar-c').style.width = Math.min(100, (totalC / state.macroGoals.c) * 100) + '%';
-      document.getElementById('bar-f').style.width = Math.min(100, (totalF / state.macroGoals.f) * 100) + '%';
-
-      const todayStr = new Date().toLocaleDateString();
+      // Exercise
       const todayWorkouts = state.workouts.filter(w => new Date(w.id).toLocaleDateString() === todayStr);
       const todayMins = todayWorkouts.reduce((s, w) => s + w.mins, 0);
       const todayCals = todayWorkouts.reduce((s, w) => s + w.cals, 0);
       const targetMins = state.exerciseGoals ? state.exerciseGoals.mins : 45;
-      const targetCals = state.exerciseGoals ? state.exerciseGoals.cals : 400;
+      const targetExCals = state.exerciseGoals ? state.exerciseGoals.cals : 400;
 
       document.getElementById('ex-time-goal-lbl').textContent = `${todayMins} / ${targetMins} mins`;
-      document.getElementById('ex-cal-goal-lbl').textContent = `${todayCals} / ${targetCals} kcal`;
+      document.getElementById('ex-cal-goal-lbl').textContent = `${todayCals} / ${targetExCals} kcal`;
       document.getElementById('bar-ex-time').style.width = Math.min(100, (todayMins / targetMins) * 100) + '%';
-      document.getElementById('bar-ex-cals').style.width = Math.min(100, (todayCals / targetCals) * 100) + '%';
+      document.getElementById('bar-ex-cals').style.width = Math.min(100, (todayCals / targetExCals) * 100) + '%';
 
       document.getElementById('workout-list').innerHTML = state.workouts.map(w => {
         const logDate = new Date(w.id).toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' });
@@ -2727,6 +2950,7 @@ Respond strictly with ONLY a raw JSON object (no markdown, no backticks, no extr
       }).join('');
       document.getElementById('dash-workout').textContent = `${todayMins} mins`;
 
+      // Finance
       const netWorth = getFinanceNetWorth();
       const netWorthFormatted = '$' + netWorth.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
       document.getElementById('fin-net-worth').textContent = netWorthFormatted;
