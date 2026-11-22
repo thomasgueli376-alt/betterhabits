@@ -3453,6 +3453,34 @@
       handleFoodChatSubmit(new Event('submit'));
     }
 
+    // Cache successful food estimates locally for 30 days (up to 50 distinct queries).
+    const FOOD_CACHE_KEY = 'betterhabits_food_cache_v1';
+    function getCachedFoodEstimate(query) {
+      try {
+        const entries = JSON.parse(localStorage.getItem(FOOD_CACHE_KEY) || '{}');
+        const item = entries[query.toLowerCase().trim()];
+        return item && Date.now() - item.time < 30 * 86400000 ? item.result : null;
+      } catch (_) { return null; }
+    }
+    function cacheFoodEstimate(query, result) {
+      if (!result || result.needsClarification || !Number.isFinite(Number(result.calories))) return;
+      try {
+        const entries = JSON.parse(localStorage.getItem(FOOD_CACHE_KEY) || '{}');
+        entries[query.toLowerCase().trim()] = { time: Date.now(), result };
+        const recent = Object.entries(entries).sort((a,b) => b[1].time - a[1].time).slice(0,50);
+        localStorage.setItem(FOOD_CACHE_KEY, JSON.stringify(Object.fromEntries(recent)));
+      } catch (_) {}
+    }
+    async function searchUSDAFood(query) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 5500);
+      try {
+        const res = await fetch('/api/food-lookup?q=' + encodeURIComponent(query), { signal: controller.signal });
+        return res.ok ? (await res.json()).result : null;
+      } catch (_) { return null; }
+      finally { clearTimeout(timer); }
+    }
+
     async function handleFoodChatSubmit(e) {
       if (e) e.preventDefault();
       const input = document.getElementById('ai-food-prompt');
@@ -3480,12 +3508,21 @@ Rules:
 Return ONLY valid JSON:
 {"needsClarification":false,"reply":"Conversational 1-2 sentence explanation","quickReplies":[],"foodName":"Clean Dish Name","calories":500,"protein":30,"carbs":50,"fat":18,"items":[{"label":"Component 1","cals":300}]}`;
 
-      const geminiResult = await callGeminiStructuredJSON(
-        systemPrompt,
-        `${prevContextSummary}\nMeal category: ${mealType}\nUser message: "${combinedQuery}"`
-      );
-
-      let result = geminiResult;
+      const normalizedMeal = combinedQuery.toLowerCase().replace(/^(i (just )?(ate|had)|a serving of)\s+/i, '').trim();
+      const savedFood = (state.banks?.food || []).find(b => b.name.toLowerCase() === normalizedMeal);
+      let result = savedFood ? {
+        needsClarification: false, foodName: savedFood.name, calories: savedFood.cals,
+        protein: savedFood.p, carbs: savedFood.c, fat: savedFood.f,
+        items: [{ label: savedFood.name + ' (Food Bank)', cals: savedFood.cals }],
+        reply: `From your Food Bank: **${savedFood.name}** — **${savedFood.cals} kcal**.`
+      } : getCachedFoodEstimate(combinedQuery);
+      if (result) result = JSON.parse(JSON.stringify(result));
+      if (!result) {
+        result = await callGeminiStructuredJSON(
+          systemPrompt,
+          `${prevContextSummary}\nMeal category: ${mealType}\nUser message: "${combinedQuery}"`
+        );
+      }
 
       if (!result) {
         // Try local verified lookup first, then Open Food Facts API if single item
@@ -3493,7 +3530,21 @@ Return ONLY valid JSON:
         if (!localAttempt.needsClarification) {
           result = localAttempt;
         } else if (localAttempt.unverifiedQuery) {
-          const offMatch = await searchOpenFoodFactsReal(localAttempt.unverifiedQuery);
+          // USDA values are for 100 g, not an assumed full restaurant serving.
+          const simpleQuery = localAttempt.unverifiedQuery.replace(/^(a|an|the|some)\s+/i, '').trim();
+          const isIngredient = !/\b(from|diner|restaurant|with|and|plus|sandwich|meal|plate|bowl|dinner|lunch|breakfast)\b/i.test(simpleQuery);
+          const usdaMatch = isIngredient ? await searchUSDAFood(simpleQuery) : null;
+          if (usdaMatch) {
+            result = {
+              needsClarification: false,
+              foodName: usdaMatch.foodName + ' (100 g reference)',
+              calories: usdaMatch.calories, protein: usdaMatch.protein,
+              carbs: usdaMatch.carbs, fat: usdaMatch.fat,
+              items: [{ label: usdaMatch.foodName + ' (USDA, 100 g)', cals: usdaMatch.calories }],
+              reply: `USDA FoodData Central lists **${usdaMatch.calories} kcal per 100 g** of **${usdaMatch.foodName}**. This is a 100 g reference, not necessarily your serving. How many grams or ounces did you eat?`
+            };
+          }
+          const offMatch = result ? null : await searchOpenFoodFactsReal(localAttempt.unverifiedQuery);
           if (offMatch) {
             result = {
               needsClarification: false,
@@ -3505,13 +3556,15 @@ Return ONLY valid JSON:
               items: [{ label: `${offMatch.foodName} (${offMatch.source})`, cals: offMatch.calories }],
               reply: `I looked up **${offMatch.foodName}** in Open Food Facts (${offMatch.source}): **${offMatch.calories} kcal** with **${offMatch.protein}g Protein**, **${offMatch.carbs}g Carbs**, and **${offMatch.fat}g Fat**.`
             };
-          } else {
+          } else if (!result) {
             result = localAttempt;
           }
         } else {
           result = localAttempt;
         }
       }
+
+      if (result && !result.needsClarification) cacheFoodEstimate(combinedQuery, result);
 
       if (result.needsClarification) {
         pendingFoodContext = combinedQuery;
