@@ -92,6 +92,24 @@
       border-radius: 4px;
     }
   </style>
+<style id="beaty-coach-v2">
+#beaty-coach-dock{position:fixed;bottom:20px;right:20px;z-index:65;display:flex;align-items:flex-end;gap:8px;max-width:min(360px,calc(100vw - 30px));filter:drop-shadow(0 8px 18px rgba(15,23,42,.18))}
+#beaty-coach-dock.hidden{display:none}
+#beaty-coach-dock.beaty-coach-bottom-right{bottom:20px;right:20px;top:auto;left:auto}
+#beaty-coach-dock.beaty-coach-bottom-left{bottom:20px;left:20px;top:auto;right:auto;flex-direction:row-reverse}
+#beaty-coach-dock.beaty-coach-middle-right{top:42%;right:20px;bottom:auto;left:auto}
+#beaty-coach-dock.beaty-coach-middle-left{top:42%;left:20px;bottom:auto;right:auto;flex-direction:row-reverse}
+#beaty-coach-dock.beaty-coach-bottom-left #beaty-coach-speech,#beaty-coach-dock.beaty-coach-middle-left #beaty-coach-speech{border-radius:20px 20px 20px 4px}
+@media(max-width:640px){#beaty-coach-dock.beaty-coach-middle-right,#beaty-coach-dock.beaty-coach-middle-left{top:auto;bottom:96px;right:12px;left:auto;flex-direction:row}#beaty-coach-dock.beaty-coach-bottom-left{left:12px}#beaty-coach-dock.beaty-coach-bottom-right{right:12px}#beaty-coach-speech{max-width:190px;font-size:12px}}
+#beaty-coach-speech{background:white;border:2px solid #fda4af;border-radius:20px 20px 4px 20px;padding:14px 16px;color:#172033;font-weight:750;font-size:14px;line-height:1.4;max-width:260px}
+#beaty-coach-face{flex-shrink:0;background:transparent;border:0;cursor:pointer;transition:transform .2s}
+#beaty-coach-face:hover{transform:scale(1.12) rotate(-6deg)}
+#beaty-coach-close{position:absolute;top:-12px;right:4px;width:26px;height:26px;background:#0f172a;color:white;border-radius:50%;font-size:20px;line-height:20px;cursor:pointer}
+.beaty-coach-pop{animation:beaty-coach-enter .5s cubic-bezier(.2,1.6,.4,1)}
+@keyframes beaty-coach-enter{from{opacity:0;transform:translateY(30px) scale(.8)}to{opacity:1;transform:translateY(0) scale(1)}}
+.beaty-coach-svg{overflow:visible}
+@media(prefers-reduced-motion:reduce){.beaty-coach-pop{animation:none}#beaty-coach-face{transition:none}}
+</style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col pb-20">
 
@@ -858,8 +876,8 @@
             </div>
           </div>
           <div class="flex items-center gap-2">
-            <button type="button" onclick="openGeminiKeyModal()" class="text-[11px] bg-white hover:bg-indigo-50 text-indigo-700 font-bold px-2.5 py-1 rounded-full border border-indigo-200 transition" title="Configure optional browser Gemini API key">
-              🔑 AI Key
+            <button type="button" onclick="openGeminiKeyModal()" class="text-[11px] bg-white hover:bg-indigo-50 text-indigo-700 font-bold px-2.5 py-1 rounded-full border border-indigo-200 transition" title="Gemini is configured on the server">
+              AI Status
             </button>
             <button type="button" onclick="clearFoodChat()" class="text-[11px] bg-white hover:bg-slate-100 text-slate-500 font-bold px-2.5 py-1 rounded-full border border-slate-200 transition">
               New Chat
@@ -1001,7 +1019,7 @@
           </div>
           <div class="flex items-center gap-2">
             <button type="button" onclick="openGeminiKeyModal()" class="text-[11px] bg-white hover:bg-indigo-50 text-indigo-700 font-bold px-2.5 py-1 rounded-full border border-indigo-200 transition">
-              🔑 AI Key
+              AI Status
             </button>
             <button type="button" onclick="clearExerciseChat()" class="text-[11px] bg-white hover:bg-slate-100 text-slate-500 font-bold px-2.5 py-1 rounded-full border border-slate-200 transition">
               New Chat
@@ -1793,23 +1811,7 @@
     }
 
     function openGeminiKeyModal() {
-      const existing = localStorage.getItem('good_habits_gemini_key') || '';
-      openCustomDialog({
-        title: "Optional Browser Gemini API Key",
-        desc: "Good Habits uses your server's /api/gemini key by default. If you test offline/locally without your server, paste a Gemini API key here (saved only in your browser).",
-        fields: [{ label: "Gemini API Key (leave blank to use /api/gemini)", type: "password", value: existing, placeholder: "AIzaSy..." }],
-        confirmText: "Save Key",
-        onConfirm: ([val]) => {
-          const trimmed = (val || '').trim();
-          if (trimmed) {
-            localStorage.setItem('good_habits_gemini_key', trimmed);
-            showToast("🔑 Browser Gemini key saved!", 'success');
-          } else {
-            localStorage.removeItem('good_habits_gemini_key');
-            showToast("Cleared browser key — using /api/gemini server route.", 'info');
-          }
-        }
-      });
+      showToast('Beaty uses the Gemini key configured securely on Vercel. No browser key is needed.', 'info');
     }
 
     // =========================================================
@@ -2613,6 +2615,68 @@
       }
     }
 
+    // Beaty 2.0: playful, occasionally guilt-inducing accountability coach.
+    // This feature is intentionally independent of nutrition AI and never makes API requests.
+    const beatyCoachLines = {
+      dashboard: ['I can SEE that unfinished heart meter. We both know what to do. 👀', 'Your streak is not going to protect itself, bestie. ❤️'],
+      todo: ['That to-do list is looking awfully confident for something unfinished. 👀', 'Check one off. I dare you.'],
+      wellness: ['Have you had water today, or are we just hoping for the best? 💧', 'A little movement. A little water. A lot less excuses.'],
+      finance: ['Your budget called. It wants to know where you went. 💸', 'Future you would like a word about that purchase.'],
+      food: ['Tell me what you ate. Yes, even the handful of chips. 👀', 'Logging it counts. Pretending it never happened does not.'],
+      exercise: ['Your sneakers miss you. Just saying. 👟', 'A ten-minute walk beats another ten-minute excuse.'],
+      screentime: ['The scroll can wait. I cannot. 📱', 'Is this screen time, or a hostage situation?'],
+      travel: ['Adventure is good. Your habits are coming with us. 🧳'],
+      badges: ['Look at those badges! I expect more, obviously. 🏆']
+    };
+    let beatyCoachDismissTimer;
+    let beatyCoachVisitCount = 0;
+    function showBeatyCoach(message, mood = 'happy', force = false) {
+      const dock = document.getElementById('beaty-coach-dock');
+      if (!dock) return;
+      // Each tab navigation deserves a fresh reaction; no 90-second lockout.
+      beatyCoachVisitCount++;
+      const spots = ['beaty-coach-bottom-right', 'beaty-coach-bottom-left', 'beaty-coach-middle-right', 'beaty-coach-middle-left'];
+      dock.classList.remove(...spots);
+      dock.classList.add(spots[(beatyCoachVisitCount - 1) % spots.length]);
+      document.getElementById('beaty-coach-speech').textContent = message;
+      document.getElementById('beaty-coach-face').innerHTML = getBeatyAvatarSVG('w-20 h-20', mood, 'beaty-coach-svg');
+      dock.classList.remove('hidden');
+      dock.classList.remove('beaty-coach-pop');
+      void dock.offsetWidth;
+      dock.classList.add('beaty-coach-pop');
+      clearTimeout(beatyCoachDismissTimer);
+      beatyCoachDismissTimer = setTimeout(() => dock.classList.add('hidden'), 8500);
+    }
+    function coachForTab(tab) {
+      const fill = state.dailyHeartFill || 0;
+      if (fill >= 100) return showBeatyCoach('Okay, superstar. Heart at 100%! I am extremely proud of you. 👑', 'crown');
+      const lines = beatyCoachLines[tab] || beatyCoachLines.dashboard;
+      const message = lines[beatyCoachVisitCount % lines.length];
+      showBeatyCoach(message, fill < 25 ? 'worried' : 'happy');
+    }
+    function installBeatyCoach() {
+      if (document.getElementById('beaty-coach-dock')) return;
+      const dock = document.createElement('div');
+      dock.id = 'beaty-coach-dock';
+      dock.className = 'hidden';
+      dock.setAttribute('role', 'status');
+      dock.setAttribute('aria-live', 'polite');
+      dock.innerHTML = `<button type="button" id="beaty-coach-close" aria-label="Dismiss Beaty">×</button>
+        <div id="beaty-coach-speech"></div>
+        <button type="button" id="beaty-coach-face" aria-label="Talk to Beaty"></button>`;
+      document.body.appendChild(dock);
+      document.getElementById('beaty-coach-close').addEventListener('click', () => {
+        dock.classList.add('hidden');
+        clearTimeout(beatyCoachDismissTimer);
+      });
+      document.getElementById('beaty-coach-face').addEventListener('click', () => {
+        dock.classList.add('hidden');
+        pokeBeaty();
+      });
+      const header = document.getElementById('header-mascot-trigger');
+      if (header) header.setAttribute('title', 'Beaty is watching your progress. Click for a pep talk!');
+    }
+
     function pokeBeaty() {
       const bannerSvg = document.querySelector('#banner-beaty-avatar svg');
       if (bannerSvg) {
@@ -2623,10 +2687,11 @@
 
       const fillPct = state.dailyHeartFill || 0;
       const tips = [
-        `Heart Status: ${fillPct}%! Every good habit pumps me up (+20% to +25%), and hitting 100% locks in your daily streak!`,
-        "Pro Tip: Your most-logged foods, workouts, and expenses are saved in the Footer Banks at the bottom of your screen!",
-        "Need a quick heart boost? Drink your daily water (+20%), check off a To-Do (+20%), or log a workout (+25%)!",
-        "Watch out! Going over your daily calorie cap or overspending a budget bucket drains my heart!"
+        `Only ${fillPct}% heart fill? I am a HEART, not a decorative paperweight. Let's get moving. ❤️`,
+        `Your heart is at ${fillPct}%. I believe in you, but I'd also appreciate some evidence. 👀`,
+        "Drink water, finish a task, or get a workout in. I am running out of motivational speeches.",
+        "I'm proud of every win. But yes, I absolutely noticed the habits you skipped.",
+        "Your streak is our streak. Please do not make me explain to the other mascots why we lost it."
       ];
       const randomQuote = tips[Math.floor(Math.random() * tips.length)];
       triggerMascotPopup("Beaty Interactive Coach 💬", randomQuote);
@@ -2919,10 +2984,12 @@
         }
       }
       evaluateCalorieStatus();
+      coachForTab(tabId);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function setupEventListeners() {
+      installBeatyCoach();
       document.getElementById('header-mascot-trigger').addEventListener('click', pokeBeaty);
       document.getElementById('btn-close-mascot').addEventListener('click', () => document.getElementById('mascot-popup').classList.add('hidden'));
 
@@ -3095,35 +3162,12 @@
       handleExerciseChatSubmit(new Event('submit'));
     }
 
-    // Core Gemini API caller supporting both server `/api/gemini` and optional browser key
+    // Gemini is called exclusively through our server; no browser API key is needed.
+    let lastGeminiError = '';
     async function callGeminiStructuredJSON(systemInstruction, userPrompt) {
-      const browserKey = (localStorage.getItem('good_habits_gemini_key') || '').trim();
-
-      // 1. Try browser key directly if user set one
-      if (browserKey) {
-        const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${browserKey}`;
-        const res = await fetch(apiUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            systemInstruction: { parts: [{ text: systemInstruction }] },
-            contents: [{ parts: [{ text: userPrompt }] }],
-            generationConfig: {
-              responseMimeType: "application/json",
-              thinkingConfig: { thinkingBudget: 0 }
-            }
-          })
-        });
-        if (res.ok) {
-          const data = await res.json();
-          const txt = data?.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (txt) return JSON.parse(txt);
-        }
-      }
-
-      // 2. Call existing serverless `/api/gemini` endpoint
+      lastGeminiError = '';
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 7500);
+      const timeoutId = setTimeout(() => controller.abort(), 17000);
       try {
         const response = await fetch('/api/gemini', {
           method: 'POST',
@@ -3131,15 +3175,27 @@
           signal: controller.signal,
           body: JSON.stringify({ systemInstruction, userPrompt })
         });
-        clearTimeout(timeoutId);
-        if (!response.ok) return null;
         const data = await response.json();
-        const raw = typeof data === 'string' ? data : (data.text || JSON.stringify(data));
-        const cleaned = raw.replace(/```json/g, '').replace(/```/g, '').trim();
-        return JSON.parse(cleaned);
-      } catch (_) {
-        clearTimeout(timeoutId);
+        if (!response.ok) {
+          lastGeminiError = data?.error || 'The AI service is temporarily unavailable.';
+          console.warn('Beaty AI:', response.status, lastGeminiError);
+          return null;
+        }
+        const result = typeof data === 'string' ? JSON.parse(data) : data;
+        if (!result || typeof result !== 'object' || Array.isArray(result) ||
+            typeof result.needsClarification !== 'boolean' || typeof result.reply !== 'string') {
+          lastGeminiError = 'The AI returned an incomplete response. Please try again.';
+          return null;
+        }
+        return result;
+      } catch (error) {
+        lastGeminiError = error.name === 'AbortError'
+          ? 'The AI request timed out. Please try again.'
+          : 'Unable to reach the AI service. Please try again.';
+        console.warn('Beaty AI:', error);
         return null;
+      } finally {
+        clearTimeout(timeoutId);
       }
     }
 
@@ -3250,6 +3306,41 @@
         };
       }
 
+      // Transparent, assumption-based estimate when Gemini is temporarily unavailable.
+      // This is NOT verified restaurant nutrition data.
+      if (/\bturkey\b/i.test(lower) && /\b(?:sandwich|sanwhich|sandwhich|sammich|club)\b/i.test(lower)) {
+        const hasMayo = /\b(?:mayo|mayonnaise)\b/i.test(lower);
+        const noMayo = /\b(?:no|without)\s+(?:mayo|mayonnaise)\b/i.test(lower);
+        const hasCheese = /\bcheese\b/i.test(lower);
+        const hasBacon = /\bbacon\b/i.test(lower);
+        const club = /\bclub\b/i.test(lower);
+        const bread = club ? 270 : 180;
+        const turkey = 150;
+        const vegetables = 20;
+        const mayo = noMayo ? 0 : 90; // one tablespoon assumed unless explicitly excluded
+        const cheese = hasCheese ? 100 : 0;
+        const bacon = (hasBacon || club) ? 90 : 0;
+        const calories = bread + turkey + vegetables + mayo + cheese + bacon;
+        const items = [
+          { label: club ? 'Three slices of toast (assumed)' : 'Two slices of bread (assumed)', cals: bread },
+          { label: '4–5 oz deli turkey (assumed)', cals: turkey },
+          { label: 'Lettuce and tomato (assumed)', cals: vegetables },
+          ...(mayo ? [{ label: '1 tbsp mayonnaise (assumed)', cals: mayo }] : []),
+          ...(cheese ? [{ label: 'One slice cheese (assumed)', cals: cheese }] : []),
+          ...(bacon ? [{ label: 'Two strips bacon (assumed)', cals: bacon }] : [])
+        ];
+        return {
+          needsClarification: false,
+          foodName: 'Diner Turkey Sandwich (estimated)',
+          calories,
+          protein: 37 + (hasCheese ? 6 : 0) + (bacon ? 6 : 0),
+          carbs: (club ? 50 : 34) + 3,
+          fat: 5 + (mayo ? 10 : 0) + (hasCheese ? 8 : 0) + (bacon ? 7 : 0),
+          items,
+          reply: `**Estimated ${calories} kcal** for a diner turkey sandwich (roughly ${Math.max(250, calories - 120)}–${calories + 170} kcal depending on portion and sauces). This is an assumption-based estimate, not verified restaurant data. ${lastGeminiError ? 'AI is temporarily unavailable. ' : ''}I assumed ${club ? 'three slices of toast' : 'two slices of bread'}, 4–5 oz turkey, lettuce and tomato${mayo ? ', and one tablespoon of mayo' : ''}. Was there cheese, extra mayo, or a side of fries?`
+        };
+      }
+
       // Decompose into components and ONLY compute if every component is verified
       const segments = cleaned.split(/\s+(?:with|and|plus|\+|&|on|topped\s+with)\s+|,\s*/i).map(s => s.trim()).filter(Boolean);
       let totalCals = 0, totalP = 0, totalC = 0, totalF = 0;
@@ -3319,12 +3410,18 @@
       return {
         needsClarification: true,
         unverifiedQuery: cleaned,
-        reply: `I don't want to guess fake numbers for **"${cleaned}"**! Connect your Gemini AI key (click **🔑 AI Key** above or deploy \`/api/gemini\`) for full AI reasoning on any dish/typo, or clarify the main ingredients below:`,
-        quickReplies: [
-          "Chicken breast with rice & veggies (~480 kcal)",
-          "Burrito bowl with chicken, rice, beans & salsa (~680 kcal)",
-          "Enter exact calories & macros manually below"
-        ]
+        reply: `I couldn't verify nutrition for **"${cleaned}"** from the available food data. ${lastGeminiError ? 'AI connection: ' + lastGeminiError + ' ' : ''}Please tell me the bread, fillings, sauces, and portion size so I can help estimate it.`,
+        quickReplies: /turkey.*sandwich|sandwich.*turkey/i.test(cleaned)
+          ? [
+              "White bread, turkey, lettuce and tomato, no mayo",
+              "Wheat bread, turkey, cheese and mayonnaise",
+              "Diner turkey club with bacon, mayo and three slices of toast"
+            ]
+          : [
+              "It was a standard restaurant portion",
+              "It was homemade with a small portion",
+              "I'll describe the ingredients and serving size"
+            ]
       };
     }
 
@@ -3439,6 +3536,34 @@
       handleFoodChatSubmit(new Event('submit'));
     }
 
+    // Cache successful food estimates locally for 30 days (up to 50 distinct queries).
+    const FOOD_CACHE_KEY = 'betterhabits_food_cache_v1';
+    function getCachedFoodEstimate(query) {
+      try {
+        const entries = JSON.parse(localStorage.getItem(FOOD_CACHE_KEY) || '{}');
+        const item = entries[query.toLowerCase().trim()];
+        return item && Date.now() - item.time < 30 * 86400000 ? item.result : null;
+      } catch (_) { return null; }
+    }
+    function cacheFoodEstimate(query, result) {
+      if (!result || result.needsClarification || !Number.isFinite(Number(result.calories))) return;
+      try {
+        const entries = JSON.parse(localStorage.getItem(FOOD_CACHE_KEY) || '{}');
+        entries[query.toLowerCase().trim()] = { time: Date.now(), result };
+        const recent = Object.entries(entries).sort((a,b) => b[1].time - a[1].time).slice(0,50);
+        localStorage.setItem(FOOD_CACHE_KEY, JSON.stringify(Object.fromEntries(recent)));
+      } catch (_) {}
+    }
+    async function searchUSDAFood(query) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), 5500);
+      try {
+        const res = await fetch('/api/food-lookup?q=' + encodeURIComponent(query), { signal: controller.signal });
+        return res.ok ? (await res.json()).result : null;
+      } catch (_) { return null; }
+      finally { clearTimeout(timer); }
+    }
+
     async function handleFoodChatSubmit(e) {
       if (e) e.preventDefault();
       const input = document.getElementById('ai-food-prompt');
@@ -3466,12 +3591,21 @@ Rules:
 Return ONLY valid JSON:
 {"needsClarification":false,"reply":"Conversational 1-2 sentence explanation","quickReplies":[],"foodName":"Clean Dish Name","calories":500,"protein":30,"carbs":50,"fat":18,"items":[{"label":"Component 1","cals":300}]}`;
 
-      const geminiResult = await callGeminiStructuredJSON(
-        systemPrompt,
-        `${prevContextSummary}\nMeal category: ${mealType}\nUser message: "${combinedQuery}"`
-      );
-
-      let result = geminiResult;
+      const normalizedMeal = combinedQuery.toLowerCase().replace(/^(i (just )?(ate|had)|a serving of)\s+/i, '').trim();
+      const savedFood = (state.banks?.food || []).find(b => b.name.toLowerCase() === normalizedMeal);
+      let result = savedFood ? {
+        needsClarification: false, foodName: savedFood.name, calories: savedFood.cals,
+        protein: savedFood.p, carbs: savedFood.c, fat: savedFood.f,
+        items: [{ label: savedFood.name + ' (Food Bank)', cals: savedFood.cals }],
+        reply: `From your Food Bank: **${savedFood.name}** — **${savedFood.cals} kcal**.`
+      } : getCachedFoodEstimate(combinedQuery);
+      if (result) result = JSON.parse(JSON.stringify(result));
+      if (!result) {
+        result = await callGeminiStructuredJSON(
+          systemPrompt,
+          `${prevContextSummary}\nMeal category: ${mealType}\nUser message: "${combinedQuery}"`
+        );
+      }
 
       if (!result) {
         // Try local verified lookup first, then Open Food Facts API if single item
@@ -3479,7 +3613,21 @@ Return ONLY valid JSON:
         if (!localAttempt.needsClarification) {
           result = localAttempt;
         } else if (localAttempt.unverifiedQuery) {
-          const offMatch = await searchOpenFoodFactsReal(localAttempt.unverifiedQuery);
+          // USDA values are for 100 g, not an assumed full restaurant serving.
+          const simpleQuery = localAttempt.unverifiedQuery.replace(/^(a|an|the|some)\s+/i, '').trim();
+          const isIngredient = !/\b(from|diner|restaurant|with|and|plus|sandwich|meal|plate|bowl|dinner|lunch|breakfast)\b/i.test(simpleQuery);
+          const usdaMatch = isIngredient ? await searchUSDAFood(simpleQuery) : null;
+          if (usdaMatch) {
+            result = {
+              needsClarification: false,
+              foodName: usdaMatch.foodName + ' (100 g reference)',
+              calories: usdaMatch.calories, protein: usdaMatch.protein,
+              carbs: usdaMatch.carbs, fat: usdaMatch.fat,
+              items: [{ label: usdaMatch.foodName + ' (USDA, 100 g)', cals: usdaMatch.calories }],
+              reply: `USDA FoodData Central lists **${usdaMatch.calories} kcal per 100 g** of **${usdaMatch.foodName}**. This is a 100 g reference, not necessarily your serving. How many grams or ounces did you eat?`
+            };
+          }
+          const offMatch = result ? null : await searchOpenFoodFactsReal(localAttempt.unverifiedQuery);
           if (offMatch) {
             result = {
               needsClarification: false,
@@ -3491,13 +3639,15 @@ Return ONLY valid JSON:
               items: [{ label: `${offMatch.foodName} (${offMatch.source})`, cals: offMatch.calories }],
               reply: `I looked up **${offMatch.foodName}** in Open Food Facts (${offMatch.source}): **${offMatch.calories} kcal** with **${offMatch.protein}g Protein**, **${offMatch.carbs}g Carbs**, and **${offMatch.fat}g Fat**.`
             };
-          } else {
+          } else if (!result) {
             result = localAttempt;
           }
         } else {
           result = localAttempt;
         }
       }
+
+      if (result && !result.needsClarification) cacheFoodEstimate(combinedQuery, result);
 
       if (result.needsClarification) {
         pendingFoodContext = combinedQuery;
@@ -3832,6 +3982,9 @@ Return ONLY valid JSON:
       );
 
       const result = geminiResult || analyzeConversationalExerciseLocal(combinedQuery, weightLbs, lastExProposal);
+      if (!geminiResult && lastGeminiError && result?.reply) {
+        result.reply += ' (AI connection issue: ' + lastGeminiError + ' This is a basic local estimate.)';
+      }
 
       if (result.needsClarification) {
         pendingExContext = combinedQuery;
