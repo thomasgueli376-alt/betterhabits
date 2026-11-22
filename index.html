@@ -3223,6 +3223,41 @@
         };
       }
 
+      // Transparent, assumption-based estimate when Gemini is temporarily unavailable.
+      // This is NOT verified restaurant nutrition data.
+      if (/\bturkey\b/i.test(lower) && /\b(?:sandwich|sanwhich|sandwhich|sammich|club)\b/i.test(lower)) {
+        const hasMayo = /\b(?:mayo|mayonnaise)\b/i.test(lower);
+        const noMayo = /\b(?:no|without)\s+(?:mayo|mayonnaise)\b/i.test(lower);
+        const hasCheese = /\bcheese\b/i.test(lower);
+        const hasBacon = /\bbacon\b/i.test(lower);
+        const club = /\bclub\b/i.test(lower);
+        const bread = club ? 270 : 180;
+        const turkey = 150;
+        const vegetables = 20;
+        const mayo = noMayo ? 0 : 90; // one tablespoon assumed unless explicitly excluded
+        const cheese = hasCheese ? 100 : 0;
+        const bacon = (hasBacon || club) ? 90 : 0;
+        const calories = bread + turkey + vegetables + mayo + cheese + bacon;
+        const items = [
+          { label: club ? 'Three slices of toast (assumed)' : 'Two slices of bread (assumed)', cals: bread },
+          { label: '4–5 oz deli turkey (assumed)', cals: turkey },
+          { label: 'Lettuce and tomato (assumed)', cals: vegetables },
+          ...(mayo ? [{ label: '1 tbsp mayonnaise (assumed)', cals: mayo }] : []),
+          ...(cheese ? [{ label: 'One slice cheese (assumed)', cals: cheese }] : []),
+          ...(bacon ? [{ label: 'Two strips bacon (assumed)', cals: bacon }] : [])
+        ];
+        return {
+          needsClarification: false,
+          foodName: 'Diner Turkey Sandwich (estimated)',
+          calories,
+          protein: 37 + (hasCheese ? 6 : 0) + (bacon ? 6 : 0),
+          carbs: (club ? 50 : 34) + 3,
+          fat: 5 + (mayo ? 10 : 0) + (hasCheese ? 8 : 0) + (bacon ? 7 : 0),
+          items,
+          reply: `**Estimated ${calories} kcal** for a diner turkey sandwich (roughly ${Math.max(250, calories - 120)}–${calories + 170} kcal depending on portion and sauces). This is an assumption-based estimate, not verified restaurant data. ${lastGeminiError ? 'AI is temporarily unavailable. ' : ''}I assumed ${club ? 'three slices of toast' : 'two slices of bread'}, 4–5 oz turkey, lettuce and tomato${mayo ? ', and one tablespoon of mayo' : ''}. Was there cheese, extra mayo, or a side of fries?`
+        };
+      }
+
       // Decompose into components and ONLY compute if every component is verified
       const segments = cleaned.split(/\s+(?:with|and|plus|\+|&|on|topped\s+with)\s+|,\s*/i).map(s => s.trim()).filter(Boolean);
       let totalCals = 0, totalP = 0, totalC = 0, totalF = 0;
