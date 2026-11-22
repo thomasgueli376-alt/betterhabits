@@ -12,13 +12,13 @@ export default async function handler(req, res) {
   }
 
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 24000);
+  const timeout = setTimeout(() => controller.abort(), 14000);
   try {
     const model = 'gemini-3.8-flash';
     let data;
     let succeeded = false;
-    for (let attempt = 0; attempt < 3; attempt++) {
-      if (attempt > 0) await new Promise(resolve => setTimeout(resolve, attempt * 900));
+    for (let attempt = 0; attempt < 2; attempt++) {
+      if (attempt > 0) await new Promise(resolve => setTimeout(resolve, attempt * 650));
       const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
         method: 'POST',
         signal: controller.signal,
@@ -42,7 +42,7 @@ export default async function handler(req, res) {
       console.warn('Gemini attempt failed', attempt + 1, response.status, message);
       const temporary = [429, 500, 502, 503, 504].includes(response.status) ||
         /high demand|overload|resource exhausted|temporarily unavailable/i.test(message);
-      if (!temporary || attempt === 2) {
+      if (!temporary || attempt === 1) {
         return res.status(response.status).json({ error: message });
       }
     }
