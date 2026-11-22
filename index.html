@@ -3293,11 +3293,17 @@
         needsClarification: true,
         unverifiedQuery: cleaned,
         reply: `I couldn't verify nutrition for **"${cleaned}"** from the available food data. ${lastGeminiError ? 'AI connection: ' + lastGeminiError + ' ' : ''}Please tell me the bread, fillings, sauces, and portion size so I can help estimate it.`,
-        quickReplies: [
-          "Chicken breast with rice & veggies (~480 kcal)",
-          "Burrito bowl with chicken, rice, beans & salsa (~680 kcal)",
-          "Enter exact calories & macros manually below"
-        ]
+        quickReplies: /turkey.*sandwich|sandwich.*turkey/i.test(cleaned)
+          ? [
+              "White bread, turkey, lettuce and tomato, no mayo",
+              "Wheat bread, turkey, cheese and mayonnaise",
+              "Diner turkey club with bacon, mayo and three slices of toast"
+            ]
+          : [
+              "It was a standard restaurant portion",
+              "It was homemade with a small portion",
+              "I'll describe the ingredients and serving size"
+            ]
       };
     }
 
