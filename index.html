@@ -3084,7 +3084,7 @@
     async function callGeminiStructuredJSON(systemInstruction, userPrompt) {
       lastGeminiError = '';
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 28000);
+      const timeoutId = setTimeout(() => controller.abort(), 17000);
       try {
         const response = await fetch('/api/gemini', {
           method: 'POST',
