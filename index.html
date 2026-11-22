@@ -95,6 +95,12 @@
 <style id="beaty-coach-v2">
 #beaty-coach-dock{position:fixed;bottom:20px;right:20px;z-index:65;display:flex;align-items:flex-end;gap:8px;max-width:min(360px,calc(100vw - 30px));filter:drop-shadow(0 8px 18px rgba(15,23,42,.18))}
 #beaty-coach-dock.hidden{display:none}
+#beaty-coach-dock.beaty-coach-bottom-right{bottom:20px;right:20px;top:auto;left:auto}
+#beaty-coach-dock.beaty-coach-bottom-left{bottom:20px;left:20px;top:auto;right:auto;flex-direction:row-reverse}
+#beaty-coach-dock.beaty-coach-middle-right{top:42%;right:20px;bottom:auto;left:auto}
+#beaty-coach-dock.beaty-coach-middle-left{top:42%;left:20px;bottom:auto;right:auto;flex-direction:row-reverse}
+#beaty-coach-dock.beaty-coach-bottom-left #beaty-coach-speech,#beaty-coach-dock.beaty-coach-middle-left #beaty-coach-speech{border-radius:20px 20px 20px 4px}
+@media(max-width:640px){#beaty-coach-dock.beaty-coach-middle-right,#beaty-coach-dock.beaty-coach-middle-left{top:auto;bottom:96px;right:12px;left:auto;flex-direction:row}#beaty-coach-dock.beaty-coach-bottom-left{left:12px}#beaty-coach-dock.beaty-coach-bottom-right{right:12px}#beaty-coach-speech{max-width:190px;font-size:12px}}
 #beaty-coach-speech{background:white;border:2px solid #fda4af;border-radius:20px 20px 4px 20px;padding:14px 16px;color:#172033;font-weight:750;font-size:14px;line-height:1.4;max-width:260px}
 #beaty-coach-face{flex-shrink:0;background:transparent;border:0;cursor:pointer;transition:transform .2s}
 #beaty-coach-face:hover{transform:scale(1.12) rotate(-6deg)}
@@ -2623,12 +2629,15 @@
       badges: ['Look at those badges! I expect more, obviously. 🏆']
     };
     let beatyCoachDismissTimer;
-    let beatyCoachLastNudge = 0;
+    let beatyCoachVisitCount = 0;
     function showBeatyCoach(message, mood = 'happy', force = false) {
       const dock = document.getElementById('beaty-coach-dock');
       if (!dock) return;
-      if (!force && Date.now() - beatyCoachLastNudge < 90000) return;
-      beatyCoachLastNudge = Date.now();
+      // Each tab navigation deserves a fresh reaction; no 90-second lockout.
+      beatyCoachVisitCount++;
+      const spots = ['beaty-coach-bottom-right', 'beaty-coach-bottom-left', 'beaty-coach-middle-right', 'beaty-coach-middle-left'];
+      dock.classList.remove(...spots);
+      dock.classList.add(spots[(beatyCoachVisitCount - 1) % spots.length]);
       document.getElementById('beaty-coach-speech').textContent = message;
       document.getElementById('beaty-coach-face').innerHTML = getBeatyAvatarSVG('w-20 h-20', mood, 'beaty-coach-svg');
       dock.classList.remove('hidden');
@@ -2636,13 +2645,13 @@
       void dock.offsetWidth;
       dock.classList.add('beaty-coach-pop');
       clearTimeout(beatyCoachDismissTimer);
-      beatyCoachDismissTimer = setTimeout(() => dock.classList.add('hidden'), 10000);
+      beatyCoachDismissTimer = setTimeout(() => dock.classList.add('hidden'), 8500);
     }
     function coachForTab(tab) {
       const fill = state.dailyHeartFill || 0;
       if (fill >= 100) return showBeatyCoach('Okay, superstar. Heart at 100%! I am extremely proud of you. 👑', 'crown');
       const lines = beatyCoachLines[tab] || beatyCoachLines.dashboard;
-      const message = lines[Math.floor(Math.random() * lines.length)];
+      const message = lines[beatyCoachVisitCount % lines.length];
       showBeatyCoach(message, fill < 25 ? 'worried' : 'happy');
     }
     function installBeatyCoach() {
