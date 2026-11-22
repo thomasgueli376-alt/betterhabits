@@ -92,6 +92,18 @@
       border-radius: 4px;
     }
   </style>
+<style id="beaty-coach-v2">
+#beaty-coach-dock{position:fixed;bottom:20px;right:20px;z-index:65;display:flex;align-items:flex-end;gap:8px;max-width:min(360px,calc(100vw - 30px));filter:drop-shadow(0 8px 18px rgba(15,23,42,.18))}
+#beaty-coach-dock.hidden{display:none}
+#beaty-coach-speech{background:white;border:2px solid #fda4af;border-radius:20px 20px 4px 20px;padding:14px 16px;color:#172033;font-weight:750;font-size:14px;line-height:1.4;max-width:260px}
+#beaty-coach-face{flex-shrink:0;background:transparent;border:0;cursor:pointer;transition:transform .2s}
+#beaty-coach-face:hover{transform:scale(1.12) rotate(-6deg)}
+#beaty-coach-close{position:absolute;top:-12px;right:4px;width:26px;height:26px;background:#0f172a;color:white;border-radius:50%;font-size:20px;line-height:20px;cursor:pointer}
+.beaty-coach-pop{animation:beaty-coach-enter .5s cubic-bezier(.2,1.6,.4,1)}
+@keyframes beaty-coach-enter{from{opacity:0;transform:translateY(30px) scale(.8)}to{opacity:1;transform:translateY(0) scale(1)}}
+.beaty-coach-svg{overflow:visible}
+@media(prefers-reduced-motion:reduce){.beaty-coach-pop{animation:none}#beaty-coach-face{transition:none}}
+</style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col pb-20">
 
@@ -2597,6 +2609,65 @@
       }
     }
 
+    // Beaty 2.0: playful, occasionally guilt-inducing accountability coach.
+    // This feature is intentionally independent of nutrition AI and never makes API requests.
+    const beatyCoachLines = {
+      dashboard: ['I can SEE that unfinished heart meter. We both know what to do. 👀', 'Your streak is not going to protect itself, bestie. ❤️'],
+      todo: ['That to-do list is looking awfully confident for something unfinished. 👀', 'Check one off. I dare you.'],
+      wellness: ['Have you had water today, or are we just hoping for the best? 💧', 'A little movement. A little water. A lot less excuses.'],
+      finance: ['Your budget called. It wants to know where you went. 💸', 'Future you would like a word about that purchase.'],
+      food: ['Tell me what you ate. Yes, even the handful of chips. 👀', 'Logging it counts. Pretending it never happened does not.'],
+      exercise: ['Your sneakers miss you. Just saying. 👟', 'A ten-minute walk beats another ten-minute excuse.'],
+      screentime: ['The scroll can wait. I cannot. 📱', 'Is this screen time, or a hostage situation?'],
+      travel: ['Adventure is good. Your habits are coming with us. 🧳'],
+      badges: ['Look at those badges! I expect more, obviously. 🏆']
+    };
+    let beatyCoachDismissTimer;
+    let beatyCoachLastNudge = 0;
+    function showBeatyCoach(message, mood = 'happy', force = false) {
+      const dock = document.getElementById('beaty-coach-dock');
+      if (!dock) return;
+      if (!force && Date.now() - beatyCoachLastNudge < 90000) return;
+      beatyCoachLastNudge = Date.now();
+      document.getElementById('beaty-coach-speech').textContent = message;
+      document.getElementById('beaty-coach-face').innerHTML = getBeatyAvatarSVG('w-20 h-20', mood, 'beaty-coach-svg');
+      dock.classList.remove('hidden');
+      dock.classList.remove('beaty-coach-pop');
+      void dock.offsetWidth;
+      dock.classList.add('beaty-coach-pop');
+      clearTimeout(beatyCoachDismissTimer);
+      beatyCoachDismissTimer = setTimeout(() => dock.classList.add('hidden'), 10000);
+    }
+    function coachForTab(tab) {
+      const fill = state.dailyHeartFill || 0;
+      if (fill >= 100) return showBeatyCoach('Okay, superstar. Heart at 100%! I am extremely proud of you. 👑', 'crown');
+      const lines = beatyCoachLines[tab] || beatyCoachLines.dashboard;
+      const message = lines[Math.floor(Math.random() * lines.length)];
+      showBeatyCoach(message, fill < 25 ? 'worried' : 'happy');
+    }
+    function installBeatyCoach() {
+      if (document.getElementById('beaty-coach-dock')) return;
+      const dock = document.createElement('div');
+      dock.id = 'beaty-coach-dock';
+      dock.className = 'hidden';
+      dock.setAttribute('role', 'status');
+      dock.setAttribute('aria-live', 'polite');
+      dock.innerHTML = `<button type="button" id="beaty-coach-close" aria-label="Dismiss Beaty">×</button>
+        <div id="beaty-coach-speech"></div>
+        <button type="button" id="beaty-coach-face" aria-label="Talk to Beaty"></button>`;
+      document.body.appendChild(dock);
+      document.getElementById('beaty-coach-close').addEventListener('click', () => {
+        dock.classList.add('hidden');
+        clearTimeout(beatyCoachDismissTimer);
+      });
+      document.getElementById('beaty-coach-face').addEventListener('click', () => {
+        dock.classList.add('hidden');
+        pokeBeaty();
+      });
+      const header = document.getElementById('header-mascot-trigger');
+      if (header) header.setAttribute('title', 'Beaty is watching your progress. Click for a pep talk!');
+    }
+
     function pokeBeaty() {
       const bannerSvg = document.querySelector('#banner-beaty-avatar svg');
       if (bannerSvg) {
@@ -2607,10 +2678,11 @@
 
       const fillPct = state.dailyHeartFill || 0;
       const tips = [
-        `Heart Status: ${fillPct}%! Every good habit pumps me up (+20% to +25%), and hitting 100% locks in your daily streak!`,
-        "Pro Tip: Your most-logged foods, workouts, and expenses are saved in the Footer Banks at the bottom of your screen!",
-        "Need a quick heart boost? Drink your daily water (+20%), check off a To-Do (+20%), or log a workout (+25%)!",
-        "Watch out! Going over your daily calorie cap or overspending a budget bucket drains my heart!"
+        `Only ${fillPct}% heart fill? I am a HEART, not a decorative paperweight. Let's get moving. ❤️`,
+        `Your heart is at ${fillPct}%. I believe in you, but I'd also appreciate some evidence. 👀`,
+        "Drink water, finish a task, or get a workout in. I am running out of motivational speeches.",
+        "I'm proud of every win. But yes, I absolutely noticed the habits you skipped.",
+        "Your streak is our streak. Please do not make me explain to the other mascots why we lost it."
       ];
       const randomQuote = tips[Math.floor(Math.random() * tips.length)];
       triggerMascotPopup("Beaty Interactive Coach 💬", randomQuote);
@@ -2903,10 +2975,12 @@
         }
       }
       evaluateCalorieStatus();
+      coachForTab(tabId);
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function setupEventListeners() {
+      installBeatyCoach();
       document.getElementById('header-mascot-trigger').addEventListener('click', pokeBeaty);
       document.getElementById('btn-close-mascot').addEventListener('click', () => document.getElementById('mascot-popup').classList.add('hidden'));
 
