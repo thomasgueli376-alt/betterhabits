@@ -14,10 +14,11 @@ export default async function handler(req, res) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 24000);
   try {
-    const models = ['gemini-3.8-flash', 'gemini-2.5-flash'];
+    const model = 'gemini-3.8-flash';
     let data;
-    let lastStatus = 503;
-    for (const model of models) {
+    let succeeded = false;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      if (attempt > 0) await new Promise(resolve => setTimeout(resolve, attempt * 900));
       const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`, {
         method: 'POST',
         signal: controller.signal,
@@ -31,23 +32,22 @@ export default async function handler(req, res) {
           generationConfig: {
             responseMimeType: 'application/json',
             maxOutputTokens: 2200,
-            ...(model === 'gemini-3.8-flash' ? { thinkingConfig: { thinkingLevel: 'LOW' } } : {})
+            thinkingConfig: { thinkingLevel: 'LOW' }
           }
         })
       });
       data = await response.json();
-      if (response.ok) break;
-      lastStatus = response.status;
+      if (response.ok) { succeeded = true; break; }
       const message = data?.error?.message || 'Gemini request failed';
-      console.warn('Gemini model failure', model, response.status, message);
-      const isTemporary = [429, 500, 502, 503, 504].includes(response.status) ||
+      console.warn('Gemini attempt failed', attempt + 1, response.status, message);
+      const temporary = [429, 500, 502, 503, 504].includes(response.status) ||
         /high demand|overload|resource exhausted|temporarily unavailable/i.test(message);
-      if (!isTemporary || model === models[models.length - 1]) {
+      if (!temporary || attempt === 2) {
         return res.status(response.status).json({ error: message });
       }
     }
-    if (!data?.candidates) {
-      return res.status(lastStatus).json({ error: 'Gemini did not return a response.' });
+    if (!succeeded || !data?.candidates) {
+      return res.status(502).json({ error: 'Gemini did not return a response.' });
     }
     const raw = (data?.candidates?.[0]?.content?.parts || [])
       .filter(part => typeof part.text === 'string').map(part => part.text).join('');
