@@ -2493,6 +2493,40 @@
       `;
     }
 
+    // Score nutrition against configured goals, not merely the act of logging food.
+    // Missing macro data is neutral rather than guessing a food is unhealthy.
+    function scoreLoggedFoodHeart(entry) {
+      const logs = state.foodLogs || [];
+      const total = logs.reduce((sum, food) => sum + (Number(food.cals) || 0), 0);
+      const previous = total - (Number(entry.cals) || 0);
+      const limit = Number(state.macroGoals.cals) || 2000;
+      // Penalize crossing the daily limit once; later entries don't repeatedly drain the heart.
+      if (previous <= limit && total > limit) {
+        adjustBeatyHeart(-20, "Exceeded daily calorie target", 'worried');
+        return;
+      }
+      if (total > limit) return;
+      const protein = Number(entry.p) || 0;
+      const carbs = Number(entry.c) || 0;
+      const fat = Number(entry.f) || 0;
+      const macroCalories = protein * 4 + carbs * 4 + fat * 9;
+      if (macroCalories <= 0) return;
+      const goals = state.macroGoals || {};
+      const actual = { p: protein * 400 / macroCalories, c: carbs * 400 / macroCalories, f: fat * 900 / macroCalories };
+      const target = { p: Number(goals.pPct) || 40, c: Number(goals.cPct) || 30, f: Number(goals.fPct) || 30 };
+      // A 10 percentage-point tolerance avoids punishing small variations.
+      const misses = ['p', 'c', 'f'].filter(key => {
+        const direction = goals[key + 'Dir'] || (key === 'p' ? 'over' : 'under');
+        return direction === 'over' ? actual[key] < target[key] - 10 : actual[key] > target[key] + 10;
+      });
+      if (misses.length >= 2) {
+        adjustBeatyHeart(-10, "Meal outside your nutrition goals", 'worried');
+      } else if (misses.length === 0) {
+        adjustBeatyHeart(15, "Meal aligned with nutrition goals", 'happy');
+      }
+      // One missed macro is neutral; full-day nutrition is assessed at lock-in.
+    }
+
     function adjustBeatyHeart(delta, reason = "", tempMood = null) {
       const prevFill = state.dailyHeartFill || 0;
       state.dailyHeartFill = Math.max(0, Math.min(100, prevFill + delta));
@@ -3741,13 +3775,7 @@ Return ONLY valid JSON:
       state.foodLogs.push(entry);
       saveToFoodBank(entry);
 
-      const totalCals = state.foodLogs.reduce((s, item) => s + item.cals, 0);
-      const limit = state.macroGoals.cals || 2000;
-      if (totalCals > limit) {
-        adjustBeatyHeart(-20, "Exceeded daily calorie limit", 'worried');
-      } else {
-        adjustBeatyHeart(15, "Logged meal within budget", 'happy');
-      }
+      scoreLoggedFoodHeart(entry);
 
       triggerMascotPopup("Meal Logged & Saved to Bank!", `Added ${mealType}: ${name} (${cals} kcal)!`);
       saveState();
@@ -4757,7 +4785,7 @@ Return ONLY valid JSON:
       } else {
         totalXP += 10;
         msgParts.push("Sleep logged (+10 XP)");
-        adjustBeatyHeart(10, "Sleep logged");
+        adjustBeatyHeart(-10, "Below your sleep duration goal", 'worried');
       }
 
       state.sleepLogs.unshift({ id: Date.now(), date: new Date().toLocaleDateString(), bed, wake, hours: parseFloat(hours), xpEarned: totalXP });
@@ -4993,13 +5021,7 @@ Return ONLY valid JSON:
         f: Math.round(f / qty)
       });
 
-      const totalCals = state.foodLogs.reduce((s, item) => s + item.cals, 0);
-      const limit = state.macroGoals.cals || 2000;
-      if (totalCals > limit) {
-        adjustBeatyHeart(-20, "Exceeded daily calorie cap", 'worried');
-      } else {
-        adjustBeatyHeart(15, "Logged meal within calorie cap", 'happy');
-      }
+      scoreLoggedFoodHeart(entry);
 
       document.getElementById('food-name').value = '';
       document.getElementById('food-cals').value = '';
