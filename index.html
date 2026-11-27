@@ -26,10 +26,10 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
   <style>
-    /* Device-native type keeps the interface crisp and readable. */
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
     
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
     }
 
     .tab-content {
@@ -169,7 +169,7 @@
   main .bg-indigo-50 { background:var(--soft)!important; }
   main .border-indigo-100, main .border-indigo-200 { border-color:var(--season-border)!important; }
   input[type=checkbox], input[type=radio] { accent-color:var(--accent)!important; }
-  main [class*="bg-gradient-to-"][class*="border"] { background-image:none!important; background-color:var(--surface)!important; }
+  /* Retain the original colorful category gradients. */
   #beaty-banner { background:var(--surface)!important; border:1px solid var(--line)!important; border-left:3px solid var(--season-tone)!important; border-radius:10px!important; box-shadow:none!important; padding:14px 16px!important; }
   #banner-beaty-avatar { background:var(--beaty-tint)!important; border-color:var(--season-border)!important; width:54px;height:54px;border-radius:10px; }
   #beaty-banner #beaty-mood-title { text-transform:none; letter-spacing:normal; font-weight:700; font-size:13px; }
@@ -263,7 +263,7 @@
     const season=seasonForDate(new Date()), previous=document.documentElement.dataset.season;
     document.documentElement.dataset.season=season;
     const label=document.getElementById('season-label');
-    if(label){label.textContent=SEASON_LABELS[season];label.hidden=season==='normal';}
+    if(label){label.textContent=({'new-year':'🎉 ','valentine':'💘 ','st-patrick':'☘️ ','easter':'🐣 ','independence':'🇺🇸 ','halloween':'🎃 ','thanksgiving':'🍂 ','christmas':'🎄 '}[season]||'')+SEASON_LABELS[season];label.hidden=season==='normal';}
     const meta=document.querySelector('meta[name="theme-color"]');
     if(meta)meta.content=getComputedStyle(document.documentElement).getPropertyValue('--surface').trim()||'#ffffff';
     if(previous&&previous!==season&&typeof renderBeatyMascotUI==='function'){
@@ -282,6 +282,82 @@
     setInterval(applySeasonalTheme,60000);
   });
 </script>
+
+<style id="good-habits-playful">
+:root{--festive-primary:#5845bd;--festive-secondary:#ee678c;--festive-light:#efedff;--season-pattern:none;--accent:#6552d9;--accent-hover:#5340bd;--soft:#f0edff;--page:#f6f4fc;--line:#e4dff0;--season-tone:#a88cf3}
+:root[data-season="new-year"]{--festive-primary:#202952;--festive-secondary:#efb84f;--festive-light:#fff6d9;--season-pattern:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22100%22%20height%3D%22100%22%3E%3Cg%20fill%3D%22%23b99942%22%20opacity%3D%22.20%22%20font-family%3D%22Arial%22%20font-size%3D%2223%22%3E%3Ctext%20x%3D%2212%22%20y%3D%2225%22%3E%E2%9C%A6%3C%2Ftext%3E%3Ctext%20x%3D%2265%22%20y%3D%2270%22%20font-size%3D%2217%22%3E%E2%9C%A6%3C%2Ftext%3E%3Ctext%20x%3D%224%22%20y%3D%2293%22%20font-size%3D%229%22%3E%E2%9C%A6%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fsvg%3E");}
+:root[data-season="valentine"]{--festive-primary:#b62f61;--festive-secondary:#e34d85;--festive-light:#ffe5ef;--season-pattern:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22100%22%20height%3D%22100%22%3E%3Cg%20fill%3D%22%23e65f92%22%20opacity%3D%22.20%22%20font-family%3D%22Arial%22%20font-size%3D%2223%22%3E%3Ctext%20x%3D%2212%22%20y%3D%2225%22%3E%E2%99%A5%3C%2Ftext%3E%3Ctext%20x%3D%2265%22%20y%3D%2270%22%20font-size%3D%2217%22%3E%E2%99%A5%3C%2Ftext%3E%3Ctext%20x%3D%224%22%20y%3D%2293%22%20font-size%3D%229%22%3E%E2%99%A5%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fsvg%3E");}
+:root[data-season="st-patrick"]{--festive-primary:#16734a;--festive-secondary:#45a35e;--festive-light:#e9f9d5;--season-pattern:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22100%22%20height%3D%22100%22%3E%3Cg%20fill%3D%22%2354a76b%22%20opacity%3D%22.20%22%20font-family%3D%22Arial%22%20font-size%3D%2223%22%3E%3Ctext%20x%3D%2212%22%20y%3D%2225%22%3E%E2%98%98%3C%2Ftext%3E%3Ctext%20x%3D%2265%22%20y%3D%2270%22%20font-size%3D%2217%22%3E%E2%98%98%3C%2Ftext%3E%3Ctext%20x%3D%224%22%20y%3D%2293%22%20font-size%3D%229%22%3E%E2%98%98%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fsvg%3E");}
+:root[data-season="easter"]{--festive-primary:#8664c2;--festive-secondary:#f1a8cc;--festive-light:#f9ebff;--season-pattern:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22100%22%20height%3D%22100%22%3E%3Cg%20fill%3D%22%23a98ad9%22%20opacity%3D%22.20%22%20font-family%3D%22Arial%22%20font-size%3D%2223%22%3E%3Ctext%20x%3D%2212%22%20y%3D%2225%22%3E%E2%9C%BF%3C%2Ftext%3E%3Ctext%20x%3D%2265%22%20y%3D%2270%22%20font-size%3D%2217%22%3E%E2%9C%BF%3C%2Ftext%3E%3Ctext%20x%3D%224%22%20y%3D%2293%22%20font-size%3D%229%22%3E%E2%9C%BF%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fsvg%3E");}
+:root[data-season="independence"]{--festive-primary:#24467e;--festive-secondary:#dd3d4c;--festive-light:#e9f1ff;--season-pattern:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22100%22%20height%3D%22100%22%3E%3Cg%20fill%3D%22%23d94b56%22%20opacity%3D%22.20%22%20font-family%3D%22Arial%22%20font-size%3D%2223%22%3E%3Ctext%20x%3D%2212%22%20y%3D%2225%22%3E%E2%98%85%3C%2Ftext%3E%3Ctext%20x%3D%2265%22%20y%3D%2270%22%20font-size%3D%2217%22%3E%E2%98%85%3C%2Ftext%3E%3Ctext%20x%3D%224%22%20y%3D%2293%22%20font-size%3D%229%22%3E%E2%98%85%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fsvg%3E");}
+:root[data-season="halloween"]{--festive-primary:#4d2769;--festive-secondary:#f28a24;--festive-light:#fff0d7;--season-pattern:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22100%22%20height%3D%22100%22%3E%3Cg%20fill%3D%22%23ed913e%22%20opacity%3D%22.20%22%20font-family%3D%22Arial%22%20font-size%3D%2223%22%3E%3Ctext%20x%3D%2212%22%20y%3D%2225%22%3E%E2%9C%A6%3C%2Ftext%3E%3Ctext%20x%3D%2265%22%20y%3D%2270%22%20font-size%3D%2217%22%3E%E2%9C%A6%3C%2Ftext%3E%3Ctext%20x%3D%224%22%20y%3D%2293%22%20font-size%3D%229%22%3E%E2%9C%A6%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fsvg%3E");}
+:root[data-season="thanksgiving"]{--festive-primary:#9a4727;--festive-secondary:#ea9c47;--festive-light:#fff2d8;--season-pattern:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22100%22%20height%3D%22100%22%3E%3Cg%20fill%3D%22%23d29158%22%20opacity%3D%22.20%22%20font-family%3D%22Arial%22%20font-size%3D%2223%22%3E%3Ctext%20x%3D%2212%22%20y%3D%2225%22%3E%E2%9C%BF%3C%2Ftext%3E%3Ctext%20x%3D%2265%22%20y%3D%2270%22%20font-size%3D%2217%22%3E%E2%9C%BF%3C%2Ftext%3E%3Ctext%20x%3D%224%22%20y%3D%2293%22%20font-size%3D%229%22%3E%E2%9C%BF%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fsvg%3E");}
+:root[data-season="christmas"]{--festive-primary:#075a3b;--festive-secondary:#ca3044;--festive-light:#e8f6ec;--season-pattern:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22100%22%20height%3D%22100%22%3E%3Cg%20fill%3D%22%23d13449%22%20opacity%3D%22.20%22%20font-family%3D%22Arial%22%20font-size%3D%2223%22%3E%3Ctext%20x%3D%2212%22%20y%3D%2225%22%3E%E2%9C%A6%3C%2Ftext%3E%3Ctext%20x%3D%2265%22%20y%3D%2270%22%20font-size%3D%2217%22%3E%E2%9C%A6%3C%2Ftext%3E%3Ctext%20x%3D%224%22%20y%3D%2293%22%20font-size%3D%229%22%3E%E2%9C%A6%3C%2Ftext%3E%3C%2Fg%3E%3C%2Fsvg%3E");}
+body{background:var(--festive-light)!important;background-image:var(--season-pattern)!important;color:var(--ink)!important}
+:root[data-season="normal"] body{background:#f6f4fc!important}
+#app-header{background:var(--surface);box-shadow:0 3px 14px #22304712;border-bottom:1px solid var(--line)}
+#header-mascot-trigger h1{font-weight:850;font-size:23px;letter-spacing:-.045em}
+#header-beaty-avatar{width:46px;height:46px;border-radius:16px;background:var(--beaty-tint);border:2px solid var(--season-border);box-shadow:0 3px 0 #1c264813}
+#header-beaty-avatar svg{width:39px;height:39px;overflow:visible}
+#header-actions button,.header-notification-button{border-radius:11px;font-weight:750;box-shadow:0 2px 0 #16213210}
+#header-actions #btn-open-modal{background:var(--festive-primary);border-color:var(--festive-primary)}
+#nav-tabs{padding:5px 0 8px;gap:7px}
+#nav-tabs .nav-btn{border-radius:13px!important;border:1px solid transparent;padding:9px 12px;background:transparent!important;font-weight:650!important;font-size:13px;gap:7px}
+#nav-tabs .nav-btn.active{background:var(--festive-light)!important;border:1px solid var(--season-border)!important;color:var(--festive-primary)!important;box-shadow:0 2px 0 var(--season-border);font-weight:800!important}
+#nav-tabs .nav-btn:hover{background:var(--festive-light)!important}
+#xp-strip{background:var(--surface);border-bottom:1px solid var(--line)}
+#xp-strip .rounded-full{height:9px;background:#dadce7;border-radius:20px}
+#xp-bar{background:linear-gradient(90deg,var(--festive-primary),var(--festive-secondary))!important;border-radius:20px}
+.season-label{font-weight:800;font-size:10px;padding:3px 7px;border-radius:99px;color:var(--festive-primary);background:var(--festive-light);border-color:var(--season-border)}
+.season-label::before{display:none}
+main .tab-content > :is(div,section,details)[class*="bg-white"]{border-radius:20px!important;border:1px solid var(--line)!important;box-shadow:0 5px 15px #1723370a!important}
+main :is(.rounded-3xl,.rounded-2xl){border-radius:18px}
+main .font-black{font-weight:850!important}
+main .font-extrabold{font-weight:800!important}
+main h2{font-weight:850!important;letter-spacing:-.033em}
+main h3{font-weight:750!important}
+main button{border-radius:12px!important}
+main input:not([type=checkbox]):not([type=radio]),main select,main textarea{border-radius:11px!important}
+main button.bg-indigo-600,#notification-settings .bg-indigo-600{background:var(--festive-primary)!important;box-shadow:0 3px 0 color-mix(in srgb,var(--festive-primary),black 22%)}
+main button:active{transform:translateY(1px)}
+#beaty-banner{position:relative;background:linear-gradient(125deg,var(--surface) 22%,var(--festive-light) 100%)!important;border:2px solid var(--season-border)!important;border-left:2px solid var(--season-border)!important;border-radius:20px!important;box-shadow:0 5px 0 color-mix(in srgb,var(--season-border),transparent 50%)!important;padding:18px!important;overflow:hidden}
+#banner-beaty-avatar{width:64px;height:64px;border-radius:18px;background:var(--beaty-tint)!important;border:2px solid var(--season-border)!important}
+#banner-beaty-avatar svg{overflow:visible;width:54px;height:54px}
+#beaty-banner #beaty-mood-title{font-weight:850;font-size:14px;letter-spacing:-.016em}
+#beaty-banner #beaty-advice-text{font-weight:570;line-height:1.5}
+#beaty-banner #beaty-heart-bar{background:linear-gradient(90deg,#ff7b9e,#e92c5f)!important;border-radius:99px}
+#beaty-banner button{border-radius:99px!important;background:var(--festive-primary)!important;color:white!important;border-color:var(--festive-primary)!important;font-weight:800}
+#habit-streak-grid > div{background:var(--festive-light)!important;border:1px solid var(--season-border);border-radius:13px}
+#habit-streak-grid > div .text-amber-600{color:var(--festive-primary)!important}
+footer .nav-btn{border-radius:13px!important;background:var(--festive-light)!important;border-color:var(--season-border)!important;box-shadow:0 2px 1px #17233712!important}
+footer .nav-btn.active{background:var(--festive-primary)!important;color:white!important}
+:root[data-season="christmas"]{--accent:#087147;--accent-hover:#065c39;--soft:#e2f5e8;--page:#f6fbf6;--line:#d1e8d7;--season-border:#b3d8bd;--beaty-tint:#ffe5e7;--season-pattern:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22120%22%20height%3D%22120%22%20viewBox%3D%220%200%20120%20120%22%3E%3Cg%20fill%3D%22none%22%20stroke%3D%22%23a5c5b2%22%20stroke-width%3D%221.25%22%20stroke-linecap%3D%22round%22%20opacity%3D%22.6%22%3E%3Cpath%20d%3D%22M19%206v20M10%2011l18%2010M10%2021l18-10M80%2077v24M70%2083l20%2012M70%2095l20-12%22%2F%3E%3Cpath%20d%3D%22M47%2044v12M41%2047l12%206M41%2053l12-6M102%2021v14M96%2024l12%208M96%2032l12-8%22%2F%3E%3C%2Fg%3E%3Cg%20fill%3D%22%23fff%22%3E%3Ccircle%20cx%3D%2213%22%20cy%3D%2282%22%20r%3D%222%22%2F%3E%3Ccircle%20cx%3D%2264%22%20cy%3D%2220%22%20r%3D%222%22%2F%3E%3Ccircle%20cx%3D%22108%22%20cy%3D%2271%22%20r%3D%222%22%2F%3E%3Ccircle%20cx%3D%2238%22%20cy%3D%22104%22%20r%3D%222%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E")}
+:root[data-season="christmas"] #app-header{background:linear-gradient(115deg,#075c3d,#087b4b 58%,#075537);color:white;border-bottom:3px solid #c62a40;box-shadow:0 4px 10px #174c3340}
+:root[data-season="christmas"] #header-mascot-trigger h1,:root[data-season="christmas"] #user-level{color:#fff!important}
+:root[data-season="christmas"] #header-mascot-trigger .text-slate-500{color:#e0f5e7!important}
+:root[data-season="christmas"] #user-xp{color:#f9d674!important}
+:root[data-season="christmas"] #header-actions button,:root[data-season="christmas"] .header-notification-button{background:#ffffff17;color:white;border-color:#ffffff55}
+:root[data-season="christmas"] #header-actions button:hover,:root[data-season="christmas"] .header-notification-button:hover{background:#ffffff30;color:white}
+:root[data-season="christmas"] #header-actions #btn-open-modal{background:#c52c41;border-color:#f86c79}
+:root[data-season="christmas"] #header-actions .notification-panel button{color:var(--ink);background:white;border-color:var(--line)}
+:root[data-season="christmas"] #header-actions .notification-panel #notify-enable{background:#0b7549!important;color:white}
+:root[data-season="christmas"] #nav-tabs .nav-btn{color:#effbef!important}
+:root[data-season="christmas"] #nav-tabs .nav-btn.active{background:#fff8e9!important;color:#075c3d!important;border-color:#e8c876!important}
+:root[data-season="christmas"] #nav-tabs .nav-btn:hover{color:#075c3d!important}
+:root[data-season="christmas"] .season-label{background:#c72d40;border-color:#f78a94;color:white}
+:root[data-season="christmas"] #xp-strip{background:#fffbef}
+:root[data-season="christmas"] #xp-bar{background:repeating-linear-gradient(125deg,#c92f45 0 12px,#fff9e6 12px 20px,#19824e 20px 32px,#fff9e6 32px 40px)!important}
+:root[data-season="christmas"] #beaty-banner{background:linear-gradient(125deg,#fffefa 15%,#f7fff6 100%)!important;padding-top:34px!important;border:2px solid #8dc69e!important;box-shadow:0 5px 0 #d4eadd!important}
+:root[data-season="christmas"] #beaty-banner::before{content:"";position:absolute;pointer-events:none;inset:0 0 auto;height:26px;background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22160%22%20height%3D%2226%22%20viewBox%3D%220%200%20160%2026%22%3E%3Cpath%20d%3D%22M0%203Q20%2021%2040%203T80%203T120%203T160%203%22%20fill%3D%22none%22%20stroke%3D%22%23174e37%22%20stroke-width%3D%223%22%2F%3E%3Cg%20stroke%3D%22%23226446%22%20stroke-width%3D%222.7%22%20stroke-linecap%3D%22round%22%3E%3Cpath%20d%3D%22m3%205%2012%202m-6%200%206%209m8-4%207-9m1%206%208%205m4-9%2012%202m-6%200%206%209m8-4%207-9m1%206%208%205m4-9%2012%202m-6%200%206%209m8-4%207-9m1%206%208%205m4-9%2012%202m-6%200%206%209m8-4%207-9m1%206%208%205%22%2F%3E%3C%2Fg%3E%3Cg%20stroke%3D%22%23fff%22%20stroke-opacity%3D%22.45%22%20stroke-width%3D%221%22%3E%3Ccircle%20cx%3D%2220%22%20cy%3D%2217%22%20r%3D%224%22%20fill%3D%22%23e5384a%22%2F%3E%3Ccircle%20cx%3D%2260%22%20cy%3D%2217%22%20r%3D%224%22%20fill%3D%22%23fac65b%22%2F%3E%3Ccircle%20cx%3D%22100%22%20cy%3D%2217%22%20r%3D%224%22%20fill%3D%22%23e5384a%22%2F%3E%3Ccircle%20cx%3D%22140%22%20cy%3D%2217%22%20r%3D%224%22%20fill%3D%22%23fac65b%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");background-repeat:repeat-x;background-size:160px 26px;opacity:1}
+:root[data-season="christmas"] #beaty-banner #banner-beaty-avatar{background:#ffe8e9!important;border-color:#e9abb1!important}
+:root[data-season="christmas"] #beaty-banner button{background:#c92f45!important;border-color:#b8263a!important}
+:root[data-season="christmas"] #beaty-banner #beaty-heart-bar{background:linear-gradient(90deg,#d82e45,#f85d79)!important}
+:root[data-season="christmas"] #habit-streak-grid > div{background:linear-gradient(120deg,#fffaf3,#e6f6e9)!important}
+:root[data-season="christmas"] footer{border-top:2px solid #148050!important;background:#fffdf5!important}
+:root[data-season="christmas"] footer .nav-btn{background:#e7f5e9!important}
+@media(min-width:1050px){:root[data-season="christmas"] #beaty-banner::after{content:"";pointer-events:none;width:105px;height:78px;align-self:center;flex-shrink:0;background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22130%22%20height%3D%2296%22%20viewBox%3D%220%200%20130%2096%22%3E%3Cpath%20d%3D%22M15%2088H123%22%20stroke%3D%22%23d1e7d8%22%20stroke-width%3D%229%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M70%2014%2042%2052h13L34%2072h25v13h19V72h25L82%2052h13Z%22%20fill%3D%22%2321804d%22%2F%3E%3Cpath%20d%3D%22M70%2027%2050%2054h13L45%2069h51L78%2054h12Z%22%20fill%3D%22%232ea963%22%2F%3E%3Cpath%20d%3D%22M70%209l3%207%208%201-6%205%202%208-7-4-7%204%202-8-6-5%208-1Z%22%20fill%3D%22%23f7c850%22%2F%3E%3Cpath%20d%3D%22M49%2057q20%2012%2042%201M58%2043q10%208%2022%202%22%20fill%3D%22none%22%20stroke%3D%22%23f4cf80%22%20stroke-width%3D%222.5%22%20stroke-linecap%3D%22round%22%2F%3E%3Cg%20fill%3D%22%23e83b4c%22%3E%3Ccircle%20cx%3D%2260%22%20cy%3D%2249%22%20r%3D%223.5%22%2F%3E%3Ccircle%20cx%3D%2281%22%20cy%3D%2264%22%20r%3D%223.5%22%2F%3E%3Ccircle%20cx%3D%2257%22%20cy%3D%2270%22%20r%3D%223.5%22%2F%3E%3C%2Fg%3E%3Cg%20fill%3D%22%23f8d66c%22%3E%3Ccircle%20cx%3D%2276%22%20cy%3D%2249%22%20r%3D%223.5%22%2F%3E%3Ccircle%20cx%3D%2271%22%20cy%3D%2271%22%20r%3D%223.5%22%2F%3E%3C%2Fg%3E%3Crect%20x%3D%2221%22%20y%3D%2271%22%20width%3D%2227%22%20height%3D%2215%22%20rx%3D%222%22%20fill%3D%22%23d83546%22%2F%3E%3Cpath%20d%3D%22M34%2071v15m-13-10h27%22%20stroke%3D%22%23f7cc64%22%20stroke-width%3D%224%22%2F%3E%3Crect%20x%3D%2295%22%20y%3D%2273%22%20width%3D%2223%22%20height%3D%2214%22%20rx%3D%222%22%20fill%3D%22%23e5b849%22%2F%3E%3Cpath%20d%3D%22M107%2073v14m-12-10h23%22%20stroke%3D%22%23b42c3c%22%20stroke-width%3D%223%22%2F%3E%3C%2Fsvg%3E") center/contain no-repeat}}
+@media(max-width:849px){#header-mascot-trigger h1{font-size:20px}#header-actions button,.header-notification-button{border-radius:10px;padding:6px 9px;min-height:34px}#nav-tabs .nav-btn{padding:8px 11px}#beaty-banner{grid-template-columns:55px 1fr;padding:14px!important;gap:11px}#beaty-banner #banner-beaty-avatar{width:53px;height:53px}#banner-beaty-avatar svg{width:45px;height:45px}}
+</style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col pb-20">
 
@@ -360,32 +436,32 @@
       <!-- Navigation Tabs (Main Tabs Only - Banks are in Footer) -->
       <nav class="flex items-center gap-1 overflow-x-auto py-1 max-w-full text-sm font-semibold text-slate-600" id="nav-tabs">
         <button id="btn-dashboard" class="nav-btn active flex items-center gap-2 px-3 py-2 rounded-xl bg-indigo-50 text-indigo-600 font-bold transition">
-          <i class="fa-solid fa-house" aria-hidden="true"></i> Overview
+          <span class="text-base" aria-hidden="true">🏠</span> Overview
         </button>
         <button id="btn-todo" class="nav-btn flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100 hover:text-slate-900 transition">
-          <i class="fa-solid fa-list-check" aria-hidden="true"></i> To-Do
+          <span class="text-base" aria-hidden="true">✅</span> To-Do
         </button>
         <button id="btn-wellness" class="nav-btn flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100 hover:text-slate-900 transition">
-          <i class="fa-solid fa-droplet" aria-hidden="true"></i> Wellness
+          <span class="text-base" aria-hidden="true">💧</span> Wellness
         </button>
         <button id="btn-finance" class="nav-btn flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100 hover:text-slate-900 transition">
-          <i class="fa-solid fa-wallet" aria-hidden="true"></i> Finance
+          <span class="text-base" aria-hidden="true">💰</span> Finance
         </button>
         <button id="btn-food" class="nav-btn flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100 hover:text-slate-900 transition">
-          <i class="fa-solid fa-utensils" aria-hidden="true"></i> Nutrition
+          <span class="text-base" aria-hidden="true">🥗</span> Nutrition
         </button>
         <button id="btn-exercise" class="nav-btn flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100 hover:text-slate-900 transition">
-          <i class="fa-solid fa-dumbbell" aria-hidden="true"></i> Exercise
+          <span class="text-base" aria-hidden="true">🏋️</span> Exercise
         </button>
         <button id="btn-screentime" class="nav-btn flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100 hover:text-slate-900 transition">
-          <i class="fa-solid fa-mobile-screen" aria-hidden="true"></i> Screen Time
+          <span class="text-base" aria-hidden="true">📱</span> Screen Time
         </button>
         <button id="btn-travel" class="nav-btn flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100 hover:text-slate-900 transition">
-          <i class="fa-solid fa-plane" aria-hidden="true"></i> Travel
+          <span class="text-base" aria-hidden="true">✈️</span> Travel
         </button>
-        <button id="btn-beaty-chat" class="nav-btn flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100 transition whitespace-nowrap"><i class="fa-solid fa-heart" aria-hidden="true"></i> Talk to Beaty</button>
+        <button id="btn-beaty-chat" class="nav-btn flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100 transition whitespace-nowrap"><span class="text-base" aria-hidden="true">❤️</span> Talk to Beaty</button>
         <button id="btn-badges" class="nav-btn flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100 hover:text-slate-900 transition">
-          <i class="fa-solid fa-trophy" aria-hidden="true"></i> Badges
+          <span class="text-base" aria-hidden="true">🏆</span> Badges
         </button>
       </nav>
 
@@ -2651,7 +2727,7 @@
       let faceMarkup = '';
       if (mood === 'crown' || mood === 'hyped') {
         faceMarkup = `
-          ${fillPct >= 100 ? `<path d="M32 14 L38 6 L45 13 L50 4 L55 13 L62 6 L68 14 Z" fill="#f59e0b" stroke="#b45309" stroke-width="1.5" stroke-linejoin="round"/>` : ''}
+          ${fillPct >= 100 && seasonForDate(new Date()) === 'normal' ? `<path d="M32 14 L38 6 L45 13 L50 4 L55 13 L62 6 L68 14 Z" fill="#f59e0b" stroke="#b45309" stroke-width="1.5" stroke-linejoin="round"/>` : ''}
           <path d="M30 38 L36 32 L42 38 L36 44 Z" fill="#1e293b"/>
           <path d="M58 38 L64 32 L70 38 L64 44 Z" fill="#1e293b"/>
           <circle cx="35" cy="36" r="1.5" fill="#ffffff"/>
@@ -2707,7 +2783,7 @@
           </g>
           <path d="M50 88.5L43.8 82.8C22.6 63.6 8.5 50.8 8.5 35C8.5 22.2 18.5 12.2 31.3 12.2C38.5 12.2 45.4 15.6 50 20.8C54.6 15.6 61.5 12.2 68.7 12.2C81.5 12.2 91.5 22.2 91.5 35C91.5 50.8 77.4 63.6 56.2 82.8L50 88.5Z" fill="none" stroke="${fillPct >= 100 ? '#be123c' : '#f43f5e'}" stroke-width="3"/>
           ${faceMarkup}
-          ${fillPct >= 100 ? "" : seasonalBeatyAccessory()}
+          ${seasonalBeatyAccessory()}
         </svg>
       `;
     }
