@@ -210,6 +210,7 @@
         <button id="btn-travel" class="nav-btn flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100 hover:text-slate-900 transition">
           <span class="text-base">✈️</span> Travel
         </button>
+        <button id="btn-beaty-chat" class="nav-btn flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100 transition whitespace-nowrap">❤️ Talk to Beaty</button>
         <button id="btn-badges" class="nav-btn flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100 hover:text-slate-900 transition">
           <span class="text-base">🏆</span> Badges
         </button>
@@ -287,6 +288,7 @@
 
     <!-- 1. OVERVIEW DASHBOARD TAB -->
     <section id="dashboard" class="tab-content active space-y-6">
+      <div class="bg-white border border-slate-200 rounded-2xl p-5 space-y-4"><h2 class="font-extrabold text-lg">🔥 Daily logging streaks</h2><p class="text-xs text-slate-500">Log each habit daily to build its own streak.</p><div id="habit-streak-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-3"></div><details class="border-t pt-3"><summary class="font-bold cursor-pointer text-indigo-600">Streak protection settings</summary><div class="space-y-3 mt-3"><label class="flex gap-2 items-center text-sm"><input type="checkbox" id="holiday-protection" onchange="changeProtection('holiday',this.checked)"> Protect U.S. federal holidays (actual and observed)</label><label class="flex gap-2 items-center text-sm"><input type="checkbox" id="vacation-protection" onchange="changeProtection('vacation',this.checked)"> Enable vacation days</label><p class="text-xs text-slate-500">Protection preserves streaks without adding a day. Settings apply from today forward; past protected days remain protected.</p><div class="flex flex-wrap gap-2 items-center"><input type="date" id="vacation-date" class="border rounded-lg p-2 text-sm"><button onclick="addVacationDay()" class="bg-indigo-600 text-white rounded-lg px-3 py-2 text-sm font-bold">Protect date</button><span id="vacation-remaining" class="text-xs font-bold"></span></div><div id="vacation-list" class="flex flex-wrap gap-2"></div><div id="protection-status" class="text-xs text-indigo-600 font-bold"></div></div></details></div>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm flex items-center justify-between">
           <div>
@@ -690,6 +692,7 @@
               Open Expenses Bank →
             </button>
           </div>
+          <label class="flex items-center gap-2 text-sm font-semibold mb-3"><input type="checkbox" id="no-transactions-today" onchange="toggleNoTransactions(this.checked)"> I made no transactions today</label><p id="no-transactions-status" class="text-xs text-slate-500 mb-3"></p>
           <form id="form-expense" class="space-y-3">
             <input type="text" id="exp-desc" placeholder="Expense description (e.g. Groceries, Rent, Uber)" required class="w-full bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-rose-500 text-sm">
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
@@ -714,6 +717,7 @@
     </section>
 
     <!-- 5. NUTRITION & MACROS TAB -->
+    <section id="beaty-chat" class="tab-content space-y-6"><div class="bg-white border border-slate-200 rounded-2xl p-5 space-y-4"><div class="flex items-center gap-3"><div id="talk-beaty-avatar"></div><div><h2 class="text-xl font-black">Talk to Beaty</h2><p class="text-sm text-slate-500">Ask about calories, exercise, or your everyday habits. Answers are estimates.</p></div></div><div id="talk-beaty-messages" aria-live="polite" class="space-y-3 max-h-96 overflow-y-auto p-3 bg-slate-50 rounded-xl"></div><form id="talk-beaty-form" class="flex gap-2"><input id="talk-beaty-input" maxlength="1500" required placeholder="Ask Beaty a question…" class="flex-1 min-w-0 border rounded-xl p-3 text-sm"><button id="talk-beaty-send" class="bg-indigo-600 text-white rounded-xl px-4 font-bold">Send</button></form><button onclick="clearBeatyChat()" class="text-xs font-bold text-indigo-600">New conversation</button></div></section>
     <section id="food" class="tab-content space-y-6">
       <div id="food-lt-container" class="hidden"></div>
 
@@ -1097,36 +1101,16 @@
           </h3>
           
           <form id="form-screentime" class="space-y-4">
-            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-              <div class="bg-white p-3 rounded-xl border border-amber-200 shadow-xs">
-                <label class="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1"><span>📱</span> Social</label>
-                <div class="flex items-center gap-1"><input type="number" id="st-social" min="0" value="0" class="st-category-input w-full bg-slate-50 border border-slate-200 px-2.5 py-1.5 rounded-lg text-slate-800 text-xs font-bold"><span class="text-[11px] text-slate-400">min</span></div>
-              </div>
-
-              <div class="bg-white p-3 rounded-xl border border-amber-200 shadow-xs">
-                <label class="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1"><span>🍿</span> Media</label>
-                <div class="flex items-center gap-1"><input type="number" id="st-entertain" min="0" value="0" class="st-category-input w-full bg-slate-50 border border-slate-200 px-2.5 py-1.5 rounded-lg text-slate-800 text-xs font-bold"><span class="text-[11px] text-slate-400">min</span></div>
-              </div>
-
-              <div class="bg-white p-3 rounded-xl border border-amber-200 shadow-xs">
-                <label class="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1"><span>💼</span> Work</label>
-                <div class="flex items-center gap-1"><input type="number" id="st-work" min="0" value="0" class="st-category-input w-full bg-slate-50 border border-slate-200 px-2.5 py-1.5 rounded-lg text-slate-800 text-xs font-bold"><span class="text-[11px] text-slate-400">min</span></div>
-              </div>
-
-              <div class="bg-white p-3 rounded-xl border border-amber-200 shadow-xs">
-                <label class="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1"><span>🎮</span> Gaming</label>
-                <div class="flex items-center gap-1"><input type="number" id="st-gaming" min="0" value="0" class="st-category-input w-full bg-slate-50 border border-slate-200 px-2.5 py-1.5 rounded-lg text-slate-800 text-xs font-bold"><span class="text-[11px] text-slate-400">min</span></div>
-              </div>
-
-              <div class="bg-white p-3 rounded-xl border border-amber-200 shadow-xs">
-                <label class="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1"><span>💬</span> Messages</label>
-                <div class="flex items-center gap-1"><input type="number" id="st-messaging" min="0" value="0" class="st-category-input w-full bg-slate-50 border border-slate-200 px-2.5 py-1.5 rounded-lg text-slate-800 text-xs font-bold"><span class="text-[11px] text-slate-400">min</span></div>
-              </div>
-
-              <div class="bg-white p-3 rounded-xl border border-amber-200 shadow-xs">
-                <label class="block text-xs font-bold text-slate-700 mb-1 flex items-center gap-1"><span>🌐</span> Other</label>
-                <div class="flex items-center gap-1"><input type="number" id="st-other" min="0" value="0" class="st-category-input w-full bg-slate-50 border border-slate-200 px-2.5 py-1.5 rounded-lg text-slate-800 text-xs font-bold"><span class="text-[11px] text-slate-400">min</span></div>
-              </div>
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-3">
+              <div class="bg-white p-3 rounded-xl border border-amber-200"><label for="st-social" class="block text-xs font-bold text-slate-700 mb-1">📱 Social</label><div class="flex items-center gap-1"><input type="number" id="st-social" min="0" value="0" class="st-category-input w-full bg-slate-50 border border-slate-200 px-2.5 py-1.5 rounded-lg text-xs font-bold"><span class="text-[11px] text-slate-400">min</span></div></div>
+              <div class="bg-white p-3 rounded-xl border border-amber-200"><label for="st-gaming" class="block text-xs font-bold text-slate-700 mb-1">🎮 Games</label><div class="flex items-center gap-1"><input type="number" id="st-gaming" min="0" value="0" class="st-category-input w-full bg-slate-50 border border-slate-200 px-2.5 py-1.5 rounded-lg text-xs font-bold"><span class="text-[11px] text-slate-400">min</span></div></div>
+              <div class="bg-white p-3 rounded-xl border border-amber-200"><label for="st-productivity" class="block text-xs font-bold text-slate-700 mb-1">💼 Productivity &amp; Finance</label><div class="flex items-center gap-1"><input type="number" id="st-productivity" min="0" value="0" class="st-category-input w-full bg-slate-50 border border-slate-200 px-2.5 py-1.5 rounded-lg text-xs font-bold"><span class="text-[11px] text-slate-400">min</span></div></div>
+              <div class="bg-white p-3 rounded-xl border border-amber-200"><label for="st-other" class="block text-xs font-bold text-slate-700 mb-1">🌐 Other</label><div class="flex items-center gap-1"><input type="number" id="st-other" min="0" value="0" class="st-category-input w-full bg-slate-50 border border-slate-200 px-2.5 py-1.5 rounded-lg text-xs font-bold"><span class="text-[11px] text-slate-400">min</span></div></div>
+              <div class="bg-white p-3 rounded-xl border border-amber-200"><label for="st-information" class="block text-xs font-bold text-slate-700 mb-1">📚 Information &amp; Reading</label><div class="flex items-center gap-1"><input type="number" id="st-information" min="0" value="0" class="st-category-input w-full bg-slate-50 border border-slate-200 px-2.5 py-1.5 rounded-lg text-xs font-bold"><span class="text-[11px] text-slate-400">min</span></div></div>
+              <div class="bg-white p-3 rounded-xl border border-amber-200"><label for="st-creativity" class="block text-xs font-bold text-slate-700 mb-1">🎨 Creativity</label><div class="flex items-center gap-1"><input type="number" id="st-creativity" min="0" value="0" class="st-category-input w-full bg-slate-50 border border-slate-200 px-2.5 py-1.5 rounded-lg text-xs font-bold"><span class="text-[11px] text-slate-400">min</span></div></div>
+              <div class="bg-white p-3 rounded-xl border border-amber-200"><label for="st-travel" class="block text-xs font-bold text-slate-700 mb-1">✈️ Travel</label><div class="flex items-center gap-1"><input type="number" id="st-travel" min="0" value="0" class="st-category-input w-full bg-slate-50 border border-slate-200 px-2.5 py-1.5 rounded-lg text-xs font-bold"><span class="text-[11px] text-slate-400">min</span></div></div>
+              <div class="bg-white p-3 rounded-xl border border-amber-200"><label for="st-entertain" class="block text-xs font-bold text-slate-700 mb-1">🍿 Entertainment</label><div class="flex items-center gap-1"><input type="number" id="st-entertain" min="0" value="0" class="st-category-input w-full bg-slate-50 border border-slate-200 px-2.5 py-1.5 rounded-lg text-xs font-bold"><span class="text-[11px] text-slate-400">min</span></div></div>
+              <div class="bg-white p-3 rounded-xl border border-amber-200"><label for="st-shopping" class="block text-xs font-bold text-slate-700 mb-1">🛍️ Shopping &amp; Food</label><div class="flex items-center gap-1"><input type="number" id="st-shopping" min="0" value="0" class="st-category-input w-full bg-slate-50 border border-slate-200 px-2.5 py-1.5 rounded-lg text-xs font-bold"><span class="text-[11px] text-slate-400">min</span></div></div>
             </div>
 
             <div class="bg-white/90 p-4 rounded-xl border border-amber-200/80 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
@@ -1868,7 +1852,7 @@
         .single();
 
       if (data && data.app_state) {
-        state = { ...state, ...data.app_state };
+        state = { ...state, habitProtection: { holidayChanges: [], vacationChanges: [], vacations: [] }, noTransactionDays: [], hydrationDays: [], taskDays: [], ...data.app_state };
         if (data.finance_state) {
           state.bankAccounts = data.finance_state.bankAccounts || state.bankAccounts;
           state.budgetBuckets = data.finance_state.budgetBuckets || state.budgetBuckets;
@@ -1927,6 +1911,10 @@
       xp: 0,
       level: 1,
       streak: 0,
+      habitProtection: { holidayChanges: [], vacationChanges: [], vacations: [] },
+      noTransactionDays: [],
+      hydrationDays: [],
+      taskDays: [],
       dailyHeartFill: 0,
       dailyHeartFull: false,
       tempBeatyReaction: null,
@@ -1978,6 +1966,173 @@
       customGoals: {},
       unlockedBadges: []
     };
+
+
+    const SCREEN_CATEGORIES = [{"key":"social","label":"Social","icon":"📱","color":"bg-rose-50 text-rose-600 border-rose-200"},{"key":"gaming","label":"Games","icon":"🎮","color":"bg-emerald-50 text-emerald-600 border-emerald-200"},{"key":"productivity","label":"Productivity & Finance","icon":"💼","color":"bg-blue-50 text-blue-600 border-blue-200"},{"key":"other","label":"Other","icon":"🌐","color":"bg-slate-50 text-slate-600 border-slate-200"},{"key":"information","label":"Information & Reading","icon":"📚","color":"bg-cyan-50 text-cyan-600 border-cyan-200"},{"key":"creativity","label":"Creativity","icon":"🎨","color":"bg-pink-50 text-pink-600 border-pink-200"},{"key":"travel","label":"Travel","icon":"✈️","color":"bg-teal-50 text-teal-600 border-teal-200"},{"key":"entertain","label":"Entertainment","icon":"🍿","color":"bg-purple-50 text-purple-600 border-purple-200"},{"key":"shopping","label":"Shopping & Food","icon":"🛍️","color":"bg-amber-50 text-amber-600 border-amber-200"}];
+    function localDay(date = new Date()) {
+      if (!Number.isFinite(date.getTime())) return '';
+      return [date.getFullYear(), String(date.getMonth()+1).padStart(2,'0'), String(date.getDate()).padStart(2,'0')].join('-');
+    }
+    function nextDay(day, offset) {
+      if (!day) return '';
+      const date = new Date(day + 'T12:00:00');
+      date.setDate(date.getDate() + offset);
+      return localDay(date);
+    }
+    function federalHolidays(year) {
+      const days = new Set();
+      function fixed(month, day) {
+        const date = new Date(year, month-1, day, 12);
+        days.add(localDay(date));
+        if (date.getDay() === 6) days.add(nextDay(localDay(date), -1));
+        if (date.getDay() === 0) days.add(nextDay(localDay(date), 1));
+      }
+      function nth(month, weekday, n) {
+        const date = new Date(year, month-1, 1, 12);
+        date.setDate(1 + (weekday - date.getDay() + 7)%7 + (n-1)*7);
+        days.add(localDay(date));
+      }
+      fixed(1,1); nth(1,1,3); nth(2,1,3);
+      const memorial = new Date(year,5,0,12);
+      memorial.setDate(memorial.getDate() - (memorial.getDay()+6)%7);
+      days.add(localDay(memorial));
+      if (year >= 2021) fixed(6,19);
+      fixed(7,4); nth(9,1,1); nth(10,1,2); fixed(11,11); nth(11,4,4); fixed(12,25);
+      return days;
+    }
+    function isFederalHoliday(day) {
+      const year = Number(day.slice(0,4));
+      return [year-1,year,year+1].some(y => federalHolidays(y).has(day));
+    }
+    function protection() {
+      return state.habitProtection ||= { holidayChanges: [], vacationChanges: [], vacations: [] };
+    }
+    function enabledOn(kind, day) {
+      const changes = protection()[kind+'Changes'] || [];
+      return changes.filter(c => c.day <= day).sort((a,b)=>a.day.localeCompare(b.day)).pop()?.enabled === true;
+    }
+    function isProtectedDay(day) {
+      return !!day && ((enabledOn('holiday',day) && isFederalHoliday(day)) || (enabledOn('vacation',day) && protection().vacations.includes(day)));
+    }
+    function allDaysProtected(from, until) {
+      if (!from || from > until) return false;
+      for (let day=from; day<until; day=nextDay(day,1)) if (!isProtectedDay(day)) return false;
+      return true;
+    }
+    function changeProtection(kind, enabled) {
+      const day = localDay();
+      const key = kind+'Changes';
+      protection()[key] = (protection()[key] || []).filter(c=>c.day!==day).concat({day,enabled});
+      if (kind === 'holiday' && enabled) protection().vacations = protection().vacations.filter(d => d < day || !isFederalHoliday(d));
+      saveState();
+    }
+    function addVacationDay() {
+      const day = document.getElementById('vacation-date').value;
+      const today = localDay();
+      if (!day || day < today || !enabledOn('vacation',today)) return showToast('Enable vacation protection and choose today or a future date.', 'warn');
+      if (enabledOn('holiday',day) && isFederalHoliday(day)) return showToast('This holiday is already protected.', 'info');
+      const dates = protection().vacations;
+      if (dates.includes(day)) return;
+      if (dates.filter(d=>d.slice(0,4)===day.slice(0,4)).length>=10) return showToast('All 10 vacation days for that year are reserved.', 'warn');
+      dates.push(day); saveState();
+    }
+    function cancelVacationDay(day) {
+      if (day <= localDay()) return;
+      protection().vacations = protection().vacations.filter(d=>d!==day);
+      saveState();
+    }
+    function logDay(entry) { return localDay(new Date(Number(entry.id))); }
+    function rememberDailyLogs() {
+      const day = localDay(new Date(state.lastActiveDate || new Date()));
+      if (!day) return;
+      state.noTransactionDays ||= [];
+      if ([...(state.expenseLogs||[]), ...(state.incomeLogs||[])].some(e=>logDay(e)===day)) state.noTransactionDays = state.noTransactionDays.filter(d=>d!==day);
+      state.hydrationDays ||= [];
+      state.taskDays ||= [];
+      for (const [key, done] of [['hydrationDays',state.todayWater>0],['taskDays',(state.todos||[]).some(t=>t.completed && (t.completedDate===state.lastActiveDate || localDay(new Date(t.completedAt))===day))]]) {
+        state[key] = state[key].filter(d=>d!==day);
+        if(done) state[key].push(day);
+      }
+    }
+    function countHabitStreak(days, today=localDay()) {
+      const done = new Set(days.filter(Boolean));
+      if (!done.size) return 0;
+      let day = today, count=0;
+      if (!done.has(day) && !isProtectedDay(day)) day=nextDay(day,-1);
+      const earliest = [...done].sort()[0];
+      while(day && day>=earliest) {
+        if(done.has(day)) count++;
+        else if(!isProtectedDay(day)) break;
+        day=nextDay(day,-1);
+      }
+      return count;
+    }
+    function toggleNoTransactions(checked) {
+      const today = localDay();
+      state.noTransactionDays = (state.noTransactionDays||[]).filter(d=>d!==today);
+      if(checked && !state.expenseLogs.some(e=>logDay(e)===today) && !state.incomeLogs.some(e=>logDay(e)===today)) state.noTransactionDays.push(today);
+      saveState();
+    }
+    function renderHabitStreaks() {
+      const today=localDay();
+      const tx = [...(state.expenseLogs||[]), ...(state.incomeLogs||[])].map(logDay);
+      const nutrition = Object.entries(state.foodHistory||{}).filter(([d,logs])=>logs.length).map(([d])=>localDay(new Date(d)));
+      if (state.foodLogs?.length) nutrition.push(localDay(new Date(state.lastActiveDate || new Date())));
+      const groups = [
+        ['Expenses', [...tx,...(state.noTransactionDays||[])]], ['Nutrition',nutrition],
+        ['Exercise',(state.workouts||[]).map(logDay)], ['Sleep',(state.sleepLogs||[]).map(logDay)],
+        ['Screen Time',(state.screenTime||[]).map(logDay)], ['Hydration',state.hydrationDays||[]],
+        ['Weight',(state.weightLogs||[]).map(logDay)], ['To-Do',state.taskDays||[]]
+      ];
+      document.getElementById('habit-streak-grid').innerHTML=groups.map(([name,days])=>'<div class="bg-slate-50 rounded-xl p-3 border"><p class="text-xs font-bold text-slate-500">'+name+'</p><p class="text-xl font-black text-amber-600">🔥 '+countHabitStreak(days)+'d</p></div>').join('');
+      const noTx = document.getElementById('no-transactions-today');
+      noTx.disabled = tx.includes(today);
+      noTx.checked = !noTx.disabled && (state.noTransactionDays||[]).includes(today);
+      document.getElementById('no-transactions-status').textContent = noTx.disabled ? 'Transaction logged today.' : noTx.checked ? 'Daily check-in recorded.' : '';
+      for(const kind of ['holiday','vacation']) document.getElementById(kind+'-protection').checked=enabledOn(kind,today);
+      const dateInput=document.getElementById('vacation-date');
+      dateInput.min=today;
+      if(!dateInput.value) dateInput.value=today;
+      document.getElementById('vacation-remaining').textContent=(10-protection().vacations.filter(d=>d.startsWith(dateInput.value.slice(0,4))).length)+' days remaining ('+dateInput.value.slice(0,4)+')';
+      document.getElementById('vacation-list').replaceChildren(...protection().vacations.slice().sort().map(day=>{
+        const button=document.createElement('button'); button.type='button'; button.className='border rounded-lg p-2 text-xs';
+        button.textContent=day+(day>today?' ×':''); button.disabled=day<=today; button.onclick=()=>cancelVacationDay(day); return button;
+      }));
+      document.getElementById('protection-status').textContent=isProtectedDay(today)?'Today is protected. You can still log habits.':'';
+    }
+    let beatyConversation = [];
+    let beatyPending = false;
+    function renderBeatyChat(error='') {
+      const box=document.getElementById('talk-beaty-messages');
+      box.replaceChildren();
+      const messages=[{role:'Beaty',text:'Hey! ❤️ Ask me about a meal, a workout, or building better habits.'},...beatyConversation];
+      if(beatyPending) messages.push({role:'Beaty',text:'Thinking…'});
+      if(error) messages.push({role:'Beaty',text:error});
+      for(const message of messages) {
+        const bubble=document.createElement('div'); bubble.className='p-3 rounded-xl whitespace-pre-wrap text-sm '+(message.role==='You'?'bg-indigo-100 ml-8':'bg-white mr-8 border');
+        bubble.textContent=message.role+': '+message.text; box.appendChild(bubble);
+      }
+      box.scrollTop=box.scrollHeight;
+    }
+    function clearBeatyChat() { if(!beatyPending) { beatyConversation=[]; renderBeatyChat(); } }
+    async function sendBeatyChat(event) {
+      event.preventDefault();
+      if(beatyPending) return;
+      const input=document.getElementById('talk-beaty-input'), button=document.getElementById('talk-beaty-send');
+      const question=input.value.trim();
+      if(!question) return;
+      beatyConversation.push({role:'You',text:question});
+      input.value=''; beatyPending=true; button.disabled=true; renderBeatyChat();
+      try {
+        const history=JSON.stringify(beatyConversation.slice(-6).map(m=>({role:m.role,text:m.text.slice(0,1500)})));
+        const response=await callGeminiStructuredJSON('You are Beaty, a friendly, playful heart habit coach. Answer nutrition, exercise and habit questions conversationally. Provide approximate calories with assumptions and ranges; ask for missing portions, body weight, intensity or duration as needed. Never log or modify anything. Do not give medical diagnoses or encourage harmful dieting. Output JSON with boolean needsClarification and string reply only.',history);
+        if(!response) throw new Error('Unable to get an answer. Please try again.');
+        beatyConversation.push({role:'Beaty',text:response.reply});
+        beatyPending=false; renderBeatyChat();
+      } catch(error) {
+        beatyConversation.pop(); input.value=question; beatyPending=false; renderBeatyChat(error.message);
+      } finally { button.disabled=false; }
+    }
 
     let weightChartInstance = null;
 
@@ -2716,6 +2871,7 @@
       }
 
       if (!state.foodHistory) state.foodHistory = {};
+      rememberDailyLogs();
 
       if (state.lastActiveDate !== todayStr) {
         const prevDate = state.lastActiveDate;
@@ -2736,13 +2892,8 @@
           return t;
         });
 
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1);
-        const wasYesterday = prevDate === yesterday.toLocaleDateString();
-
-        if (!wasYesterday || !state.dailyHeartFull) {
-          state.streak = 0;
-        }
+        const previous = localDay(new Date(prevDate));
+        if ((!state.dailyHeartFull && !isProtectedDay(previous)) || !allDaysProtected(nextDay(previous, 1), localDay())) state.streak = 0;
 
         state.dailyHeartFill = 0;
         state.dailyHeartFull = false;
@@ -2834,6 +2985,7 @@
     }
 
     function saveState() {
+      rememberDailyLogs();
       localStorage.setItem('good_habits_state', JSON.stringify(state));
       updateUI();
       evaluateCalorieStatus();
@@ -2990,10 +3142,14 @@
 
     function setupEventListeners() {
       installBeatyCoach();
+      document.getElementById('talk-beaty-form').addEventListener('submit', sendBeatyChat);
+      document.getElementById('talk-beaty-avatar').innerHTML = getBeatyAvatarSVG('w-16 h-16', 'happy');
+      renderBeatyChat();
+      document.getElementById('vacation-date').addEventListener('change', renderHabitStreaks);
       document.getElementById('header-mascot-trigger').addEventListener('click', pokeBeaty);
       document.getElementById('btn-close-mascot').addEventListener('click', () => document.getElementById('mascot-popup').classList.add('hidden'));
 
-      ['dashboard', 'todo', 'wellness', 'finance', 'food', 'exercise', 'screentime', 'travel', 'badges'].forEach(tab => {
+      ['dashboard', 'todo', 'wellness', 'finance', 'food', 'exercise', 'screentime', 'travel', 'badges', 'beaty-chat'].forEach(tab => {
         const btn = document.getElementById(`btn-${tab}`);
         if (btn) btn.addEventListener('click', () => switchTab(tab));
       });
@@ -4408,14 +4564,8 @@ Return ONLY valid JSON:
 
     // --- SCREEN TIME LOGIC ---
     function updateScreenTimeLivePreview() {
-      const social = parseInt(document.getElementById('st-social').value) || 0;
-      const entertain = parseInt(document.getElementById('st-entertain').value) || 0;
-      const work = parseInt(document.getElementById('st-work').value) || 0;
-      const gaming = parseInt(document.getElementById('st-gaming').value) || 0;
-      const messaging = parseInt(document.getElementById('st-messaging').value) || 0;
-      const other = parseInt(document.getElementById('st-other').value) || 0;
-
-      const totalMins = social + entertain + work + gaming + messaging + other;
+      const categories = Object.fromEntries(SCREEN_CATEGORIES.map(({key}) => [key, Math.max(0, parseInt(document.getElementById('st-' + key).value) || 0)]));
+      const totalMins = Object.values(categories).reduce((sum, mins) => sum + mins, 0);
       const h = Math.floor(totalMins / 60);
       const m = totalMins % 60;
 
@@ -4433,14 +4583,8 @@ Return ONLY valid JSON:
 
     function logScreenTimeBreakdown(e) {
       e.preventDefault();
-      const social = parseInt(document.getElementById('st-social').value) || 0;
-      const entertain = parseInt(document.getElementById('st-entertain').value) || 0;
-      const work = parseInt(document.getElementById('st-work').value) || 0;
-      const gaming = parseInt(document.getElementById('st-gaming').value) || 0;
-      const messaging = parseInt(document.getElementById('st-messaging').value) || 0;
-      const other = parseInt(document.getElementById('st-other').value) || 0;
-
-      const totalMins = social + entertain + work + gaming + messaging + other;
+      const categories = Object.fromEntries(SCREEN_CATEGORIES.map(({key}) => [key, Math.max(0, parseInt(document.getElementById('st-' + key).value) || 0)]));
+      const totalMins = Object.values(categories).reduce((sum, mins) => sum + mins, 0);
       if (totalMins <= 0) return;
 
       const yesterday = new Date();
@@ -4457,7 +4601,7 @@ Return ONLY valid JSON:
         adjustBeatyHeart(-20, "Exceeded screen time limit", 'worried');
       }
 
-      state.screenTime.unshift({ id: Date.now(), date: dateStr, totalMins, categories: { social, entertain, work, gaming, messaging, other }, xpEarned: earnedXP });
+      state.screenTime.unshift({ id: Date.now(), date: dateStr, totalMins, categories, categoryVersion: 2, xpEarned: earnedXP });
       document.querySelectorAll('.st-category-input').forEach(i => i.value = '0');
       updateScreenTimeLivePreview();
       awardXP(earnedXP, msg);
@@ -5153,6 +5297,7 @@ Return ONLY valid JSON:
     // MASTER UI RENDER
     // =========================================================
     function updateUI() {
+      renderHabitStreaks();
       document.getElementById('user-level').textContent = state.level;
       const maxXP = state.level * 100;
       document.getElementById('user-xp').textContent = `${state.xp} / ${maxXP} XP`;
@@ -5205,7 +5350,7 @@ Return ONLY valid JSON:
       const limitHrs = (state.screenTimeLimitMins / 60).toFixed(1);
       document.getElementById('st-limit-lbl').textContent = `${limitHrs}h`;
 
-      const categoryBadges = [
+      const legacyCategoryBadges = [
         { key: 'social', label: 'Social', color: 'bg-rose-50 text-rose-600 border-rose-200', icon: '📱' },
         { key: 'entertain', label: 'Media', color: 'bg-purple-50 text-purple-600 border-purple-200', icon: '🍿' },
         { key: 'work', label: 'Work', color: 'bg-blue-50 text-blue-600 border-blue-200', icon: '💼' },
@@ -5218,7 +5363,7 @@ Return ONLY valid JSON:
         const total = st.totalMins || st.mins || 0;
         const under = total <= state.screenTimeLimitMins;
         const cats = st.categories || {};
-        const pills = categoryBadges.map(b => {
+        const pills = (st.categoryVersion === 2 ? SCREEN_CATEGORIES : legacyCategoryBadges).map(b => {
           const val = cats[b.key] || 0;
           if (val <= 0) return '';
           return `<span class="text-[10px] ${b.color} font-bold px-2 py-0.5 rounded-md border flex items-center gap-1"><span>${b.icon}</span> ${b.label}: ${val}m</span>`;
