@@ -289,6 +289,7 @@
     <!-- 1. OVERVIEW DASHBOARD TAB -->
     <section id="dashboard" class="tab-content active space-y-6">
       <div class="bg-white border border-slate-200 rounded-2xl p-5 space-y-4"><h2 class="font-extrabold text-lg">🔥 Daily logging streaks</h2><p class="text-xs text-slate-500">Log each habit daily to build its own streak.</p><div id="habit-streak-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-3"></div><details class="border-t pt-3"><summary class="font-bold cursor-pointer text-indigo-600">Streak protection settings</summary><div class="space-y-3 mt-3"><label class="flex gap-2 items-center text-sm"><input type="checkbox" id="holiday-protection" onchange="changeProtection('holiday',this.checked)"> Protect U.S. federal holidays (actual and observed)</label><label class="flex gap-2 items-center text-sm"><input type="checkbox" id="vacation-protection" onchange="changeProtection('vacation',this.checked)"> Enable vacation days</label><p class="text-xs text-slate-500">Protection preserves streaks without adding a day. Settings apply from today forward; past protected days remain protected.</p><div class="flex flex-wrap gap-2 items-center"><input type="date" id="vacation-date" class="border rounded-lg p-2 text-sm"><button onclick="addVacationDay()" class="bg-indigo-600 text-white rounded-lg px-3 py-2 text-sm font-bold">Protect date</button><span id="vacation-remaining" class="text-xs font-bold"></span></div><div id="vacation-list" class="flex flex-wrap gap-2"></div><div id="protection-status" class="text-xs text-indigo-600 font-bold"></div></div></details></div>
+      <details id="notification-settings" class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm"><summary class="cursor-pointer font-extrabold text-lg">🔔 Beaty reminders</summary><div class="space-y-4 pt-4"><p id="notification-status" role="status" class="text-sm text-slate-600">Checking notification support…</p><div id="notification-options" class="space-y-3"><label class="flex items-center justify-between gap-3 text-sm font-semibold"><span><input type="checkbox" id="notify-sleep" checked class="accent-indigo-600 mr-2"> Log last night's sleep</span><span class="text-xs text-slate-500">Wake-up goal</span></label><label class="flex items-center justify-between gap-3 text-sm font-semibold"><span><input type="checkbox" id="notify-water" checked class="accent-indigo-600 mr-2"> Hydration reminder</span><input type="time" id="notify-water-time" value="12:00" aria-label="Hydration reminder time" class="border rounded-lg p-1.5"></label><label class="flex items-center justify-between gap-3 text-sm font-semibold"><span><input type="checkbox" id="notify-calories" checked class="accent-indigo-600 mr-2"> Calories remaining</span><input type="time" id="notify-calories-time" value="15:00" aria-label="Calories reminder time" class="border rounded-lg p-1.5"></label><label class="flex items-center justify-between gap-3 text-sm font-semibold"><span><input type="checkbox" id="notify-evening" checked class="accent-indigo-600 mr-2"> Evening heart and habit check-in</span><input type="time" id="notify-evening-time" value="20:00" aria-label="Evening reminder time" class="border rounded-lg p-1.5"></label><p class="text-xs text-slate-500">Times use your current time zone, with delivery usually within about 10–20 minutes. Beaty skips protected holidays and vacation days.</p></div><div class="flex flex-wrap gap-2"><button type="button" id="notify-enable" disabled class="bg-indigo-600 text-white rounded-xl px-4 py-2 font-bold text-sm disabled:opacity-50">Enable notifications</button><button type="button" id="notify-save" disabled class="border border-indigo-200 text-indigo-700 rounded-xl px-4 py-2 font-bold text-sm disabled:opacity-50">Save preferences</button><button type="button" id="notify-test" disabled class="border border-indigo-200 text-indigo-700 rounded-xl px-4 py-2 font-bold text-sm disabled:opacity-50">Send test</button><button type="button" id="notify-disable" disabled class="border rounded-xl px-4 py-2 font-bold text-sm disabled:opacity-50">Turn off</button></div></div></details>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm flex items-center justify-between">
           <div>
@@ -1548,7 +1549,8 @@
           name: "Good Habits - Beaty Coach",
           short_name: "Good Habits",
           description: "Habit, Nutrition, Workout & Finance Tracker with Beaty Coach",
-          start_url: window.location.href,
+          id: "/",
+          start_url: "/",
           display: "standalone",
           background_color: "#f8fafc",
           theme_color: "#4f46e5",
@@ -1700,6 +1702,7 @@
     }
 
     async function logoutUser() {
+      if (window.stopBeatyNotifications) await window.stopBeatyNotifications();
       await supabaseClient.auth.signOut({ scope: 'local' });
       currentUser = null;
       localStorage.removeItem('good_habits_state');
@@ -1748,6 +1751,8 @@
       } else {
         await pushStateToCloud();
       }
+      window.beatyCloudReadyUser = currentUser?.id;
+      window.syncBeatyReminders?.();
     }
 
     async function pushStateToCloud() {
@@ -2874,6 +2879,7 @@
       updateUI();
       evaluateCalorieStatus();
       pushStateToCloud();
+      window.syncBeatyReminders?.();
     }
 
     // --- ONBOARDING TOUR LOGIC ---
@@ -5735,5 +5741,6 @@ Return ONLY valid JSON:
 
     document.addEventListener('DOMContentLoaded', loadState);
   </script>
+  <script src="/notifications.js" defer></script>
 </body>
 </html>
