@@ -866,64 +866,7 @@
         </div>
       </div>
 
-      <!-- CONVERSATIONAL BEATY NUTRITION CHATBOT (GEMINI + CLARIFYING FOLLOW-UPS) -->
-      <div class="bg-gradient-to-br from-emerald-500/10 via-teal-500/5 to-white border-2 border-emerald-400/40 p-5 sm:p-6 rounded-3xl shadow-sm relative overflow-hidden space-y-4">
-        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-emerald-200/60 pb-3">
-          <div class="flex items-center gap-3">
-            <div id="food-chat-beaty-icon" class="w-11 h-11 rounded-2xl bg-white border border-emerald-200 flex items-center justify-center shadow-xs shrink-0"></div>
-            <div>
-              <h2 class="text-base sm:text-lg font-black text-slate-900 flex items-center gap-2">
-                <span>💬</span> Chat with Beaty • Nutritionist
-                <span class="text-[10px] bg-emerald-100 text-emerald-800 font-extrabold px-2 py-0.5 rounded-full border border-emerald-300">Gemini AI</span>
-              </h2>
-              <p class="text-xs text-slate-600 font-medium">Tell Beaty what you ate—if a meal is ambiguous (like a burrito bowl), Beaty will ask clarifying follow-ups instead of guessing!</p>
-            </div>
-          </div>
-          <div class="flex items-center gap-2">
-            <button type="button" onclick="openGeminiKeyModal()" class="text-[11px] bg-white hover:bg-indigo-50 text-indigo-700 font-bold px-2.5 py-1 rounded-full border border-indigo-200 transition" title="Gemini is configured on the server">
-              AI Status
-            </button>
-            <button type="button" onclick="clearFoodChat()" class="text-[11px] bg-white hover:bg-slate-100 text-slate-500 font-bold px-2.5 py-1 rounded-full border border-slate-200 transition">
-              New Chat
-            </button>
-            <button type="button" onclick="switchTab('bank-food')" class="text-[11px] bg-white hover:bg-emerald-50 text-emerald-700 font-extrabold px-3 py-1 rounded-full border border-emerald-300 transition">
-              🏦 Food Bank
-            </button>
-          </div>
-        </div>
-
-        <!-- Quick Starter Prompts -->
-        <div class="flex flex-wrap items-center gap-1.5">
-          <span class="text-[10px] font-extrabold uppercase text-slate-400 mr-1">Try asking:</span>
-          <button type="button" onclick="sendQuickFoodPrompt('I ate Spaghetti with meatballs')" class="text-[11px] font-bold bg-white hover:bg-emerald-50 text-slate-700 px-2.5 py-1 rounded-full border border-emerald-200/80 transition">"I ate Spaghetti with meatballs"</button>
-          <button type="button" onclick="sendQuickFoodPrompt('Chipotle bowl')" class="text-[11px] font-bold bg-white hover:bg-emerald-50 text-slate-700 px-2.5 py-1 rounded-full border border-emerald-200/80 transition">"Chipotle bowl"</button>
-          <button type="button" onclick="sendQuickFoodPrompt('Chicken fried rice with 1 tbsp low sodium soy sauce')" class="text-[11px] font-bold bg-white hover:bg-emerald-50 text-slate-700 px-2.5 py-1 rounded-full border border-emerald-200/80 transition">"Chicken fried rice + soy sauce"</button>
-        </div>
-
-        <!-- Scrollable Chat Thread -->
-        <div id="food-chat-thread" class="space-y-3 max-h-96 overflow-y-auto pr-1"></div>
-
-        <!-- Chat Input Bar -->
-        <form id="form-ai-food" onsubmit="handleFoodChatSubmit(event)" class="space-y-2 relative pt-1">
-          <div class="flex flex-col sm:flex-row gap-2">
-            <div class="relative flex-1">
-              <input type="text" id="ai-food-prompt" oninput="updateFoodSuggestions(this.value)" autocomplete="off" placeholder="Tell Beaty what you ate (e.g. 'I ate Spaghetti with meatballs' or reply to clarify)..." required class="w-full bg-white border border-emerald-300 px-4 py-3 rounded-2xl text-sm text-slate-800 focus:outline-none focus:border-emerald-500 shadow-inner">
-              <!-- Live Autocomplete Dropdown -->
-              <div id="food-autocomplete-box" class="hidden absolute left-0 right-0 bottom-full mb-1 bg-white border border-emerald-200 rounded-2xl shadow-xl z-30 max-h-52 overflow-y-auto divide-y divide-slate-100"></div>
-            </div>
-            <select id="ai-food-mealtype" class="bg-white border border-emerald-300 px-3 py-2.5 rounded-2xl text-xs font-bold text-slate-700 focus:outline-none focus:border-emerald-500">
-              <option value="Breakfast">Breakfast</option>
-              <option value="Lunch" selected>Lunch</option>
-              <option value="Dinner">Dinner</option>
-              <option value="Snack">Snack</option>
-              <option value="Dessert">Dessert</option>
-            </select>
-            <button type="submit" id="btn-ai-food-submit" class="bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold px-6 py-3 rounded-2xl text-xs transition shadow-md shadow-emerald-200 flex items-center justify-center gap-2">
-              <i class="fa-solid fa-paper-plane"></i> Send
-            </button>
-          </div>
-        </form>
-      </div>
+      <div class="bg-indigo-50 border border-indigo-100 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3"><p class="text-sm text-slate-700 font-medium">Not sure how many calories are in your meal? <button type="button" onclick="switchTab('beaty-chat')" class="font-extrabold text-indigo-700 underline">Ask Beaty in the tab above.</button></p><button type="button" onclick="switchTab('bank-food')" class="text-xs font-bold text-indigo-700 border border-indigo-200 bg-white rounded-xl px-3 py-2">Open Food Bank</button></div>
 
       <!-- Manual Meal Logger & Daily History Review -->
       <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm space-y-4">
@@ -935,13 +878,6 @@
             <p class="text-xs text-slate-500">Today's meals reset freshly each morning & auto-save to your Food Bank.</p>
           </div>
           
-          <!-- History Date Filter -->
-          <div class="flex items-center gap-2">
-            <span class="text-xs font-bold text-slate-500">Viewing Day:</span>
-            <select id="nutrition-history-date-select" onchange="renderFoodUI()" class="bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl text-xs font-bold text-slate-800 focus:outline-none focus:border-indigo-500">
-              <option value="today" selected>Today (Active Log)</option>
-            </select>
-          </div>
         </div>
 
         <!-- Add Meal Form (No pre-filled zeros on macros!) -->
@@ -1008,58 +944,7 @@
         </div>
       </div>
 
-      <!-- CONVERSATIONAL BEATY EXERCISE CHATBOT -->
-      <div class="bg-gradient-to-br from-sky-500/10 via-indigo-500/5 to-white border-2 border-sky-400/40 p-5 sm:p-6 rounded-3xl shadow-sm relative overflow-hidden space-y-4">
-        <div class="flex flex-wrap items-center justify-between gap-2 border-b border-sky-200/60 pb-3">
-          <div class="flex items-center gap-3">
-            <div id="ex-chat-beaty-icon" class="w-11 h-11 rounded-2xl bg-white border border-sky-200 flex items-center justify-center shadow-xs shrink-0"></div>
-            <div>
-              <h2 class="text-base sm:text-lg font-black text-slate-900 flex items-center gap-2">
-                <span>💬</span> Chat with Beaty • Fitness Coach
-                <span class="text-[10px] bg-sky-100 text-sky-800 font-extrabold px-2 py-0.5 rounded-full border border-sky-300">Gemini AI</span>
-              </h2>
-              <p class="text-xs text-slate-600 font-medium">Describe your workout in plain English—if duration or intensity is missing, Beaty will ask before logging!</p>
-            </div>
-          </div>
-          <div class="flex items-center gap-2">
-            <button type="button" onclick="openGeminiKeyModal()" class="text-[11px] bg-white hover:bg-indigo-50 text-indigo-700 font-bold px-2.5 py-1 rounded-full border border-indigo-200 transition">
-              AI Status
-            </button>
-            <button type="button" onclick="clearExerciseChat()" class="text-[11px] bg-white hover:bg-slate-100 text-slate-500 font-bold px-2.5 py-1 rounded-full border border-slate-200 transition">
-              New Chat
-            </button>
-            <button type="button" onclick="switchTab('bank-exercise')" class="text-[11px] bg-white hover:bg-sky-50 text-sky-700 font-extrabold px-3 py-1 rounded-full border border-sky-300 transition">
-              🏦 Exercise Bank
-            </button>
-          </div>
-        </div>
-
-        <!-- Quick Starter Prompts -->
-        <div class="flex flex-wrap items-center gap-1.5">
-          <span class="text-[10px] font-extrabold uppercase text-slate-400 mr-1">Try asking:</span>
-          <button type="button" onclick="sendQuickExPrompt('I ran for 25 mins and lifted weights for 30 mins')" class="text-[11px] font-bold bg-white hover:bg-sky-50 text-slate-700 px-2.5 py-1 rounded-full border border-sky-200/80 transition">"Ran 25m + lifted weights 30m"</button>
-          <button type="button" onclick="sendQuickExPrompt('Went to the gym')" class="text-[11px] font-bold bg-white hover:bg-sky-50 text-slate-700 px-2.5 py-1 rounded-full border border-sky-200/80 transition">"Went to the gym"</button>
-          <button type="button" onclick="sendQuickExPrompt('45 minute brisk incline treadmill walk')" class="text-[11px] font-bold bg-white hover:bg-sky-50 text-slate-700 px-2.5 py-1 rounded-full border border-sky-200/80 transition">"45m incline walk"</button>
-        </div>
-
-        <!-- Scrollable Chat Thread -->
-        <div id="ex-chat-thread" class="space-y-3 max-h-96 overflow-y-auto pr-1"></div>
-
-        <form id="form-ai-ex" onsubmit="handleExerciseChatSubmit(event)" class="space-y-2 pt-1">
-          <div class="grid grid-cols-1 sm:grid-cols-4 gap-2">
-            <div class="sm:col-span-3 relative">
-              <input type="text" id="ai-ex-prompt" oninput="updateExerciseSuggestions(this.value)" autocomplete="off" placeholder="Tell Beaty about your workout (e.g. 'I ran 30 mins and did 15 mins of core')..." required class="w-full bg-white border border-sky-300 px-4 py-3 rounded-2xl text-sm text-slate-800 focus:outline-none focus:border-sky-500 shadow-inner">
-              <div id="ex-autocomplete-box" class="hidden absolute left-0 right-0 bottom-full mb-1 bg-white border border-sky-200 rounded-2xl shadow-xl z-30 max-h-52 overflow-y-auto divide-y divide-slate-100"></div>
-            </div>
-            <div class="flex items-center gap-2">
-              <input type="number" id="ai-ex-weight" placeholder="Weight (lbs)" value="175" class="w-24 bg-white border border-sky-300 px-3 py-3 rounded-2xl text-xs font-bold text-slate-800 focus:outline-none focus:border-sky-500 shadow-inner" title="Body weight used for MET burn calculation">
-              <button type="submit" id="btn-ai-ex-submit" class="flex-1 bg-sky-600 hover:bg-sky-700 text-white font-extrabold py-3 px-4 rounded-2xl text-xs transition shadow-md shadow-sky-200 flex items-center justify-center gap-2">
-                <i class="fa-solid fa-paper-plane"></i> Send
-              </button>
-            </div>
-          </div>
-        </form>
-      </div>
+      <div class="bg-indigo-50 border border-indigo-100 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3"><p class="text-sm text-slate-700 font-medium">Not sure how many calories you burned? <button type="button" onclick="switchTab('beaty-chat')" class="font-extrabold text-indigo-700 underline">Ask Beaty in the tab above.</button></p><button type="button" onclick="switchTab('bank-exercise')" class="text-xs font-bold text-indigo-700 border border-indigo-200 bg-white rounded-xl px-3 py-2">Open Exercise Bank</button></div>
 
       <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
         <h2 class="text-xl font-bold text-slate-900 mb-2 flex items-center gap-2">
@@ -2974,7 +2859,6 @@
       checkDailyMidnightResets();
       setupPWAAndHomeScreenIcon();
       setupEventListeners();
-      initChatThreads();
       initChart();
       evaluateBadges(false);
       updateUI();
@@ -2996,7 +2880,7 @@
     let tourStep = 0;
     const tourContent = [
       { title: "Meet Beaty & Fill His Heart! ❤️", desc: "Beaty is your interactive companion! Every healthy habit pumps up Beaty's heart (+20% to +25%). Reach 100% heart fill each day to lock in your streak!" },
-      { title: "💬 Conversational Gemini Nutrition & Fitness Coach", desc: "Tell Beaty what you ate or did in plain English—if a meal is ambiguous (like a Chipotle bowl), Beaty will ask a quick follow-up question instead of guessing!" },
+      { title: "💬 Talk to Beaty", desc: "Ask Beaty about calories, workouts, and habits in the Talk to Beaty tab, then enter your logs manually." },
       { title: "🏦 Footer Food, Exercise & Expense Banks", desc: "Every meal, workout, and expense you log automatically saves into your Footer Banks at the bottom of the screen for 1-click re-logging!" },
       { title: "🏆 Progressive Evolving Badges", desc: "Unlock milestone badges like $10k → $100k → $500k → $1M Net Worth! Each unlocked tier automatically evolves into the next challenge." }
     ];
@@ -5251,30 +5135,45 @@ Return ONLY valid JSON:
     // =========================================================
     // NUTRITION & MEAL LOG DISPLAY WITH HISTORICAL ARCHIVE
     // =========================================================
+
+    // History is grouped by local calendar day. Older entries stay available on demand.
+    function renderDatedHistory(entries, renderEntry, historyId, getDay = logDay, listTag = 'ul') {
+      const today = localDay();
+      const yesterday = nextDay(today, -1);
+      const groups = new Map();
+      for (const entry of entries) {
+        const day = getDay(entry) || '';
+        if (!groups.has(day)) groups.set(day, []);
+        groups.get(day).push(entry);
+      }
+      const dates = [...groups.keys()].sort().reverse();
+      const itemTag = listTag === 'ul' ? 'li' : 'div';
+      function group(day) {
+        const label = day === today ? 'Today' : day === yesterday ? 'Yesterday' : day ? new Date(day + 'T12:00:00').toLocaleDateString() : 'Undated';
+        return '<' + itemTag + ' class="list-none pt-2"><h4 class="text-xs font-bold text-slate-500 mb-2">' + label + '</h4><' + listTag + ' class="space-y-2">' + groups.get(day).map(renderEntry).join('') + '</' + listTag + '></' + itemTag + '>';
+      }
+      const recent = dates.filter(day => day === today || day === yesterday);
+      const older = dates.filter(day => day !== today && day !== yesterday);
+      const recentHTML = recent.length ? recent.map(group).join('') : '<' + itemTag + ' class="text-xs text-slate-500 p-2">No entries today or yesterday.</' + itemTag + '>';
+      if (!older.length) return recentHTML;
+      const open = document.getElementById(historyId + '-archive')?.open;
+      const count = older.reduce((total, day) => total + groups.get(day).length, 0);
+      return recentHTML + '<' + itemTag + ' class="list-none"><details id="' + historyId + '-archive" ' + (open ? 'open' : '') + ' class="rounded-xl border border-slate-200 bg-white p-3"><summary class="cursor-pointer font-bold text-sm text-indigo-600">Previous days (' + count + ' ' + (count === 1 ? 'entry' : 'entries') + ')</summary><' + listTag + ' class="space-y-3 mt-2">' + older.map(group).join('') + '</' + listTag + '></details></' + itemTag + '>';
+    }
+
+    function screenReflectionDay(entry) {
+      // Screen Time's form records yesterday's actual usage.
+      return nextDay(logDay(entry), -1);
+    }
+
     function renderFoodUI() {
-      const dateSelect = document.getElementById('nutrition-history-date-select');
-      const selectedDate = dateSelect ? dateSelect.value : 'today';
-      const formContainer = document.getElementById('add-meal-form-container');
-
-      if (dateSelect) {
-        const historyDates = Object.keys(state.foodHistory || {}).sort((a,b) => new Date(b) - new Date(a));
-        dateSelect.innerHTML = `<option value="today" ${selectedDate === 'today' ? 'selected' : ''}>Today (Active Log)</option>` + 
-          historyDates.map(d => `<option value="${d}" ${selectedDate === d ? 'selected' : ''}>${d} (Archive)</option>`).join('');
+      const today = localDay();
+      const entries = (state.foodLogs || []).map(f => ({ ...f, day: today }));
+      for (const [date, meals] of Object.entries(state.foodHistory || {})) {
+        const day = localDay(new Date(date));
+        if (day !== today) entries.push(...meals.map(f => ({ ...f, day })));
       }
-
-      const isViewingToday = selectedDate === 'today';
-      if (formContainer) {
-        formContainer.style.display = isViewingToday ? 'block' : 'none';
-      }
-
-      const activeMeals = isViewingToday ? (state.foodLogs || []) : (state.foodHistory[selectedDate] || []);
-
-      const listEl = document.getElementById('food-list');
-      if (listEl) {
-        if (activeMeals.length === 0) {
-          listEl.innerHTML = `<li class="p-4 text-center text-xs text-slate-400 bg-slate-50 border border-dashed border-slate-200 rounded-xl">${isViewingToday ? 'No meals logged yet today. Chat with Beaty or log manually above!' : 'No meals recorded for this archived date.'}</li>`;
-        } else {
-          listEl.innerHTML = activeMeals.map(f => `
+      document.getElementById('food-list').innerHTML = renderDatedHistory(entries, f => `
             <li class="flex items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-200">
               <div>
                 <div class="flex items-center gap-2">
@@ -5285,12 +5184,10 @@ Return ONLY valid JSON:
               </div>
               <div class="flex items-center gap-3">
                 <span class="text-xs font-extrabold text-emerald-600 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg">${f.cals} kcal</span>
-                ${isViewingToday ? `<button onclick="deleteFoodLog(${f.id})" class="text-slate-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button>` : ''}
+                ${f.day === localDay() ? `<button onclick="deleteFoodLog(${f.id})" class="text-slate-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button>` : ''}
               </div>
             </li>
-          `).join('');
-        }
-      }
+          `, 'food-list', f => f.day);
     }
 
     // =========================================================
@@ -5319,12 +5216,12 @@ Return ONLY valid JSON:
       const aiWeightInput = document.getElementById('ai-ex-weight');
       if (aiWeightInput && latestWeight) aiWeightInput.value = valOr(latestWeight, 175);
 
-      document.getElementById('weight-history-list').innerHTML = state.weightLogs.map(w => `
+      document.getElementById('weight-history-list').innerHTML = renderDatedHistory(state.weightLogs, w => `
         <li class="flex items-center justify-between p-2.5 bg-slate-50 rounded-xl border border-slate-200 text-xs">
           <div><span class="font-bold text-slate-800">${w.date}</span><span class="text-indigo-600 font-extrabold ml-2">${w.weight} lbs</span></div>
           <button onclick="deleteWeightLog(${w.id})" class="text-slate-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button>
         </li>
-      `).join('');
+      `, 'weight-history-list');
 
       // Water UI
       const wPct = Math.min(100, Math.round((state.todayWater / state.waterGoal) * 100));
@@ -5339,12 +5236,12 @@ Return ONLY valid JSON:
       document.getElementById('goal-waketime-lbl').textContent = state.sleepGoals.waketime;
       document.getElementById('goal-sleep-hrs-lbl').textContent = `${state.sleepGoals.duration} hrs`;
 
-      document.getElementById('sleep-history-list').innerHTML = state.sleepLogs.map(s => `
+      document.getElementById('sleep-history-list').innerHTML = renderDatedHistory(state.sleepLogs, s => `
         <li class="flex items-center justify-between p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs">
           <div><span class="font-bold text-slate-800">${s.date}</span><span class="text-slate-500 ml-2">(${s.bed} to ${s.wake})</span><span class="font-extrabold text-indigo-600 ml-2">${s.hours} hrs slept</span></div>
           <button onclick="deleteSleepLog(${s.id})" class="text-slate-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button>
         </li>
-      `).join('');
+      `, 'sleep-history-list');
 
       // Screen Time UI
       const limitHrs = (state.screenTimeLimitMins / 60).toFixed(1);
@@ -5359,7 +5256,7 @@ Return ONLY valid JSON:
         { key: 'other', label: 'Other', color: 'bg-slate-100 text-slate-600 border-slate-200', icon: '🌐' }
       ];
 
-      document.getElementById('st-history').innerHTML = state.screenTime.map(st => {
+      document.getElementById('st-history').innerHTML = renderDatedHistory(state.screenTime, st => {
         const total = st.totalMins || st.mins || 0;
         const under = total <= state.screenTimeLimitMins;
         const cats = st.categories || {};
@@ -5367,7 +5264,7 @@ Return ONLY valid JSON:
           const val = cats[b.key] || 0;
           if (val <= 0) return '';
           return `<span class="text-[10px] ${b.color} font-bold px-2 py-0.5 rounded-md border flex items-center gap-1"><span>${b.icon}</span> ${b.label}: ${val}m</span>`;
-        }).join('');
+        }, 'st-history', screenReflectionDay, 'div');
 
         return `
           <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 text-xs space-y-2">
@@ -5559,7 +5456,7 @@ Return ONLY valid JSON:
       document.getElementById('bar-ex-time').style.width = Math.min(100, (todayMins / targetMins) * 100) + '%';
       document.getElementById('bar-ex-cals').style.width = Math.min(100, (todayCals / targetExCals) * 100) + '%';
 
-      document.getElementById('workout-list').innerHTML = state.workouts.map(w => {
+      document.getElementById('workout-list').innerHTML = renderDatedHistory(state.workouts, w => {
         const logDate = new Date(w.id).toLocaleDateString('en-US', { month: 'numeric', day: 'numeric' });
         return `
           <li class="flex items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-200">
@@ -5567,7 +5464,7 @@ Return ONLY valid JSON:
             <div class="flex items-center gap-3"><span class="text-xs font-extrabold text-sky-600 bg-sky-50 border border-sky-200 px-2.5 py-1 rounded-lg">-${w.cals} kcal</span><button onclick="deleteWorkout(${w.id})" class="text-slate-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button></div>
           </li>
         `;
-      }).join('');
+      }, 'workout-list');
       document.getElementById('dash-workout').textContent = `${todayMins} mins`;
 
       // Finance
@@ -5669,19 +5566,19 @@ Return ONLY valid JSON:
       updateIncomeAccountPreview();
       updateExpenseAccountPreview();
 
-      document.getElementById('income-list').innerHTML = state.incomeLogs.map(i => `
+      document.getElementById('income-list').innerHTML = renderDatedHistory(state.incomeLogs, i => `
         <li class="flex items-center justify-between p-2.5 bg-slate-50 rounded-xl border border-slate-200 text-xs">
           <div><span class="font-bold text-slate-800">${i.desc}</span><span class="text-emerald-600 font-extrabold ml-2">+$${i.amount.toFixed(2)}</span><span class="text-[10px] bg-emerald-50 text-emerald-600 font-bold px-1.5 py-0.5 rounded ml-2">${i.bucketName || 'Bucket'} (${i.accountName || 'Bank'})</span>${i.xpEarned === 100 ? `<span class="text-[9px] bg-amber-100 text-amber-800 font-bold px-1 py-0.2 rounded ml-1">2X XP</span>` : ''}</div>
           <button onclick="deleteIncomeLog(${i.id})" class="text-slate-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button>
         </li>
-      `).join('');
+      `, 'income-list');
 
-      document.getElementById('expense-list').innerHTML = state.expenseLogs.map(e => `
+      document.getElementById('expense-list').innerHTML = renderDatedHistory(state.expenseLogs, e => `
         <li class="flex items-center justify-between p-2.5 bg-slate-50 rounded-xl border border-slate-200 text-xs">
           <div><span class="font-bold text-slate-800">${e.desc}</span><span class="text-rose-500 font-extrabold ml-2">-$${e.amount.toFixed(2)}</span><span class="text-[10px] bg-rose-50 text-rose-600 font-bold px-1.5 py-0.5 rounded ml-2">${e.bucketName || 'Bucket'} (${e.accountName || 'Bank'})</span></div>
           <button onclick="deleteExpenseLog(${e.id})" class="text-slate-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button>
         </li>
-      `).join('');
+      `, 'expense-list');
 
       renderCustomTabs();
       renderBanksUI();
@@ -5768,6 +5665,7 @@ Return ONLY valid JSON:
       const activeId = currentActive ? currentActive.id : 'dashboard';
 
       document.querySelectorAll('.custom-nav-btn').forEach(b => b.remove());
+      const openArchives = new Set([...contentContainer.querySelectorAll('details[open]')].map(el => el.id));
       contentContainer.innerHTML = '';
 
       state.customSections.forEach(sec => {
@@ -5810,16 +5708,18 @@ Return ONLY valid JSON:
               <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 font-bold px-5 py-2.5 rounded-xl text-white transition shadow-sm">Log Entry</button>
             </form>
             <ul class="space-y-2">
-              ${logs.map(l => `
+              ${renderDatedHistory(logs, l => `
                 <li class="flex items-center justify-between p-3.5 bg-slate-50 rounded-xl border border-slate-200">
                   <div><span class="text-slate-800 font-medium">${l.text}</span><span class="text-xs text-slate-400 font-medium ml-2">(${l.date})</span></div>
                   <button onclick="deleteCustomLog('${sec.id}', ${l.id})" class="text-slate-400 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button>
                 </li>
-              `).join('')}
+              `, 'custom-history-' + sec.id)}
             </ul>
           </div>
         `;
         contentContainer.appendChild(sectionEl);
+        const archive = document.getElementById('custom-history-' + sec.id + '-archive');
+        if (archive && openArchives.has(archive.id)) archive.open = true;
       });
     }
 
