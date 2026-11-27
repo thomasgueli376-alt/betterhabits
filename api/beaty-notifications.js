@@ -12,7 +12,7 @@ const JWKS=createRemoteJWKSet(new URL(ISSUER+'/.well-known/jwks'));
 const KINDS=['sleep','water','calories','evening'];
 
 function fail(message,status=400){return Object.assign(new Error(message),{status});}
-function isReady(){return Boolean(process.env.PUSH_VAPID_PRIVATE_KEY && process.env.PUSH_VAPID_PUBLIC_KEY);}
+function isReady(){return Boolean(process.env.PUSH_VAPID_PRIVATE_KEY && process.env.PUSH_VAPID_PUBLIC_KEY && process.env.BLOB_READ_WRITE_TOKEN);}
 function bearer(req){return (req.headers.authorization||'').match(/^Bearer (.+)$/)?.[1];}
 async function authenticate(req){
   const token=bearer(req);
@@ -187,6 +187,13 @@ async function dispatch(){
 }
 export default async function handler(req,res){
   res.setHeader('Cache-Control','no-store');
+  if(req.method==='GET'){
+    try{
+      if(!isReady())return res.status(503).json({ready:false});
+      await readRegistry();
+      return res.status(200).json({ready:true});
+    }catch{return res.status(503).json({ready:false});}
+  }
   if(req.method!=='POST')return res.status(405).json({error:'Method not allowed'});
   try{
     const {action,endpoint,...body}=req.body||{};
