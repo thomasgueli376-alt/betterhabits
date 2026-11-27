@@ -26,10 +26,10 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap');
+    /* Device-native type keeps the interface crisp and readable. */
     
     body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
     }
 
     .tab-content {
@@ -110,6 +110,178 @@
 .beaty-coach-svg{overflow:visible}
 @media(prefers-reduced-motion:reduce){.beaty-coach-pop{animation:none}#beaty-coach-face{transition:none}}
 </style>
+
+<style id="good-habits-design">
+  :root { --page:#f5f6f8; --surface:#fff; --ink:#243147; --muted:#667085; --line:#e0e5ed; --accent:#365b8c; --accent-hover:#294974; --soft:#edf2f8; --season-tone:#6b819d; --season-border:#dce5f0; --beaty-tint:#fdf2f3; }
+  :root[data-season="new-year"] { --page:#f5f3ec; --surface:#fffefa; --ink:#222a3c; --muted:#646474; --line:#e5dfd1; --accent:#55411a; --accent-hover:#3e2e11; --soft:#f2ead6; --season-tone:#c79b39; --season-border:#dfc888; --beaty-tint:#f9ebc9; }
+  :root[data-season="valentine"] { --page:#fff4f6; --surface:#fffafd; --ink:#43252f; --muted:#805b6c; --line:#efdce3; --accent:#9f345b; --accent-hover:#842746; --soft:#f9dfe8; --season-tone:#d76590; --season-border:#edc3d2; --beaty-tint:#ffe3ed; }
+  :root[data-season="st-patrick"] { --page:#f1f7f0; --surface:#fcfffb; --ink:#233a2b; --muted:#5a7460; --line:#dce8db; --accent:#286644; --accent-hover:#1d4e31; --soft:#e3f1e2; --season-tone:#5d9b56; --season-border:#bad5b6; --beaty-tint:#eaf4df; }
+  :root[data-season="easter"] { --page:#f8f5fb; --surface:#fffdfd; --ink:#392f4a; --muted:#746880; --line:#e9e0ef; --accent:#76559b; --accent-hover:#5f427f; --soft:#eee7f7; --season-tone:#e2bb76; --season-border:#d8c8e8; --beaty-tint:#f4e8fa; }
+  :root[data-season="independence"] { --page:#f1f4f9; --surface:#fff; --ink:#22364f; --muted:#65758b; --line:#dce3ee; --accent:#224779; --accent-hover:#19365f; --soft:#e5edf8; --season-tone:#b83d47; --season-border:#bccce4; --beaty-tint:#fce8e9; }
+  :root[data-season="halloween"] { --page:#f9f3ed; --surface:#fffdfb; --ink:#382c2a; --muted:#786658; --line:#ebded3; --accent:#a0471a; --accent-hover:#863612; --soft:#f8e7d7; --season-tone:#d47a34; --season-border:#e9c39d; --beaty-tint:#fff0d9; }
+  :root[data-season="thanksgiving"] { --page:#f8f3eb; --surface:#fffdf8; --ink:#47372a; --muted:#806957; --line:#e9ded0; --accent:#92552d; --accent-hover:#743f21; --soft:#f3e6d5; --season-tone:#b47d38; --season-border:#e0c9a9; --beaty-tint:#fbecd7; }
+  :root[data-season="christmas"] { --page:#f1f6f1; --surface:#fffefa; --ink:#273b32; --muted:#61766a; --line:#dce6dd; --accent:#27634b; --accent-hover:#1c4b38; --soft:#e1eee3; --season-tone:#b93742; --season-border:#b9d4c0; --beaty-tint:#f9e7e8; }
+
+  body { background:var(--page)!important; color:var(--ink)!important; font-size:15px; -webkit-font-smoothing:antialiased; }
+  #app-header { background:var(--surface); color:var(--ink); border-bottom:1px solid var(--line); box-shadow:none; }
+  #header-layout { display:grid; grid-template-columns:minmax(0,1fr) auto; gap:9px 16px; padding-top:12px; padding-bottom:0; align-items:center; }
+  #header-mascot-trigger { grid-column:1; grid-row:1; min-width:0; gap:9px; }
+  #header-mascot-trigger h1 { color:var(--ink); font-size:20px; font-weight:720; letter-spacing:-.035em; }
+  #header-beaty-avatar { width:42px;height:42px;border-radius:12px;background:var(--beaty-tint);border:1px solid var(--line);box-shadow:none; }
+  #header-beaty-avatar svg { width:34px;height:34px; }
+  #header-actions { grid-column:2; grid-row:1; justify-content:flex-end; position:relative; gap:6px; }
+  #header-actions button, .header-notification-button { display:inline-flex; align-items:center; justify-content:center; min-height:35px; padding:7px 10px; font-size:12px; font-weight:600; color:var(--ink); background:transparent; border:1px solid var(--line); border-radius:7px; box-shadow:none; white-space:nowrap; }
+  #header-actions button:hover, .header-notification-button:hover { background:var(--soft); color:var(--accent); }
+  #header-actions #btn-open-modal { background:var(--accent); color:white; border-color:var(--accent); }
+  #header-actions #btn-open-modal:hover { background:var(--accent-hover); }
+  #auth-container > div { gap:5px; }
+  #nav-tabs { grid-column:1/-1; grid-row:2; width:100%; max-width:100%; gap:5px; padding:0 0 1px; scrollbar-width:none; }
+  #nav-tabs::-webkit-scrollbar { display:none; }
+  #nav-tabs .nav-btn { flex:none; white-space:nowrap; border-radius:0!important; padding:10px 10px 11px; border-bottom:2px solid transparent; color:var(--muted); font-weight:550!important; font-size:13px; background:none!important; gap:6px; }
+  #nav-tabs .nav-btn i { width:15px; text-align:center; font-size:12px; }
+  #nav-tabs .nav-btn:hover { color:var(--accent); background:var(--soft)!important; }
+  #nav-tabs .nav-btn.active { color:var(--accent)!important; border-color:var(--accent); font-weight:700!important; }
+  #xp-strip { background:var(--surface); border-bottom:1px solid var(--line); }
+  #xp-strip .rounded-full { height:5px; border:0; }
+  #xp-bar { background:var(--accent)!important; }
+  .season-label { color:var(--accent); background:var(--soft); border:1px solid var(--season-border); border-radius:5px; font-size:10px; line-height:1.4; font-weight:650; padding:2px 5px; white-space:nowrap; }
+  .season-label[hidden] { display:none; }
+  .season-label::before { content:""; display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--season-tone); margin-right:4px; vertical-align:1px; }
+
+  main { padding-top:18px!important; padding-bottom:20px!important; }
+  main .tab-content > :is(div,section,details)[class*="bg-white"] { background:var(--surface)!important; border-color:var(--line)!important; }
+  main :is(.rounded-3xl,.rounded-2xl) { border-radius:12px; }
+  main :is(.shadow-sm,.shadow-md,.shadow-lg,.shadow-xl,.shadow-xs) { box-shadow:0 1px 2px rgba(20,32,48,.045)!important; }
+  main .bg-white { background:var(--surface); }
+  main .border-slate-200, main .border-slate-200\/80 { border-color:var(--line)!important; }
+  main .bg-slate-50, main .bg-slate-100 { background:var(--page)!important; }
+  main .text-slate-900, main .text-slate-800 { color:var(--ink)!important; }
+  main .text-slate-500, main .text-slate-600 { color:var(--muted)!important; }
+  main h2 { font-weight:720!important; letter-spacing:-.022em; }
+  main h3 { font-weight:650!important; letter-spacing:-.01em; }
+  main .font-black { font-weight:750!important; }
+  main .font-extrabold { font-weight:700!important; }
+  main button { border-radius:7px!important; }
+  main input:not([type=checkbox]):not([type=radio]), main select, main textarea { border-radius:7px!important; }
+  main .bg-indigo-600, #notification-settings .bg-indigo-600 { background:var(--accent)!important; }
+  main .bg-indigo-600:hover, #notification-settings .bg-indigo-600:hover { background:var(--accent-hover)!important; }
+  main .text-indigo-600, main .text-indigo-700, #notification-settings .text-indigo-700, #user-level { color:var(--accent)!important; }
+  main .bg-indigo-50 { background:var(--soft)!important; }
+  main .border-indigo-100, main .border-indigo-200 { border-color:var(--season-border)!important; }
+  input[type=checkbox], input[type=radio] { accent-color:var(--accent)!important; }
+  main [class*="bg-gradient-to-"][class*="border"] { background-image:none!important; background-color:var(--surface)!important; }
+  #beaty-banner { background:var(--surface)!important; border:1px solid var(--line)!important; border-left:3px solid var(--season-tone)!important; border-radius:10px!important; box-shadow:none!important; padding:14px 16px!important; }
+  #banner-beaty-avatar { background:var(--beaty-tint)!important; border-color:var(--season-border)!important; width:54px;height:54px;border-radius:10px; }
+  #beaty-banner #beaty-mood-title { text-transform:none; letter-spacing:normal; font-weight:700; font-size:13px; }
+  #beaty-banner #beaty-advice-text { font-weight:500; line-height:1.45; font-size:13px; }
+  #beaty-banner #beaty-heart-bar { background:#e15b75!important; }
+  #beaty-banner button { background:var(--soft)!important; border-color:var(--season-border)!important;color:var(--accent)!important; }
+  #beaty-banner #beaty-cal-pill { font-size:14px; }
+  #habit-streak-grid > div { border-radius:8px; box-shadow:none; padding:10px 12px; }
+  #habit-streak-grid > div .text-amber-600 { color:var(--accent)!important; }
+  footer { background:var(--surface)!important; border-color:var(--line)!important; box-shadow:none!important; }
+  footer .nav-btn { border-radius:8px!important; box-shadow:none!important; background:var(--page)!important; border-color:var(--line)!important; color:var(--ink)!important; }
+  footer .nav-btn.active { background:var(--soft)!important; color:var(--accent)!important; }
+  .notification-menu { flex:none; }
+  .notification-menu summary { list-style:none; cursor:pointer; gap:6px; }
+  .notification-menu summary::-webkit-details-marker { display:none; }
+  .notification-menu[open] summary { background:var(--soft); color:var(--accent); border-color:var(--season-border); }
+  .notification-panel { position:absolute; right:0; top:calc(100% + 10px); width:min(390px, calc(100vw - 32px)); background:var(--surface); border:1px solid var(--line); padding:16px; border-radius:12px; box-shadow:0 12px 36px rgba(31,41,55,.15); max-height:min(540px, 73vh); overflow-y:auto; z-index:80; color:var(--ink); }
+  #header-actions .notification-panel button { padding:7px 10px; }
+  #header-actions .notification-panel #notify-enable { color:white; }
+  #header-actions .notification-panel .notification-close { border:0; font-size:20px; padding:0 7px; min-height:30px; }
+  .notification-panel input[type=time] { color:var(--ink); background:var(--page); border-color:var(--line); }
+  #notification-status { color:var(--muted); line-height:1.5; }
+  @media(min-width:850px) { #header-layout { padding-left:20px;padding-right:20px; } }
+  @media(max-width:849px) {
+    #header-layout { grid-template-columns:1fr; gap:6px; padding-top:9px; }
+    #header-mascot-trigger { grid-row:1;grid-column:1; }
+    #header-actions { grid-row:2;grid-column:1;justify-content:flex-start; width:100%; gap:5px; flex-wrap:wrap; }
+    #nav-tabs { grid-row:3;grid-column:1; }
+    #header-actions button,.header-notification-button { min-height:32px;padding:5px 7px; font-size:11px; }
+    #header-actions .header-notification-button span { display:none; }
+    #header-actions .header-notification-button i { font-size:15px; }
+    #nav-tabs .nav-btn { padding:9px 8px; font-size:12px; }
+    #beaty-banner { display:grid;grid-template-columns:49px 1fr;gap:9px;align-items:start; }
+    #beaty-banner #banner-beaty-avatar { width:46px;height:46px; }
+    #beaty-banner > div:nth-child(2) { text-align:left; min-width:0; }
+    #beaty-banner > div:nth-child(2) > div:first-child { justify-content:flex-start; }
+    #beaty-banner > div:last-child { grid-column:1/-1;display:flex;flex-direction:row;justify-content:space-between; border-top:1px solid var(--line); padding-top:8px; }
+    #beaty-banner > div:last-child > div { text-align:left; }
+    main { padding-left:12px!important; padding-right:12px!important; padding-top:12px!important; }
+  }
+  @media(max-width:390px) { #header-mascot-trigger h1 {font-size:18px;} .season-label{font-size:9px;} #header-actions button{padding:5px 6px;} }
+  @media(prefers-reduced-motion:reduce) { .animate-float,.animate-heartbeat { animation:none!important; } }
+</style>
+
+
+<script>
+  function easterSunday(year) {
+    // Gregorian computus (Meeus/Jones/Butcher).
+    const a=year%19,b=Math.floor(year/100),c=year%100,d=Math.floor(b/4),e=b%4;
+    const f=Math.floor((b+8)/25),g=Math.floor((b-f+1)/3),h=(19*a+b-d-g+15)%30;
+    const i=Math.floor(c/4),k=c%4,l=(32+2*e+2*i-h-k)%7,m=Math.floor((a+11*h+22*l)/451);
+    const value=h+l-7*m+114;
+    return new Date(year,Math.floor(value/31)-1,value%31+1,12);
+  }
+  function nthWeekday(year,month,weekday,n) {
+    const date=new Date(year,month,1,12);
+    date.setDate(1+(weekday-date.getDay()+7)%7+(n-1)*7);
+    return date;
+  }
+  function seasonForDate(date) {
+    const y=date.getFullYear(), day=new Date(y,date.getMonth(),date.getDate(),12);
+    const from=(month,d)=>new Date(y,month-1,d,12);
+    const easter=easterSunday(y), labor=nthWeekday(y,8,1,1), thanksgiving=nthWeekday(y,10,4,4);
+    if(day<from(1,7))return 'new-year';
+    if(day<from(2,1))return 'normal';
+    if(day<from(2,15))return 'valentine';
+    if(day<from(3,17))return 'st-patrick';
+    if(day<=easter)return 'easter';
+    if(day<from(6,15))return 'normal';
+    if(day<from(7,5))return 'independence';
+    if(day<labor)return 'normal';
+    if(day<from(11,1))return 'halloween';
+    if(day<thanksgiving)return 'thanksgiving';
+    return 'christmas';
+  }
+  const SEASON_LABELS = {'new-year':'New Year','normal':'','valentine':'Valentine’s Day','st-patrick':'St. Patrick’s Day','easter':'Easter','independence':'Independence Day','halloween':'Halloween','thanksgiving':'Thanksgiving','christmas':'Christmas'};
+  function seasonalBeatyAccessory() {
+    const accessories={
+      'new-year':'<path d="M38 17 49 0 61 17Z" fill="#c69e42" stroke="#7c5c24" stroke-width="1.5"/><path d="M42 12 56 8" stroke="#fff5d1" stroke-width="2"/><circle cx="49" cy="2" r="3" fill="#f1d885"/><path d="M22 7v8M18 11h8M78 7v8M74 11h8" stroke="#c69e42" stroke-width="2" stroke-linecap="round"/>',
+      'valentine':'<path d="M18 11C9 3 3 14 19 25 35 14 29 3 18 11Z" fill="#b92d5f"/><path d="M79 4C73-1 68 6 79 14 90 6 85-1 79 4Z" fill="#d77a98"/>',
+      'st-patrick':'<path d="M36 3h28l4 17H32Z" fill="#2c7547" stroke="#174a2b" stroke-width="1.5"/><path d="M33 14h34v6H33Z" fill="#153c2a"/><rect x="46" y="13" width="8" height="7" rx="1" fill="#d6aa49"/><path d="M26 20h48" stroke="#225b39" stroke-width="5" stroke-linecap="round"/>',
+      'easter':'<ellipse cx="35" cy="8" rx="8" ry="15" transform="rotate(-16 35 8)" fill="#e5d9f2" stroke="#aa8cc4" stroke-width="1.5"/><ellipse cx="35" cy="7" rx="3" ry="10" transform="rotate(-16 35 7)" fill="#efb8cf"/><ellipse cx="65" cy="8" rx="8" ry="15" transform="rotate(16 65 8)" fill="#e5d9f2" stroke="#aa8cc4" stroke-width="1.5"/><ellipse cx="65" cy="7" rx="3" ry="10" transform="rotate(16 65 7)" fill="#efb8cf"/>',
+      'independence':'<rect x="36" y="0" width="28" height="20" rx="2" fill="#fff"/><path d="M36 4h28M36 11h28" stroke="#bf3e45" stroke-width="5"/><path d="M36 17h28v6H36Z" fill="#284f83"/><path d="M50 17l1.2 2.3 2.6.4-1.9 1.8.4 2.5-2.3-1.2-2.3 1.2.4-2.5-1.9-1.8 2.6-.4Z" fill="#fff"/><path d="M28 24h44" stroke="#284f83" stroke-width="4" stroke-linecap="round"/>',
+      'halloween':'<path d="M50 1 66 20H34Z" fill="#493351" stroke="#34233c" stroke-width="1.5"/><path d="M38 15h24l4 5H34Z" fill="#d57c39"/><path d="M26 23h48" stroke="#493351" stroke-width="5" stroke-linecap="round"/><rect x="48" y="16" width="6" height="5" rx="1" fill="#ffce6a"/>',
+      'thanksgiving':'<path d="M29 9 36 18 43 9 40 24 27 23 18 12 26 15Z" fill="#be7133" stroke="#92552d" stroke-width="1.4"/><path d="m72 7-6 11-7-9 2 15 13-1 9-11-9 3Z" fill="#c48b42" stroke="#92552d" stroke-width="1.4"/>',
+      'christmas':'<path d="M31 20Q34-5 57 2L73 17 57 18 53 10 65 22Z" fill="#c43c49" stroke="#9a2635" stroke-width="1.6"/><path d="M28 20Q50 13 69 22" fill="none" stroke="#fffdf6" stroke-width="7" stroke-linecap="round"/><circle cx="74" cy="17" r="5" fill="#fffdf6" stroke="#cbd5d1" stroke-width="1"/>'
+    };
+    return accessories[seasonForDate(new Date())]||'';
+  }
+  function applySeasonalTheme() {
+    const season=seasonForDate(new Date()), previous=document.documentElement.dataset.season;
+    document.documentElement.dataset.season=season;
+    const label=document.getElementById('season-label');
+    if(label){label.textContent=SEASON_LABELS[season];label.hidden=season==='normal';}
+    const meta=document.querySelector('meta[name="theme-color"]');
+    if(meta)meta.content=getComputedStyle(document.documentElement).getPropertyValue('--surface').trim()||'#ffffff';
+    if(previous&&previous!==season&&typeof renderBeatyMascotUI==='function'){
+      renderBeatyMascotUI();
+      const avatar=document.getElementById('talk-beaty-avatar');
+      if(avatar&&typeof getBeatyAvatarSVG==='function')avatar.innerHTML=getBeatyAvatarSVG('w-16 h-16','happy');
+    }
+  }
+  document.documentElement.dataset.season=seasonForDate(new Date());
+  document.addEventListener('DOMContentLoaded',()=>{
+    applySeasonalTheme();
+    const menu=document.getElementById('notification-settings');
+    document.addEventListener('click',e=>{if(menu?.open&&!menu.contains(e.target))menu.open=false;});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&menu?.open){menu.open=false;menu.querySelector('summary')?.focus();}});
+    document.addEventListener('visibilitychange',()=>{if(!document.hidden)applySeasonalTheme();});
+    setInterval(applySeasonalTheme,60000);
+  });
+</script>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col pb-20">
 
@@ -158,8 +330,8 @@
   </div>
 
   <!-- Header / Navigation Bar -->
-  <header class="bg-white/95 backdrop-blur-md border-b border-slate-200 sticky top-0 z-40 shadow-sm">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+  <header id="app-header" class="sticky top-0 z-40">
+    <div id="header-layout" class="max-w-7xl mx-auto px-4">
       
       <!-- Logo, Dynamic Liquid Heart Mascot & Level Indicator -->
       <div class="flex items-center gap-3 cursor-pointer group" id="header-mascot-trigger" title="Click Beaty to interact!">
@@ -169,6 +341,7 @@
             <h1 class="font-extrabold text-xl tracking-tight text-slate-900">
               Good Habits
             </h1>
+            <span id="season-label" class="season-label" hidden></span>
             <span id="header-heart-pill" class="text-[10px] bg-rose-100 text-rose-700 font-extrabold px-2 py-0.5 rounded-md border border-rose-200 flex items-center gap-1">
               ❤️ 0%
             </span>
@@ -187,38 +360,39 @@
       <!-- Navigation Tabs (Main Tabs Only - Banks are in Footer) -->
       <nav class="flex items-center gap-1 overflow-x-auto py-1 max-w-full text-sm font-semibold text-slate-600" id="nav-tabs">
         <button id="btn-dashboard" class="nav-btn active flex items-center gap-2 px-3 py-2 rounded-xl bg-indigo-50 text-indigo-600 font-bold transition">
-          <span class="text-base">🏠</span> Overview
+          <i class="fa-solid fa-house" aria-hidden="true"></i> Overview
         </button>
         <button id="btn-todo" class="nav-btn flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100 hover:text-slate-900 transition">
-          <span class="text-base">✅</span> To-Do
+          <i class="fa-solid fa-list-check" aria-hidden="true"></i> To-Do
         </button>
         <button id="btn-wellness" class="nav-btn flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100 hover:text-slate-900 transition">
-          <span class="text-base">💧</span> Wellness
+          <i class="fa-solid fa-droplet" aria-hidden="true"></i> Wellness
         </button>
         <button id="btn-finance" class="nav-btn flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100 hover:text-slate-900 transition">
-          <span class="text-base">💰</span> Finance
+          <i class="fa-solid fa-wallet" aria-hidden="true"></i> Finance
         </button>
         <button id="btn-food" class="nav-btn flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100 hover:text-slate-900 transition">
-          <span class="text-base">🥗</span> Nutrition
+          <i class="fa-solid fa-utensils" aria-hidden="true"></i> Nutrition
         </button>
         <button id="btn-exercise" class="nav-btn flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100 hover:text-slate-900 transition">
-          <span class="text-base">🏋️</span> Exercise
+          <i class="fa-solid fa-dumbbell" aria-hidden="true"></i> Exercise
         </button>
         <button id="btn-screentime" class="nav-btn flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100 hover:text-slate-900 transition">
-          <span class="text-base">📱</span> Screen Time
+          <i class="fa-solid fa-mobile-screen" aria-hidden="true"></i> Screen Time
         </button>
         <button id="btn-travel" class="nav-btn flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100 hover:text-slate-900 transition">
-          <span class="text-base">✈️</span> Travel
+          <i class="fa-solid fa-plane" aria-hidden="true"></i> Travel
         </button>
-        <button id="btn-beaty-chat" class="nav-btn flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100 transition whitespace-nowrap">❤️ Talk to Beaty</button>
+        <button id="btn-beaty-chat" class="nav-btn flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100 transition whitespace-nowrap"><i class="fa-solid fa-heart" aria-hidden="true"></i> Talk to Beaty</button>
         <button id="btn-badges" class="nav-btn flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-slate-100 hover:text-slate-900 transition">
-          <span class="text-base">🏆</span> Badges
+          <i class="fa-solid fa-trophy" aria-hidden="true"></i> Badges
         </button>
       </nav>
 
       <!-- Right Header Actions -->
-      <div class="flex items-center gap-2">
+      <div id="header-actions" class="flex items-center gap-2">
         <div id="auth-container"></div>
+        <details id="notification-settings" class="notification-menu"><summary aria-label="Notifications" title="Beaty reminders" class="header-notification-button"><i class="fa-regular fa-bell" aria-hidden="true"></i><span>Reminders</span></summary><div class="notification-panel space-y-4"><div class="flex items-center justify-between"><h2 class="text-base font-bold">Beaty reminders</h2><button type="button" onclick="document.getElementById('notification-settings').open=false" class="notification-close" aria-label="Close reminders">×</button></div><p id="notification-status" role="status" class="text-sm text-slate-600">Checking notification support…</p><div id="notification-options" class="space-y-3"><label class="flex items-center justify-between gap-3 text-sm font-semibold"><span><input type="checkbox" id="notify-sleep" checked class="accent-indigo-600 mr-2"> Log last night's sleep</span><span class="text-xs text-slate-500">Wake-up goal</span></label><label class="flex items-center justify-between gap-3 text-sm font-semibold"><span><input type="checkbox" id="notify-water" checked class="accent-indigo-600 mr-2"> Hydration reminder</span><input type="time" id="notify-water-time" value="12:00" aria-label="Hydration reminder time" class="border rounded-lg p-1.5"></label><label class="flex items-center justify-between gap-3 text-sm font-semibold"><span><input type="checkbox" id="notify-calories" checked class="accent-indigo-600 mr-2"> Calories remaining</span><input type="time" id="notify-calories-time" value="15:00" aria-label="Calories reminder time" class="border rounded-lg p-1.5"></label><label class="flex items-center justify-between gap-3 text-sm font-semibold"><span><input type="checkbox" id="notify-evening" checked class="accent-indigo-600 mr-2"> Evening heart and habit check-in</span><input type="time" id="notify-evening-time" value="20:00" aria-label="Evening reminder time" class="border rounded-lg p-1.5"></label><p class="text-xs text-slate-500">Times use your current time zone, with delivery usually within about 10–20 minutes. Beaty skips protected holidays and vacation days.</p></div><div class="flex flex-wrap gap-2"><button type="button" id="notify-enable" disabled class="bg-indigo-600 text-white rounded-xl px-4 py-2 font-bold text-sm disabled:opacity-50">Enable notifications</button><button type="button" id="notify-save" disabled class="border border-indigo-200 text-indigo-700 rounded-xl px-4 py-2 font-bold text-sm disabled:opacity-50">Save preferences</button><button type="button" id="notify-test" disabled class="border border-indigo-200 text-indigo-700 rounded-xl px-4 py-2 font-bold text-sm disabled:opacity-50">Send test</button><button type="button" id="notify-disable" disabled class="border rounded-xl px-4 py-2 font-bold text-sm disabled:opacity-50">Turn off</button></div></div></details>
         <button id="btn-install-app" onclick="openInstallAppModal()" title="Add Good Habits to Phone Home Screen" class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-extrabold px-3 py-2 rounded-xl border border-emerald-200 transition flex items-center gap-1.5 shadow-xs">
           <span>📲</span> <span class="hidden sm:inline">Install App</span>
         </button>
@@ -237,7 +411,7 @@
   </header>
 
   <!-- XP Progress Bar Banner -->
-  <div class="w-full bg-slate-200/60 border-b border-slate-200 px-4 py-1.5">
+  <div id="xp-strip" class="w-full px-4 py-1.5">
     <div class="max-w-7xl mx-auto flex items-center gap-3">
       <div class="w-full bg-slate-300/70 h-2.5 rounded-full overflow-hidden border border-slate-300">
         <div id="xp-bar" class="bg-gradient-to-r from-indigo-500 via-sky-500 to-emerald-500 h-full w-0 transition-all duration-500"></div>
@@ -250,7 +424,7 @@
   <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full space-y-6">
 
     <!-- BEATY LIVE INTERACTIVE COACH & HEART FILL STREAK BANNER -->
-    <div id="beaty-banner" class="bg-white border-2 border-slate-200 rounded-2xl p-4 shadow-sm flex flex-col sm:flex-row items-center gap-4 transition-all">
+    <div id="beaty-banner" class="bg-white border border-slate-200 rounded-2xl p-4 flex flex-col sm:flex-row items-center gap-4 transition-all">
       <div id="banner-beaty-avatar" class="relative w-16 h-16 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-center shrink-0 cursor-pointer hover:scale-105 transition shadow-xs" onclick="pokeBeaty()" title="Tap Beaty for motivation & tips!"></div>
       
       <div class="flex-1 text-center sm:text-left">
@@ -280,7 +454,7 @@
           <span class="text-[10px] font-bold text-slate-400 uppercase block">Daily Calorie Gauge</span>
           <span id="beaty-cal-pill" class="text-xs font-black text-indigo-600">0 / 2,000 kcal</span>
         </div>
-        <button onclick="pokeBeaty()" class="text-[11px] font-extrabold bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 px-3 py-1.5 rounded-xl transition flex items-center gap-1">
+        <button onclick="switchTab('beaty-chat')" class="text-[11px] font-extrabold bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 px-3 py-1.5 rounded-xl transition flex items-center gap-1">
           <span>💬</span> Talk to Beaty
         </button>
       </div>
@@ -289,7 +463,6 @@
     <!-- 1. OVERVIEW DASHBOARD TAB -->
     <section id="dashboard" class="tab-content active space-y-6">
       <div class="bg-white border border-slate-200 rounded-2xl p-5 space-y-4"><h2 class="font-extrabold text-lg">🔥 Daily logging streaks</h2><p class="text-xs text-slate-500">Log each habit daily to build its own streak.</p><div id="habit-streak-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-3"></div><details class="border-t pt-3"><summary class="font-bold cursor-pointer text-indigo-600">Streak protection settings</summary><div class="space-y-3 mt-3"><label class="flex gap-2 items-center text-sm"><input type="checkbox" id="holiday-protection" onchange="changeProtection('holiday',this.checked)"> Protect U.S. federal holidays (actual and observed)</label><label class="flex gap-2 items-center text-sm"><input type="checkbox" id="vacation-protection" onchange="changeProtection('vacation',this.checked)"> Enable vacation days</label><p class="text-xs text-slate-500">Protection preserves streaks without adding a day. Settings apply from today forward; past protected days remain protected.</p><div class="flex flex-wrap gap-2 items-center"><input type="date" id="vacation-date" class="border rounded-lg p-2 text-sm"><button onclick="addVacationDay()" class="bg-indigo-600 text-white rounded-lg px-3 py-2 text-sm font-bold">Protect date</button><span id="vacation-remaining" class="text-xs font-bold"></span></div><div id="vacation-list" class="flex flex-wrap gap-2"></div><div id="protection-status" class="text-xs text-indigo-600 font-bold"></div></div></details></div>
-      <details id="notification-settings" class="bg-white border border-slate-200 rounded-2xl p-5 shadow-sm"><summary class="cursor-pointer font-extrabold text-lg">🔔 Beaty reminders</summary><div class="space-y-4 pt-4"><p id="notification-status" role="status" class="text-sm text-slate-600">Checking notification support…</p><div id="notification-options" class="space-y-3"><label class="flex items-center justify-between gap-3 text-sm font-semibold"><span><input type="checkbox" id="notify-sleep" checked class="accent-indigo-600 mr-2"> Log last night's sleep</span><span class="text-xs text-slate-500">Wake-up goal</span></label><label class="flex items-center justify-between gap-3 text-sm font-semibold"><span><input type="checkbox" id="notify-water" checked class="accent-indigo-600 mr-2"> Hydration reminder</span><input type="time" id="notify-water-time" value="12:00" aria-label="Hydration reminder time" class="border rounded-lg p-1.5"></label><label class="flex items-center justify-between gap-3 text-sm font-semibold"><span><input type="checkbox" id="notify-calories" checked class="accent-indigo-600 mr-2"> Calories remaining</span><input type="time" id="notify-calories-time" value="15:00" aria-label="Calories reminder time" class="border rounded-lg p-1.5"></label><label class="flex items-center justify-between gap-3 text-sm font-semibold"><span><input type="checkbox" id="notify-evening" checked class="accent-indigo-600 mr-2"> Evening heart and habit check-in</span><input type="time" id="notify-evening-time" value="20:00" aria-label="Evening reminder time" class="border rounded-lg p-1.5"></label><p class="text-xs text-slate-500">Times use your current time zone, with delivery usually within about 10–20 minutes. Beaty skips protected holidays and vacation days.</p></div><div class="flex flex-wrap gap-2"><button type="button" id="notify-enable" disabled class="bg-indigo-600 text-white rounded-xl px-4 py-2 font-bold text-sm disabled:opacity-50">Enable notifications</button><button type="button" id="notify-save" disabled class="border border-indigo-200 text-indigo-700 rounded-xl px-4 py-2 font-bold text-sm disabled:opacity-50">Save preferences</button><button type="button" id="notify-test" disabled class="border border-indigo-200 text-indigo-700 rounded-xl px-4 py-2 font-bold text-sm disabled:opacity-50">Send test</button><button type="button" id="notify-disable" disabled class="border rounded-xl px-4 py-2 font-bold text-sm disabled:opacity-50">Turn off</button></div></div></details>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm flex items-center justify-between">
           <div>
@@ -1781,7 +1954,7 @@
           <div class="flex items-center gap-2">
             <span class="text-xs font-bold text-slate-600 hidden md:inline">${currentUser.email}</span>
             <button onclick="logoutUser()" class="text-xs bg-slate-100 hover:bg-rose-50 hover:text-rose-600 text-slate-700 font-bold px-3 py-1.5 rounded-xl border border-slate-200 transition flex items-center gap-1.5 shadow-sm">
-              <span>🚪</span> Log Out
+              <i class="fa-solid fa-arrow-right-from-bracket" aria-hidden="true"></i> Log Out
             </button>
           </div>
         `;
@@ -2534,6 +2707,7 @@
           </g>
           <path d="M50 88.5L43.8 82.8C22.6 63.6 8.5 50.8 8.5 35C8.5 22.2 18.5 12.2 31.3 12.2C38.5 12.2 45.4 15.6 50 20.8C54.6 15.6 61.5 12.2 68.7 12.2C81.5 12.2 91.5 22.2 91.5 35C91.5 50.8 77.4 63.6 56.2 82.8L50 88.5Z" fill="none" stroke="${fillPct >= 100 ? '#be123c' : '#f43f5e'}" stroke-width="3"/>
           ${faceMarkup}
+          ${fillPct >= 100 ? "" : seasonalBeatyAccessory()}
         </svg>
       `;
     }
