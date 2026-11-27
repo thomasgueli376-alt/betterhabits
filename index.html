@@ -5264,7 +5264,7 @@ Return ONLY valid JSON:
           const val = cats[b.key] || 0;
           if (val <= 0) return '';
           return `<span class="text-[10px] ${b.color} font-bold px-2 py-0.5 rounded-md border flex items-center gap-1"><span>${b.icon}</span> ${b.label}: ${val}m</span>`;
-        }, 'st-history', screenReflectionDay, 'div');
+        }).join('');
 
         return `
           <div class="p-3.5 bg-slate-50 rounded-2xl border border-slate-200 text-xs space-y-2">
@@ -5275,7 +5275,7 @@ Return ONLY valid JSON:
             ${pills ? `<div class="flex flex-wrap items-center gap-1.5 pt-1">${pills}</div>` : ''}
           </div>
         `;
-      }).join('');
+      }, 'st-history', screenReflectionDay, 'div');
 
       // Travel UI (Pre-filled startingCount + checked items)
       if (!state.travelBuckets) state.travelBuckets = [];
