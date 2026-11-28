@@ -370,6 +370,11 @@ footer .nav-btn.active{background:var(--festive-primary)!important;color:white!i
 .category-streak-chip{display:inline-flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--season-border);border-radius:999px;padding:7px 12px;font-size:12px;font-weight:700;color:var(--ink);box-shadow:0 2px 0 var(--season-border)}
 .category-streak-chip strong{color:var(--festive-primary);font-weight:850}
 </style>
+<style>
+#completed-todos summary::-webkit-details-marker{display:none}
+#completed-todos .completed-todo-chevron{transition:transform .18s ease}
+#completed-todos[open] .completed-todo-chevron{transform:rotate(180deg)}
+</style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col pb-20">
 
@@ -692,7 +697,6 @@ footer .nav-btn.active{background:var(--festive-primary)!important;color:white!i
             </h2>
             <p class="text-xs text-slate-500 font-medium">Complete tasks to earn XP and <strong class="text-rose-500">+20% Heart Fill</strong>! Recurring tasks reset at midnight local time.</p>
           </div>
-          <span class="text-xs font-bold bg-indigo-50 text-indigo-600 border border-indigo-200 px-3 py-1 rounded-full" id="todo-count">0 Completed</span>
         </div>
 
         <form id="form-todo" class="space-y-3 mb-6">
@@ -732,6 +736,10 @@ footer .nav-btn.active{background:var(--festive-primary)!important;color:white!i
         </form>
 
         <ul id="todo-list" class="space-y-2"></ul>
+        <details id="completed-todos" class="mt-4 rounded-xl border border-slate-200 bg-slate-50 p-3">
+          <summary class="cursor-pointer font-extrabold text-sm text-indigo-600 flex items-center gap-2 list-none"><span aria-hidden="true" class="fa-solid fa-chevron-down completed-todo-chevron text-xs"></span><span id="todo-count">0 Completed</span></summary>
+          <ul id="completed-todo-list" class="space-y-2 mt-3"></ul>
+        </details>
       </div>
     </section>
 
@@ -5129,6 +5137,12 @@ Return ONLY valid JSON:
     }
 
     // --- TO-DO LIST (RECURRING MIDNIGHT AWARE) ---
+    function splitTodosForDisplay(todos) {
+      const active = todos.filter(task => !task.completed).sort((a,b) => Number(b.id)-Number(a.id));
+      const completed = todos.filter(task => task.completed).sort((a,b) => Number(b.completedAt || b.id)-Number(a.completedAt || a.id));
+      return { active, completed };
+    }
+
     function addTodoTask(e) {
       e.preventDefault();
       const input = document.getElementById('todo-input');
@@ -5556,13 +5570,16 @@ Return ONLY valid JSON:
       });
 
       // To-Do List
-      document.getElementById('todo-list').innerHTML = state.todos.map(t => `
+      const renderTodo = t => `
         <li class="flex items-center justify-between p-3.5 bg-slate-50 hover:bg-slate-100/80 rounded-xl border border-slate-200 transition">
           <div class="flex items-center gap-3"><input type="checkbox" ${t.completed ? 'checked' : ''} onchange="toggleTodo(${t.id})" class="w-4 h-4 accent-indigo-600 rounded cursor-pointer"><span class="${t.completed ? 'line-through text-slate-400' : 'text-slate-800 font-medium'}">${t.text}</span><span class="text-[10px] bg-indigo-50 text-indigo-600 font-bold px-2 py-0.5 rounded-md border border-indigo-200">${t.category || 'Task'} (+${t.xp || 10} XP)</span>${t.isRecurring ? `<span class="text-[10px] bg-purple-50 text-purple-600 font-bold px-2 py-0.5 rounded-md border border-purple-200 flex items-center gap-1"><i class="fa-solid fa-rotate text-[8px]"></i> ${t.recurrence}</span>` : ''}</div>
           <button onclick="deleteTodo(${t.id})" class="text-xs text-rose-500 hover:text-rose-700 p-1"><i class="fa-solid fa-trash"></i></button>
         </li>
-      `).join('');
-      document.getElementById('todo-count').textContent = `${state.todos.filter(t => t.completed).length} Completed`;
+      `;
+      const { active, completed } = splitTodosForDisplay(state.todos);
+      document.getElementById('todo-list').innerHTML = active.length ? active.map(renderTodo).join('') : '<li class="text-sm text-slate-500 px-2 py-3">All caught up! 🎉</li>';
+      document.getElementById('completed-todo-list').innerHTML = completed.length ? completed.map(renderTodo).join('') : '<li class="text-xs text-slate-500 px-2 py-2">No completed tasks yet.</li>';
+      document.getElementById('todo-count').textContent = `${completed.length} Completed`;
 
       // Percentage-Based Macro & Meal Log Render
       const totalCals = state.foodLogs.reduce((s, f) => s + f.cals, 0);
