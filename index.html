@@ -11,9 +11,9 @@
   <meta name="apple-mobile-web-app-title" content="Good Habits">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="application-name" content="Good Habits">
-  <link id="pwa-apple-icon" rel="apple-touch-icon" href="">
-  <link id="pwa-favicon" rel="icon" type="image/png" href="">
-  <link id="pwa-manifest-link" rel="manifest" href="">
+  <link id="pwa-apple-icon" rel="apple-touch-icon" sizes="180x180" href="/api/seasonal-icon?season=normal&amp;size=180">
+  <link id="pwa-favicon" rel="icon" type="image/png" href="/api/seasonal-icon?season=normal&amp;size=192">
+  <link id="pwa-manifest-link" rel="manifest" href="/api/seasonal-icon?season=normal&amp;manifest=1">
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Canvas Confetti CDN -->
@@ -259,9 +259,16 @@
     };
     return accessories[seasonForDate(new Date())]||'';
   }
+  function refreshSeasonalAppIcon(season) {
+    const root='/api/seasonal-icon?season='+encodeURIComponent(season);
+    document.getElementById('pwa-apple-icon').href=root+'&size=180';
+    document.getElementById('pwa-favicon').href=root+'&size=192';
+    document.getElementById('pwa-manifest-link').href=root+'&manifest=1';
+  }
   function applySeasonalTheme() {
     const season=seasonForDate(new Date()), previous=document.documentElement.dataset.season;
     document.documentElement.dataset.season=season;
+    if(previous!==season)refreshSeasonalAppIcon(season);
     const label=document.getElementById('season-label');
     if(label){label.textContent=({'new-year':'🎉 ','valentine':'💘 ','st-patrick':'☘️ ','easter':'🐣 ','independence':'🇺🇸 ','halloween':'🎃 ','thanksgiving':'🍂 ','christmas':'🎄 '}[season]||'')+SEASON_LABELS[season];label.hidden=season==='normal';}
     const meta=document.querySelector('meta[name="theme-color"]');
@@ -273,6 +280,7 @@
     }
   }
   document.documentElement.dataset.season=seasonForDate(new Date());
+  refreshSeasonalAppIcon(document.documentElement.dataset.season);
   document.addEventListener('DOMContentLoaded',()=>{
     applySeasonalTheme();
     const menu=document.getElementById('notification-settings');
@@ -357,6 +365,10 @@ footer .nav-btn.active{background:var(--festive-primary)!important;color:white!i
 :root[data-season="christmas"] footer .nav-btn{background:#e7f5e9!important}
 @media(min-width:1050px){:root[data-season="christmas"] #beaty-banner::after{content:"";pointer-events:none;width:105px;height:78px;align-self:center;flex-shrink:0;background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22130%22%20height%3D%2296%22%20viewBox%3D%220%200%20130%2096%22%3E%3Cpath%20d%3D%22M15%2088H123%22%20stroke%3D%22%23d1e7d8%22%20stroke-width%3D%229%22%20stroke-linecap%3D%22round%22%2F%3E%3Cpath%20d%3D%22M70%2014%2042%2052h13L34%2072h25v13h19V72h25L82%2052h13Z%22%20fill%3D%22%2321804d%22%2F%3E%3Cpath%20d%3D%22M70%2027%2050%2054h13L45%2069h51L78%2054h12Z%22%20fill%3D%22%232ea963%22%2F%3E%3Cpath%20d%3D%22M70%209l3%207%208%201-6%205%202%208-7-4-7%204%202-8-6-5%208-1Z%22%20fill%3D%22%23f7c850%22%2F%3E%3Cpath%20d%3D%22M49%2057q20%2012%2042%201M58%2043q10%208%2022%202%22%20fill%3D%22none%22%20stroke%3D%22%23f4cf80%22%20stroke-width%3D%222.5%22%20stroke-linecap%3D%22round%22%2F%3E%3Cg%20fill%3D%22%23e83b4c%22%3E%3Ccircle%20cx%3D%2260%22%20cy%3D%2249%22%20r%3D%223.5%22%2F%3E%3Ccircle%20cx%3D%2281%22%20cy%3D%2264%22%20r%3D%223.5%22%2F%3E%3Ccircle%20cx%3D%2257%22%20cy%3D%2270%22%20r%3D%223.5%22%2F%3E%3C%2Fg%3E%3Cg%20fill%3D%22%23f8d66c%22%3E%3Ccircle%20cx%3D%2276%22%20cy%3D%2249%22%20r%3D%223.5%22%2F%3E%3Ccircle%20cx%3D%2271%22%20cy%3D%2271%22%20r%3D%223.5%22%2F%3E%3C%2Fg%3E%3Crect%20x%3D%2221%22%20y%3D%2271%22%20width%3D%2227%22%20height%3D%2215%22%20rx%3D%222%22%20fill%3D%22%23d83546%22%2F%3E%3Cpath%20d%3D%22M34%2071v15m-13-10h27%22%20stroke%3D%22%23f7cc64%22%20stroke-width%3D%224%22%2F%3E%3Crect%20x%3D%2295%22%20y%3D%2273%22%20width%3D%2223%22%20height%3D%2214%22%20rx%3D%222%22%20fill%3D%22%23e5b849%22%2F%3E%3Cpath%20d%3D%22M107%2073v14m-12-10h23%22%20stroke%3D%22%23b42c3c%22%20stroke-width%3D%223%22%2F%3E%3C%2Fsvg%3E") center/contain no-repeat}}
 @media(max-width:849px){#header-mascot-trigger h1{font-size:20px}#header-actions button,.header-notification-button{border-radius:10px;padding:6px 9px;min-height:34px}#nav-tabs .nav-btn{padding:8px 11px}#beaty-banner{grid-template-columns:55px 1fr;padding:14px!important;gap:11px}#beaty-banner #banner-beaty-avatar{width:53px;height:53px}#banner-beaty-avatar svg{width:45px;height:45px}}
+</style>
+<style>
+.category-streak-chip{display:inline-flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--season-border);border-radius:999px;padding:7px 12px;font-size:12px;font-weight:700;color:var(--ink);box-shadow:0 2px 0 var(--season-border)}
+.category-streak-chip strong{color:var(--festive-primary);font-weight:850}
 </style>
 </head>
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col pb-20">
@@ -499,6 +511,8 @@ footer .nav-btn.active{background:var(--festive-primary)!important;color:white!i
   <!-- Main Content Container -->
   <main class="max-w-7xl mx-auto px-4 py-6 flex-1 w-full space-y-6">
 
+    <!-- 1. OVERVIEW DASHBOARD TAB -->
+    <section id="dashboard" class="tab-content active space-y-6">
     <!-- BEATY LIVE INTERACTIVE COACH & HEART FILL STREAK BANNER -->
     <div id="beaty-banner" class="bg-white border border-slate-200 rounded-2xl p-4 flex flex-col sm:flex-row items-center gap-4 transition-all">
       <div id="banner-beaty-avatar" class="relative w-16 h-16 bg-slate-50 border border-slate-200 rounded-2xl flex items-center justify-center shrink-0 cursor-pointer hover:scale-105 transition shadow-xs" onclick="pokeBeaty()" title="Tap Beaty for motivation & tips!"></div>
@@ -536,9 +550,8 @@ footer .nav-btn.active{background:var(--festive-primary)!important;color:white!i
       </div>
     </div>
 
-    <!-- 1. OVERVIEW DASHBOARD TAB -->
-    <section id="dashboard" class="tab-content active space-y-6">
-      <div class="bg-white border border-slate-200 rounded-2xl p-5 space-y-4"><h2 class="font-extrabold text-lg">🔥 Daily logging streaks</h2><p class="text-xs text-slate-500">Log each habit daily to build its own streak.</p><div id="habit-streak-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-3"></div><details class="border-t pt-3"><summary class="font-bold cursor-pointer text-indigo-600">Streak protection settings</summary><div class="space-y-3 mt-3"><label class="flex gap-2 items-center text-sm"><input type="checkbox" id="holiday-protection" onchange="changeProtection('holiday',this.checked)"> Protect U.S. federal holidays (actual and observed)</label><label class="flex gap-2 items-center text-sm"><input type="checkbox" id="vacation-protection" onchange="changeProtection('vacation',this.checked)"> Enable vacation days</label><p class="text-xs text-slate-500">Protection preserves streaks without adding a day. Settings apply from today forward; past protected days remain protected.</p><div class="flex flex-wrap gap-2 items-center"><input type="date" id="vacation-date" class="border rounded-lg p-2 text-sm"><button onclick="addVacationDay()" class="bg-indigo-600 text-white rounded-lg px-3 py-2 text-sm font-bold">Protect date</button><span id="vacation-remaining" class="text-xs font-bold"></span></div><div id="vacation-list" class="flex flex-wrap gap-2"></div><div id="protection-status" class="text-xs text-indigo-600 font-bold"></div></div></details></div>
+
+      <div class="bg-white border border-slate-200 rounded-2xl p-5 space-y-4"><details><summary class="font-bold cursor-pointer text-indigo-600">Streak protection settings</summary><div class="space-y-3 mt-3"><label class="flex gap-2 items-center text-sm"><input type="checkbox" id="holiday-protection" onchange="changeProtection('holiday',this.checked)"> Protect U.S. federal holidays (actual and observed)</label><label class="flex gap-2 items-center text-sm"><input type="checkbox" id="vacation-protection" onchange="changeProtection('vacation',this.checked)"> Enable vacation days</label><p class="text-xs text-slate-500">Protection preserves streaks without adding a day. Settings apply from today forward; past protected days remain protected.</p><div class="flex flex-wrap gap-2 items-center"><input type="date" id="vacation-date" class="border rounded-lg p-2 text-sm"><button onclick="addVacationDay()" class="bg-indigo-600 text-white rounded-lg px-3 py-2 text-sm font-bold">Protect date</button><span id="vacation-remaining" class="text-xs font-bold"></span></div><div id="vacation-list" class="flex flex-wrap gap-2"></div><div id="protection-status" class="text-xs text-indigo-600 font-bold"></div></div></details></div>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         <div class="bg-white border border-slate-200/80 p-5 rounded-2xl shadow-sm flex items-center justify-between">
           <div>
@@ -668,6 +681,7 @@ footer .nav-btn.active{background:var(--festive-primary)!important;color:white!i
 
     <!-- 2. TO-DO TAB -->
     <section id="todo" class="tab-content space-y-6">
+      <div class="category-streaks flex flex-wrap gap-2"><div class="category-streak-chip"><span aria-hidden="true">🔥</span><span>To-Do streak</span><strong id="streak-todo">0 days</strong></div></div>
       <div id="todo-lt-container" class="hidden"></div>
 
       <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
@@ -723,6 +737,7 @@ footer .nav-btn.active{background:var(--festive-primary)!important;color:white!i
 
     <!-- 3. WELLNESS TAB (Editable Water Rack & Sleep) -->
     <section id="wellness" class="tab-content space-y-6">
+      <div class="category-streaks flex flex-wrap gap-2"><div class="category-streak-chip"><span aria-hidden="true">🔥</span><span>Sleep streak</span><strong id="streak-sleep">0 days</strong></div><div class="category-streak-chip"><span aria-hidden="true">🔥</span><span>Hydration streak</span><strong id="streak-hydration">0 days</strong></div></div>
       <div id="wellness-lt-container" class="hidden"></div>
 
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -820,6 +835,8 @@ footer .nav-btn.active{background:var(--festive-primary)!important;color:white!i
 
     <!-- 4. PERSONAL FINANCE TAB -->
     <section id="finance" class="tab-content space-y-6">
+      <div class="category-streaks flex flex-wrap gap-2"><div class="category-streak-chip"><span aria-hidden="true">🔥</span><span>Finance streak</span><strong id="streak-finance">0 days</strong></div></div>
+      <div class="bg-white border border-slate-200 rounded-2xl p-4 space-y-2"><label for="no-transactions-today" class="flex items-start gap-3 cursor-pointer font-bold text-sm"><input type="checkbox" id="no-transactions-today" onchange="toggleNoTransactions(this.checked)" class="w-5 h-5 mt-0.5 shrink-0"> <span>I logged all my transactions today</span></label><p class="text-xs text-slate-500">Check this off once you’ve logged your income and expenses, or if you had none today. A no-transaction day counts toward your finance streak.</p><p id="no-transactions-status" class="text-xs font-bold text-indigo-600" aria-live="polite"></p></div>
       <div id="finance-lt-container" class="hidden"></div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -942,7 +959,7 @@ footer .nav-btn.active{background:var(--festive-primary)!important;color:white!i
               Open Expenses Bank →
             </button>
           </div>
-          <label class="flex items-center gap-2 text-sm font-semibold mb-3"><input type="checkbox" id="no-transactions-today" onchange="toggleNoTransactions(this.checked)"> I made no transactions today</label><p id="no-transactions-status" class="text-xs text-slate-500 mb-3"></p>
+          
           <form id="form-expense" class="space-y-3">
             <input type="text" id="exp-desc" placeholder="Expense description (e.g. Groceries, Rent, Uber)" required class="w-full bg-slate-50 border border-slate-200 px-3.5 py-2 rounded-xl text-slate-800 placeholder-slate-400 focus:outline-none focus:border-rose-500 text-sm">
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
@@ -969,6 +986,7 @@ footer .nav-btn.active{background:var(--festive-primary)!important;color:white!i
     <!-- 5. NUTRITION & MACROS TAB -->
     <section id="beaty-chat" class="tab-content space-y-6"><div class="bg-white border border-slate-200 rounded-2xl p-5 space-y-4"><div class="flex items-center gap-3"><div id="talk-beaty-avatar"></div><div><h2 class="text-xl font-black">Talk to Beaty</h2><p class="text-sm text-slate-500">Ask about calories, exercise, or your everyday habits. Answers are estimates.</p></div></div><div id="talk-beaty-messages" aria-live="polite" class="space-y-3 max-h-96 overflow-y-auto p-3 bg-slate-50 rounded-xl"></div><form id="talk-beaty-form" class="flex gap-2"><input id="talk-beaty-input" maxlength="1500" required placeholder="Ask Beaty a question…" class="flex-1 min-w-0 border rounded-xl p-3 text-sm"><button id="talk-beaty-send" class="bg-indigo-600 text-white rounded-xl px-4 font-bold">Send</button></form><button onclick="clearBeatyChat()" class="text-xs font-bold text-indigo-600">New conversation</button></div></section>
     <section id="food" class="tab-content space-y-6">
+      <div class="category-streaks flex flex-wrap gap-2"><div class="category-streak-chip"><span aria-hidden="true">🔥</span><span>Nutrition streak</span><strong id="streak-nutrition">0 days</strong></div><div class="category-streak-chip"><span aria-hidden="true">🔥</span><span>Weight streak</span><strong id="streak-weight">0 days</strong></div></div>
       <div id="food-lt-container" class="hidden"></div>
 
       <!-- END OF DAY FINISH EATING CARD -->
@@ -1158,6 +1176,7 @@ footer .nav-btn.active{background:var(--festive-primary)!important;color:white!i
 
     <!-- 6. EXERCISE TAB -->
     <section id="exercise" class="tab-content space-y-6">
+      <div class="category-streaks flex flex-wrap gap-2"><div class="category-streak-chip"><span aria-hidden="true">🔥</span><span>Exercise streak</span><strong id="streak-exercise">0 days</strong></div></div>
       <div id="exercise-lt-container" class="hidden"></div>
 
       <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
@@ -1217,6 +1236,7 @@ footer .nav-btn.active{background:var(--festive-primary)!important;color:white!i
 
     <!-- 7. SCREEN TIME TAB -->
     <section id="screentime" class="tab-content space-y-6">
+      <div class="category-streaks flex flex-wrap gap-2"><div class="category-streak-chip"><span aria-hidden="true">🔥</span><span>Screen Time streak</span><strong id="streak-screentime">0 days</strong></div></div>
       <div id="screentime-lt-container" class="hidden"></div>
 
       <div class="bg-white border border-slate-200/80 p-6 rounded-2xl shadow-sm">
@@ -1734,88 +1754,7 @@ footer .nav-btn.active{background:var(--festive-primary)!important;color:white!i
     let deferredInstallPrompt = null;
 
     function setupPWAAndHomeScreenIcon() {
-      try {
-        const canvas = document.createElement('canvas');
-        canvas.width = 512;
-        canvas.height = 512;
-        const ctx = canvas.getContext('2d');
-
-        const grad = ctx.createLinearGradient(0, 0, 512, 512);
-        grad.addColorStop(0, '#4f46e5');
-        grad.addColorStop(1, '#0f172a');
-        ctx.fillStyle = grad;
-        ctx.fillRect(0, 0, 512, 512);
-
-        ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
-        ctx.beginPath();
-        ctx.arc(256, 256, 195, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.save();
-        ctx.translate(76, 82);
-        ctx.scale(3.6, 3.6);
-        ctx.fillStyle = '#f43f5e';
-        ctx.beginPath();
-        ctx.moveTo(50, 88.5);
-        ctx.lineTo(43.8, 82.8);
-        ctx.bezierCurveTo(22.6, 63.6, 8.5, 50.8, 8.5, 35);
-        ctx.bezierCurveTo(8.5, 22.2, 18.5, 12.2, 31.3, 12.2);
-        ctx.bezierCurveTo(38.5, 12.2, 45.4, 15.6, 50, 20.8);
-        ctx.bezierCurveTo(54.6, 15.6, 61.5, 12.2, 68.7, 12.2);
-        ctx.bezierCurveTo(81.5, 12.2, 91.5, 22.2, 91.5, 35);
-        ctx.bezierCurveTo(91.5, 50.8, 77.4, 63.6, 56.2, 82.8);
-        ctx.closePath();
-        ctx.fill();
-
-        ctx.fillStyle = '#1e293b';
-        ctx.beginPath();
-        ctx.arc(36, 38, 4.5, 0, Math.PI * 2);
-        ctx.arc(64, 38, 4.5, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.fillStyle = '#ffffff';
-        ctx.beginPath();
-        ctx.arc(37.5, 36.5, 1.6, 0, Math.PI * 2);
-        ctx.arc(65.5, 36.5, 1.6, 0, Math.PI * 2);
-        ctx.fill();
-
-        ctx.strokeStyle = '#1e293b';
-        ctx.lineWidth = 3.2;
-        ctx.lineCap = 'round';
-        ctx.beginPath();
-        ctx.moveTo(41, 49);
-        ctx.quadraticCurveTo(50, 58, 59, 49);
-        ctx.stroke();
-        ctx.restore();
-
-        const iconDataUrl = canvas.toDataURL('image/png');
-        const appleLink = document.getElementById('pwa-apple-icon');
-        const favLink = document.getElementById('pwa-favicon');
-        if (appleLink) appleLink.href = iconDataUrl;
-        if (favLink) favLink.href = iconDataUrl;
-
-        const manifestObj = {
-          name: "Good Habits - Beaty Coach",
-          short_name: "Good Habits",
-          description: "Habit, Nutrition, Workout & Finance Tracker with Beaty Coach",
-          id: "/",
-          start_url: "/",
-          display: "standalone",
-          background_color: "#f8fafc",
-          theme_color: "#4f46e5",
-          orientation: "portrait-primary",
-          icons: [
-            { src: iconDataUrl, sizes: "192x192", type: "image/png", purpose: "any maskable" },
-            { src: iconDataUrl, sizes: "512x512", type: "image/png", purpose: "any maskable" }
-          ]
-        };
-
-        const manifestStr = encodeURIComponent(JSON.stringify(manifestObj));
-        const manifestLink = document.getElementById('pwa-manifest-link');
-        if (manifestLink) manifestLink.href = `data:application/manifest+json;charset=utf-8,${manifestStr}`;
-      } catch (e) {
-        console.warn("PWA setup skipped:", e);
-      }
+      refreshSeasonalAppIcon(seasonForDate(new Date()));
 
       window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
@@ -2185,7 +2124,6 @@ footer .nav-btn.active{background:var(--festive-primary)!important;color:white!i
       const day = localDay(new Date(state.lastActiveDate || new Date()));
       if (!day) return;
       state.noTransactionDays ||= [];
-      if ([...(state.expenseLogs||[]), ...(state.incomeLogs||[])].some(e=>logDay(e)===day)) state.noTransactionDays = state.noTransactionDays.filter(d=>d!==day);
       state.hydrationDays ||= [];
       state.taskDays ||= [];
       for (const [key, done] of [['hydrationDays',state.todayWater>0],['taskDays',(state.todos||[]).some(t=>t.completed && (t.completedDate===state.lastActiveDate || localDay(new Date(t.completedAt))===day))]]) {
@@ -2209,7 +2147,7 @@ footer .nav-btn.active{background:var(--festive-primary)!important;color:white!i
     function toggleNoTransactions(checked) {
       const today = localDay();
       state.noTransactionDays = (state.noTransactionDays||[]).filter(d=>d!==today);
-      if(checked && !state.expenseLogs.some(e=>logDay(e)===today) && !state.incomeLogs.some(e=>logDay(e)===today)) state.noTransactionDays.push(today);
+      if(checked) state.noTransactionDays.push(today);
       saveState();
     }
     function renderHabitStreaks() {
@@ -2218,16 +2156,20 @@ footer .nav-btn.active{background:var(--festive-primary)!important;color:white!i
       const nutrition = Object.entries(state.foodHistory||{}).filter(([d,logs])=>logs.length).map(([d])=>localDay(new Date(d)));
       if (state.foodLogs?.length) nutrition.push(localDay(new Date(state.lastActiveDate || new Date())));
       const groups = [
-        ['Expenses', [...tx,...(state.noTransactionDays||[])]], ['Nutrition',nutrition],
-        ['Exercise',(state.workouts||[]).map(logDay)], ['Sleep',(state.sleepLogs||[]).map(logDay)],
-        ['Screen Time',(state.screenTime||[]).map(logDay)], ['Hydration',state.hydrationDays||[]],
-        ['Weight',(state.weightLogs||[]).map(logDay)], ['To-Do',state.taskDays||[]]
+        ['finance', [...tx,...(state.noTransactionDays||[])]], ['nutrition',nutrition],
+        ['exercise',(state.workouts||[]).map(logDay)], ['sleep',(state.sleepLogs||[]).map(logDay)],
+        ['screentime',(state.screenTime||[]).map(logDay)], ['hydration',state.hydrationDays||[]],
+        ['weight',(state.weightLogs||[]).map(logDay)], ['todo',state.taskDays||[]]
       ];
-      document.getElementById('habit-streak-grid').innerHTML=groups.map(([name,days])=>'<div class="bg-slate-50 rounded-xl p-3 border"><p class="text-xs font-bold text-slate-500">'+name+'</p><p class="text-xl font-black text-amber-600">🔥 '+countHabitStreak(days)+'d</p></div>').join('');
+      for(const [key,days] of groups) {
+        const count=countHabitStreak(days);
+        document.getElementById('streak-'+key).textContent=count+' '+(count===1?'day':'days');
+      }
       const noTx = document.getElementById('no-transactions-today');
-      noTx.disabled = tx.includes(today);
-      noTx.checked = !noTx.disabled && (state.noTransactionDays||[]).includes(today);
-      document.getElementById('no-transactions-status').textContent = noTx.disabled ? 'Transaction logged today.' : noTx.checked ? 'Daily check-in recorded.' : '';
+      noTx.checked = (state.noTransactionDays||[]).includes(today);
+      document.getElementById('no-transactions-status').textContent = noTx.checked
+        ? '✓ Today’s finance check-in is complete.'
+        : tx.includes(today) ? 'Transactions logged today. Check off when you’re finished.' : '';
       for(const kind of ['holiday','vacation']) document.getElementById(kind+'-protection').checked=enabledOn(kind,today);
       const dateInput=document.getElementById('vacation-date');
       dateInput.min=today;
